@@ -1,0 +1,44 @@
+if(isRelease){
+    apply plugin: 'com.android.library' // -> aar
+}else {
+    apply plugin: 'com.android.application' // -> apk
+}
+
+android {
+    compileSdkVersion app_android.compileSdkVersion
+    buildToolsVersion app_android.buildToolsVersion
+
+    defaultConfig {
+        if(!isRelease){
+            applicationId app_id.chat
+        }
+        minSdkVersion app_android.minSdkVersion
+        targetSdkVersion app_android.targetSdkVersion
+        versionCode app_android.versionCode
+        versionName app_android.versionName
+
+        testInstrumentationRunner app_android.testInstrumentationRunner
+
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments = [ AROUTER_MODULE_NAME  : project.getName() ]
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility app_android.sourceCompatibility
+        targetCompatibility app_android.targetCompatibility
+    }
+}
+
+dependencies {
+    annotationProcessor app_annotationProcessors.arouter_compiler
+    implementation project(':common')
+}

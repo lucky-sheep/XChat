@@ -1,2 +1,6 @@
+include ':contacts'
+include ':common'
+include ':personal'
+include ':chat'
 include ':app'
 rootProject.name = "XChat-Client"

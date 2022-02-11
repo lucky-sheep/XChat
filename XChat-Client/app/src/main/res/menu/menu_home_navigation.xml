@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/tab_menu_chat"
+        android:icon="@drawable/icon_navigation_chat"
+        android:title="消息"
+        />
+    <item
+        android:id="@+id/tab_menu_contact"
+        android:icon="@drawable/icon_navigation_contact"
+        android:title="联系人"
+        />
+    <item
+        android:id="@+id/tab_menu_personal"
+        android:icon="@drawable/icon_navigation_personal"
+        android:title="我"
+        />
+</menu>

@@ -1,30 +1,86 @@
 package cn.tim.xchat;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.os.Bundle;
-import android.widget.TextView;
+import android.view.Gravity;
+import android.view.View;
 
-public class MainActivity extends AppCompatActivity {
 
-    // Used to load the 'native-lib' library on application startup.
-    static {
-        System.loadLibrary("native-lib");
-    }
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.viewpager2.adapter.FragmentStateAdapter;
+import androidx.viewpager2.widget.ViewPager2;
+
+import com.google.android.material.bottomnavigation.BottomNavigationItemView;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+
+import cn.tim.xchat.chat.MessageListFragment;
+import cn.tim.xchat.contacts.ContactsFragment;
+import cn.tim.xchat.personal.PersonalFragment;
+import q.rorbin.badgeview.QBadgeView;
+
+public class MainActivity extends XChatBaseActivity {
+    QBadgeView chatQBadgeView;
+//    // Used to load the 'native-lib' library on application startup.
+//    static {
+//        System.loadLibrary("native-lib");
+//    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        BottomNavigationView bottomNavView = findViewById(R.id.bottom_navigation);
+        BottomNavigationItemView chat = bottomNavView.findViewById(R.id.tab_menu_chat);
 
-        // Example of a call to a native method
-        TextView tv = findViewById(R.id.sample_text);
-        tv.setText(stringFromJNI());
+        if(chatQBadgeView == null) {
+            chatQBadgeView = new QBadgeView(this);
+        }
+        chatQBadgeView.bindTarget(chat)
+                .setBadgeGravity(Gravity.TOP|Gravity.START)
+                .setGravityOffset(75, 0, true)
+                .setBadgeNumber(20);
+
+        ViewPager2 viewPager2 = findViewById(R.id.viewpager);
+        bottomNavView.setOnItemSelectedListener(item -> {
+            switch (item.getItemId()) {
+                case R.id.tab_menu_chat:
+                    viewPager2.setCurrentItem(0);
+                    break;
+                case R.id.tab_menu_contact:
+                    viewPager2.setCurrentItem(1);
+                    break;
+                case R.id.tab_menu_personal:
+                    viewPager2.setCurrentItem(2);
+
+                    break;
+                default:
+                    break;
+            }
+            return true;
+        });
     }
 
-    /**
-     * A native method that is implemented by the 'native-lib' native library,
-     * which is packaged with this application.
-     */
-    public native String stringFromJNI();
+
+    private Fragment[] setupViewPager(ViewPager2 viewPager) {
+        Fragment[] fragments = new Fragment[]{
+                new MessageListFragment(),
+                new ContactsFragment(),
+                new PersonalFragment()
+        };
+
+        FragmentStateAdapter stateAdapter = new FragmentStateAdapter(this) {
+            @Override
+            public int getItemCount() {
+                return fragments.length;
+            }
+
+            @NonNull
+            @Override
+            public Fragment createFragment(int position) {
+                return fragments[position];
+            }
+        };
+        viewPager.setAdapter(stateAdapter);
+        return fragments;
+    }
 }
