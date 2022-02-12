@@ -41,4 +41,9 @@ dependencies {
         api v
         println('引入依赖: ' + k + " -> " + v)
     }
+
+    app_onlydebug_tools_dependencies.each {k,v ->
+        debugImplementation v
+        println('Debug Tools: ' + k + " -> " + v)
+    }
 }

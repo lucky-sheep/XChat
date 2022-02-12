@@ -8,18 +8,28 @@
     android:orientation="vertical"
     tools:context=".MainActivity">
 
-    <androidx.viewpager2.widget.ViewPager2
-        android:id="@+id/viewpager"
+    <RelativeLayout
+        android:id="@+id/app_main_top_safe"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@+id/bottom_navigation" />
+        android:layout_height="wrap_content"/>
+
+    <cn.tim.xchat.common.base_widget.BaseTitleBar
+        android:id="@+id/app_main_titlebar"
+        android:layout_below="@id/app_main_top_safe"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/app_main_viewpager"
+        android:layout_below="@id/app_main_titlebar"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/bottom_navigation"
+        android:id="@+id/app_main_bottom_navigation"
         android:paddingTop="3dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         app:menu="@menu/menu_home_navigation" />
-
 </RelativeLayout>

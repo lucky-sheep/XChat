@@ -1,84 +1,75 @@
 package cn.tim.xchat;
 
+import android.app.Activity;
 import android.os.Bundle;
-import android.view.Gravity;
+import android.os.Handler;
+import android.os.Message;
+import android.view.Window;
 
+import androidx.core.splashscreen.SplashScreen;
+import java.lang.ref.WeakReference;
 
-import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
-import androidx.viewpager2.adapter.FragmentStateAdapter;
-import androidx.viewpager2.widget.ViewPager2;
+import cn.tim.xchat.common.base_utils.StatusBarUtils;
 
-import com.google.android.material.bottomnavigation.BottomNavigationItemView;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
+public class MainActivity extends XChatBaseActivity implements ActivityProvider {
 
-import cn.tim.xchat.chat.MessageListFragment;
-import cn.tim.xchat.contacts.ContactsFragment;
-import cn.tim.xchat.personal.PersonalFragment;
-import q.rorbin.badgeview.QBadgeView;
-
-public class MainActivity extends XChatBaseActivity {
-    QBadgeView chatQBadgeView;
+    private final Handler handler = new MainHandler(this);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        SplashScreen splashScreen = SplashScreen.installSplashScreen(this);
+
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_main);
-        BottomNavigationView bottomNavView = findViewById(R.id.bottom_navigation);
-        BottomNavigationItemView chat = bottomNavView.findViewById(R.id.tab_menu_chat);
 
-        if(chatQBadgeView == null) {
-            chatQBadgeView = new QBadgeView(this);
-        }
+        // 设置沉浸式状态栏
+        StatusBarUtils.setStatusBarFullTransparent(MainActivity.this);
+        StatusBarUtils.setDarkStatusIcon(getWindow(),true);
 
-        chatQBadgeView.bindTarget(chat)
-                .setBadgeGravity(Gravity.TOP|Gravity.START)
-                .setGravityOffset(75, 0, true)
-                .setBadgeNumber(20);
-
-        ViewPager2 viewPager = findViewById(R.id.viewpager);
-        setupViewPager(viewPager);
-        bottomNavView.setOnItemSelectedListener(item -> {
-            int itemId = item.getItemId();
-            if(itemId == R.id.tab_menu_chat){
-                viewPager.setCurrentItem(0);
-            }else if(itemId == R.id.tab_menu_contact){
-                viewPager.setCurrentItem(1);
-            }else if(itemId == R.id.tab_menu_personal){
-                viewPager.setCurrentItem(2);
-            }
-            return true;
-        });
-
-        viewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
-            @Override
-            public void onPageSelected(int position) {
-                super.onPageSelected(position);
-                bottomNavView.setSelectedItemId(position);
-            }
-        });
+        splashScreen.setKeepVisibleCondition(() -> true);
+        MainActivityLogic activityLogic = new MainActivityLogic(this, savedInstanceState);
+        getLifecycle().addObserver(activityLogic);
+        postDelayRunnable(() -> {
+            splashScreen.setKeepVisibleCondition(() -> false);
+        }, 1500);
     }
 
 
-    private void setupViewPager(ViewPager2 viewPager) {
-        Fragment[] fragments = new Fragment[]{
-                new MessageListFragment(),
-                new ContactsFragment(),
-                new PersonalFragment()
-        };
+    @Override
+    public Activity getActivity() {
+        return this;
+    }
 
-        FragmentStateAdapter stateAdapter = new FragmentStateAdapter(this) {
-            @Override
-            public int getItemCount() {
-                return fragments.length;
-            }
+    @Override
+    public void postRunnable(Runnable runnable) {
+        runOnUiThread(runnable);
+    }
 
-            @NonNull
-            @Override
-            public Fragment createFragment(int position) {
-                return fragments[position];
-            }
-        };
-        viewPager.setAdapter(stateAdapter);
+    @Override
+    public void postDelayRunnable(Runnable runnable, long delayMs) {
+        handler.postDelayed(runnable, delayMs);
+    }
+
+    public static class MainHandler extends Handler {
+        private final WeakReference<MainActivity> mActivityWR;
+        // 在构造方法中传入需持有的Activity实例
+        public MainHandler(MainActivity activity) {
+            // 使用WeakReference弱引用持有Activity实例
+            mActivityWR = new WeakReference<>(activity);
+        }
+
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            MainActivity activity = mActivityWR.get();
+        }
+    }
+
+
+    protected void onDestroy() {
+        super.onDestroy();
+        if(handler != null) {
+            handler.removeCallbacksAndMessages(null);
+        }
     }
 }

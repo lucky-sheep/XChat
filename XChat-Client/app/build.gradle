@@ -1,5 +1,6 @@
 plugins {
     id 'com.android.application'
+    id 'kotlin-android'
 }
 
 android {
@@ -54,10 +55,11 @@ android {
         sourceCompatibility app_android.sourceCompatibility
         targetCompatibility app_android.targetCompatibility
     }
+    ndkVersion '22.1.7171670'
 }
 
 dependencies {
-    implementation 'com.google.android.material:material:1.4.0'
+
     app_annotationProcessors.each {k, v ->
         annotationProcessor v
         println('注解处理器: ' + k + " -> " + v)
@@ -65,6 +67,9 @@ dependencies {
 //    annotationProcessor app_annotationProcessors.arouter_compiler
 //    annotationProcessor app_annotationProcessors.arouter_compiler
     implementation project(':common')
+    implementation 'androidx.appcompat:appcompat:1.4.0'
+    implementation 'com.google.android.material:material:1.5.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.2'
     print("isRelease = " + isRelease)
     if(isRelease){
         implementation project(':chat')
