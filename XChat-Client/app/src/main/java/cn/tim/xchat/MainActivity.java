@@ -2,7 +2,6 @@ package cn.tim.xchat;
 
 import android.os.Bundle;
 import android.view.Gravity;
-import android.view.View;
 
 
 import androidx.annotation.NonNull;
@@ -20,10 +19,6 @@ import q.rorbin.badgeview.QBadgeView;
 
 public class MainActivity extends XChatBaseActivity {
     QBadgeView chatQBadgeView;
-//    // Used to load the 'native-lib' library on application startup.
-//    static {
-//        System.loadLibrary("native-lib");
-//    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,33 +30,37 @@ public class MainActivity extends XChatBaseActivity {
         if(chatQBadgeView == null) {
             chatQBadgeView = new QBadgeView(this);
         }
+
         chatQBadgeView.bindTarget(chat)
                 .setBadgeGravity(Gravity.TOP|Gravity.START)
                 .setGravityOffset(75, 0, true)
                 .setBadgeNumber(20);
 
-        ViewPager2 viewPager2 = findViewById(R.id.viewpager);
+        ViewPager2 viewPager = findViewById(R.id.viewpager);
+        setupViewPager(viewPager);
         bottomNavView.setOnItemSelectedListener(item -> {
-            switch (item.getItemId()) {
-                case R.id.tab_menu_chat:
-                    viewPager2.setCurrentItem(0);
-                    break;
-                case R.id.tab_menu_contact:
-                    viewPager2.setCurrentItem(1);
-                    break;
-                case R.id.tab_menu_personal:
-                    viewPager2.setCurrentItem(2);
-
-                    break;
-                default:
-                    break;
+            int itemId = item.getItemId();
+            if(itemId == R.id.tab_menu_chat){
+                viewPager.setCurrentItem(0);
+            }else if(itemId == R.id.tab_menu_contact){
+                viewPager.setCurrentItem(1);
+            }else if(itemId == R.id.tab_menu_personal){
+                viewPager.setCurrentItem(2);
             }
             return true;
+        });
+
+        viewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+            @Override
+            public void onPageSelected(int position) {
+                super.onPageSelected(position);
+                bottomNavView.setSelectedItemId(position);
+            }
         });
     }
 
 
-    private Fragment[] setupViewPager(ViewPager2 viewPager) {
+    private void setupViewPager(ViewPager2 viewPager) {
         Fragment[] fragments = new Fragment[]{
                 new MessageListFragment(),
                 new ContactsFragment(),
@@ -81,6 +80,5 @@ public class MainActivity extends XChatBaseActivity {
             }
         };
         viewPager.setAdapter(stateAdapter);
-        return fragments;
     }
 }
