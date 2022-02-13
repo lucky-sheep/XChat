@@ -98,6 +98,7 @@ public class UserAuthorizeServiceImpl implements UserAuthorizeService {
                 stringRedisTemplate.opsForValue().set(String.format(RedisConstant.TOKEN_PREFIX, token),
                         userInfo.getId(), RedisConstant.EXPIRE, TimeUnit.SECONDS);
                 ret.put("token", token);
+                ret.put("userInfo", userInfo);
 
                 // 记录一下设备变更
                 if(!userInfo.getClientId().equals(form.getDeviceId())){

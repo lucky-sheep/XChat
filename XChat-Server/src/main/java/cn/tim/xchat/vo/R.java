@@ -20,7 +20,7 @@ public class R {
     private String message;
 
     @ApiModelProperty(value = "返回数据")
-    private Map<String, Object> data = new HashMap<String, Object>();
+    private Map<String, Object> data = new HashMap<>();
 
     private R(){}
 
