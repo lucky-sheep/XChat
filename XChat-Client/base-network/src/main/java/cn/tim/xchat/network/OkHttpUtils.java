@@ -15,11 +15,10 @@ public class OkHttpUtils {
     public static OkHttpClient getInstance(){
         if(client == null) {
             synchronized (OkHttpClient.class) {
-                if(client != null){
+                if(client == null){
                     client = new OkHttpClient.Builder()
                             .addInterceptor(new LogInterceptor())
-                            .addInterceptor(new TokenInterceptor())
-                            .addInterceptor(new TokenInterceptor())
+                            .addInterceptor(new TokenInterceptor(context))
                             .addInterceptor(new ChuckInterceptor(context))
                             .build();
                 }

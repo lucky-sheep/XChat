@@ -26,8 +26,8 @@ ext {
 
     // 测试环境与正式环境的URL
     app_server_url  = [
-            "debug": "http://78.22.65.12/debug/api",
-            "release": "https://xxx.yyy.com/release/api"
+            "debug": "http://192.168.31.156:8080",
+            "release": "http://192.168.31.156:8080"
     ]
 
     // 定义依赖项目
@@ -43,7 +43,9 @@ ext {
             "splashscreen": "androidx.core:core-splashscreen:1.0.0-alpha01",
             "okhttp3": "com.squareup.okhttp3:okhttp:3.12.0",
             "mmkv": "com.tencent:mmkv:1.2.12",
-            "permissionx": "com.guolindev.permissionx:permissionx:1.6.1"
+            "permissionx": "com.guolindev.permissionx:permissionx:1.6.1",
+            "fastjson": "com.alibaba:fastjson:1.2.79"
+
     ]
 
     app_annotationProcessors = [

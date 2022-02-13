@@ -21,6 +21,7 @@ import androidx.viewpager2.widget.ViewPager2;
 
 import com.google.android.material.bottomnavigation.BottomNavigationItemView;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.tencent.mmkv.MMKV;
 
 import java.util.List;
 
@@ -93,12 +94,11 @@ public class MainActivityLogic implements DefaultLifecycleObserver {
                         baseTitleBar.autoChangeByType(TitleBarType.MESSAGE_MAIN_PAGER);
                         break;
                     case 1:
-                        XChatToast.INSTANCE.showToast(activityProvider.getActivity(), "Hello friend!");
                         itemId = R.id.tab_menu_contact;
                         baseTitleBar.autoChangeByType(TitleBarType.CONTACTS_MAIN_PAGER);
+                        MMKV.defaultMMKV().clearAll();
                         break;
                     case 2:
-                        XChatToast.INSTANCE.showToast(activityProvider.getActivity(), "请登录注册之后使用");
                         itemId = R.id.tab_menu_personal;
                         baseTitleBar.autoChangeByType(TitleBarType.PERSONAL_MAIN_PAGER);
                         break;

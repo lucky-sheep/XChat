@@ -8,10 +8,13 @@ import android.view.Window;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.alibaba.android.arouter.facade.annotation.Route;
+
 import java.lang.ref.WeakReference;
 
 import cn.tim.xchat.common.utils.StatusBarUtil;
 
+@Route(path = "/home/main")
 public class MainActivity extends AppCompatActivity implements ActivityProvider {
 
     private final Handler handler = new MainHandler(this);
@@ -27,14 +30,8 @@ public class MainActivity extends AppCompatActivity implements ActivityProvider 
         StatusBarUtil.setStatusBarFullTransparent(MainActivity.this);
         StatusBarUtil.setDarkStatusIcon(getWindow(),true);
 
-//        splashScreen.setKeepVisibleCondition(() -> true);
         MainActivityLogic activityLogic = new MainActivityLogic(this, savedInstanceState);
         getLifecycle().addObserver(activityLogic);
-
-//        // 启动页延迟1S
-//        postDelayRunnable(() -> {
-//            splashScreen.setKeepVisibleCondition(() -> false);
-//        }, 1000);
     }
 
 

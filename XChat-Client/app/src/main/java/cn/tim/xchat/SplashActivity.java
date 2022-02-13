@@ -3,8 +3,6 @@ package cn.tim.xchat;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.splashscreen.SplashScreen;
 
-import android.annotation.SuppressLint;
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -34,8 +32,7 @@ public class SplashActivity extends AppCompatActivity {
         if(TextUtils.isEmpty(userToken)) {
             ARouter.getInstance().build("/login/main").navigation();
         }else {
-            // 1、检查Token有效性
-
+            ARouter.getInstance().build("/home/main").navigation();
         }
         //startActivity(new Intent(this, MainActivity.class));
         finish();
