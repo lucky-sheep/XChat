@@ -13,7 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 
-    <cn.tim.xchat.common.base_widget.BaseTitleBar
+    <cn.tim.xchat.common.widget.titlebar.BaseTitleBar
         android:id="@+id/app_main_titlebar"
         android:layout_below="@id/app_main_top_safe"
         android:layout_width="match_parent"

@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="cn.tim.xchat.chat">
     <application>
-        <activity android:name=".ChatActivity"/>
+        <activity
+            android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar"
+            android:name=".ChatActivity" />
     </application>
 </manifest>

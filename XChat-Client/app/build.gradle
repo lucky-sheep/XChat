@@ -1,6 +1,5 @@
 plugins {
     id 'com.android.application'
-    id 'kotlin-android'
 }
 
 android {
@@ -64,17 +63,14 @@ dependencies {
         annotationProcessor v
         println('注解处理器: ' + k + " -> " + v)
     }
-//    annotationProcessor app_annotationProcessors.arouter_compiler
-//    annotationProcessor app_annotationProcessors.arouter_compiler
+
     implementation project(':common')
-    implementation 'androidx.appcompat:appcompat:1.4.0'
-    implementation 'com.google.android.material:material:1.5.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.1.2'
-    print("isRelease = " + isRelease)
+    implementation project(':base-network')
+
     if(isRelease){
         implementation project(':chat')
         implementation project(':personal')
         implementation project(':contacts')
-
+        implementation project(':login')
     }
 }
