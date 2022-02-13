@@ -10,6 +10,7 @@ import androidx.annotation.StringRes;
 import androidx.fragment.app.FragmentManager;
 
 public interface ActivityProvider {
+    String TAG = "XChat-dev";
     <T extends View> T findViewById(@IdRes int id);
 
     Resources getResources();

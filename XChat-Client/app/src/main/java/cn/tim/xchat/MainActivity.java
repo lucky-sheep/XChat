@@ -6,33 +6,35 @@ import android.os.Handler;
 import android.os.Message;
 import android.view.Window;
 
-import androidx.core.splashscreen.SplashScreen;
+import androidx.appcompat.app.AppCompatActivity;
+
 import java.lang.ref.WeakReference;
 
-import cn.tim.xchat.common.base_utils.StatusBarUtils;
+import cn.tim.xchat.common.utils.StatusBarUtil;
 
-public class MainActivity extends XChatBaseActivity implements ActivityProvider {
+public class MainActivity extends AppCompatActivity implements ActivityProvider {
 
     private final Handler handler = new MainHandler(this);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        SplashScreen splashScreen = SplashScreen.installSplashScreen(this);
 
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_main);
 
         // 设置沉浸式状态栏
-        StatusBarUtils.setStatusBarFullTransparent(MainActivity.this);
-        StatusBarUtils.setDarkStatusIcon(getWindow(),true);
+        StatusBarUtil.setStatusBarFullTransparent(MainActivity.this);
+        StatusBarUtil.setDarkStatusIcon(getWindow(),true);
 
-        splashScreen.setKeepVisibleCondition(() -> true);
+//        splashScreen.setKeepVisibleCondition(() -> true);
         MainActivityLogic activityLogic = new MainActivityLogic(this, savedInstanceState);
         getLifecycle().addObserver(activityLogic);
-        postDelayRunnable(() -> {
-            splashScreen.setKeepVisibleCondition(() -> false);
-        }, 1500);
+
+//        // 启动页延迟1S
+//        postDelayRunnable(() -> {
+//            splashScreen.setKeepVisibleCondition(() -> false);
+//        }, 1000);
     }
 
 

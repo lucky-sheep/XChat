@@ -4,3 +4,5 @@ include ':personal'
 include ':chat'
 include ':app'
 rootProject.name = "XChat-Client"
+include ':login'
+include ':base-network'

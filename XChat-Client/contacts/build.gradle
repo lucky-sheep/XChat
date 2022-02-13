@@ -52,6 +52,6 @@ android {
 
 dependencies {
     annotationProcessor app_annotationProcessors.arouter_compiler
-
-    implementation project(':common')
+    implementation project(":common")
+    implementation project(":base-network")
 }

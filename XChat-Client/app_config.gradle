@@ -20,7 +20,8 @@ ext {
     app_id = [
             "chat": 'cn.tim.xchat.chat',
             "personal": 'cn.tim.xchat.personal',
-            "contacts": 'cn.tim.xchat.contacts'
+            "contacts": 'cn.tim.xchat.contacts',
+            "login": 'cn.tim.xchat.login'
     ]
 
     // 测试环境与正式环境的URL
@@ -41,6 +42,7 @@ ext {
             "badgeview" : "q.rorbin:badgeview:1.1.3",
             "splashscreen": "androidx.core:core-splashscreen:1.0.0-alpha01",
             "okhttp3": "com.squareup.okhttp3:okhttp:3.12.0",
+            "mmkv": "com.tencent:mmkv:1.2.12"
     ]
 
     app_annotationProcessors = [
@@ -49,6 +51,5 @@ ext {
 
     app_onlydebug_tools_dependencies = [
             "leakcanary": "com.squareup.leakcanary:leakcanary-android:2.8.1",
-            "chuck_debughttp": "com.readystatesoftware.chuck:library:1.1.0"
     ]
 }
