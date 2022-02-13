@@ -3,6 +3,11 @@ server:
   tomcat:
     uri-encoding: UTF-8
 spring:
+  mvc:
+    pathmatch:
+      matching-strategy: ANT_PATH_MATCHER
+  messages:
+    encoding: UTF-8
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://127.0.0.1:3306/xchat-dev?serverTimezone=UTC&useUnicode=true&characterEncoding=UTF-8&useSSL=false
@@ -33,5 +38,3 @@ spring:
         max-idle: 8
         min-idle: 2
     timeout: 500
-
-# Netty的配置

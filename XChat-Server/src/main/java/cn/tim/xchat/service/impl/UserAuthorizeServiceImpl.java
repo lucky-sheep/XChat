@@ -4,11 +4,13 @@ import cn.tim.xchat.constant.RedisConstant;
 import cn.tim.xchat.entity.UserInfo;
 import cn.tim.xchat.enums.ResultEnum;
 import cn.tim.xchat.exception.XChatException;
+import cn.tim.xchat.form.UserLoginForm;
 import cn.tim.xchat.form.UserRegisterForm;
 import cn.tim.xchat.repository.UserInfoRepository;
 import cn.tim.xchat.service.UserAuthorizeService;
 import cn.tim.xchat.utils.KeyUtil;
-import io.netty.handler.codec.redis.IntegerRedisMessage;
+import com.google.common.collect.Maps;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
@@ -19,6 +21,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
+@Slf4j
 @Service
 public class UserAuthorizeServiceImpl implements UserAuthorizeService {
     @Resource
@@ -72,5 +75,37 @@ public class UserAuthorizeServiceImpl implements UserAuthorizeService {
         ret.put("userInfo", savedUser);
         ret.put("token", token);
         return ret;
+    }
+
+    @Override
+    public Map<String, Object> userLogin(UserLoginForm form) {
+        HashMap<String, Object> ret = Maps.newHashMap();
+        Integer loginCount = redisTemplate.opsForValue().get(form.getUsername());
+        if(loginCount != null && loginCount++ > 5) {
+            // 请求次数过多
+            throw new XChatException(ResultEnum.PWD_ERROR_TOO_MANY_TIMES);
+        }else {
+            log.info("form.getUsername() = " + form.getUsername() + ", loginCount = " + loginCount);
+            redisTemplate.opsForValue().set(form.getUsername(), loginCount != null ? loginCount : 1,
+                    RedisConstant.PASSWORD_ERROR_EXPIRE, TimeUnit.SECONDS);
+        }
+
+        UserInfo userInfo = userInfoRepository.findUserInfoByUsername(form.getUsername());
+        if(userInfo != null) {
+            if(userInfo.getPassword().equals(form.getPassword())){
+                // 先获取Redis里面的Token，否则存在Token重复的问题
+                String token = UUID.randomUUID().toString();
+                stringRedisTemplate.opsForValue().set(String.format(RedisConstant.TOKEN_PREFIX, token),
+                        userInfo.getId(), RedisConstant.EXPIRE, TimeUnit.SECONDS);
+                ret.put("token", token);
+
+                // 记录一下设备变更
+                if(!userInfo.getClientId().equals(form.getDeviceId())){
+                    // TODO 记录一下设备变更
+                }
+                return ret;
+            }
+        }
+        return null;
     }
 }

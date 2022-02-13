@@ -1,25 +1,20 @@
 package cn.tim.xchat.form;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+import org.hibernate.validator.constraints.Length;
+
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import io.swagger.annotations.ApiParam;
-import lombok.Data;
-import org.hibernate.validator.constraints.Length;
-
-@ApiModel(value = "用户注册表单")
+@ApiModel(value = "用户登录表单")
 @Data
-public class UserRegisterForm {
+public class UserLoginForm {
     @ApiModelProperty(value = "设备ID")
     @NotBlank(message = "缺失设备ID")
     private String deviceId;
-
-    @ApiModelProperty(value = "E-mail")
-    @Email(message = "Email格式错误")
-    private String email;
 
     @ApiModelProperty(value = "用户密码")
     @NotBlank(message = "缺失密码")

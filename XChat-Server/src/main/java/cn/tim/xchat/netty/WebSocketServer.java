@@ -36,7 +36,7 @@ public class WebSocketServer {
 
     public void start() {
         channelFuture = serverBootstrap.bind(8088);
-        log.error("netty websocket server start success...");
+        log.warn("netty websocket server start success...");
     }
 
     public void stop() {
