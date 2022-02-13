@@ -1,20 +1,13 @@
 package cn.tim.xchat.entity;
 
-import lombok.*;
-import org.hibernate.Hibernate;
+import javax.persistence.*;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import java.util.Objects;
-
-@Getter
-@Setter
-@ToString
-@RequiredArgsConstructor
 @Entity
-@Table(name = "user_info")
+@Table(name = "user_info",
+indexes = {
+        @Index(name = "username_index", columnList = "username", unique = true),
+        @Index(name = "email_index", columnList = "email", unique = true),
+})
 public class UserInfo {
     @Id
     @Column(name = "id", nullable = false, length = 64)
@@ -23,34 +16,96 @@ public class UserInfo {
     @Column(name = "username", nullable = false, length = 64)
     private String username;
 
+    @Column(name = "email", nullable = false, length = 64)
+    private String email;
+
     @Column(name = "password", nullable = false, length = 64)
     private String password;
 
-    @Column(name = "face_image", nullable = false)
-    private String faceImage;
-
-    @Column(name = "face_image_big", nullable = false)
-    private String faceImageBig;
-
-    @Column(name = "nickname", nullable = false, length = 64)
-    private String nickname;
-
-    @Column(name = "qrcode", nullable = false)
-    private String qrcode;
-
-    @Column(name = "client_id", nullable = false, length = 64)
+    @Column(name = "client_id", length = 64)
     private String clientId;
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
-        UserInfo userInfo = (UserInfo) o;
-        return id != null && Objects.equals(id, userInfo.id);
+    @Column(name = "face_image")
+    private String faceImage;
+
+    @Column(name = "face_image_big")
+    private String faceImageBig;
+
+    @Column(name = "nickname", length = 64)
+    private String nickname;
+
+    @Column(name = "qrcode")
+    private String qrcode;
+
+    public String getQrcode() {
+        return qrcode;
     }
 
-    @Override
-    public int hashCode() {
-        return getClass().hashCode();
+    public void setQrcode(String qrcode) {
+        this.qrcode = qrcode;
+    }
+
+    public String getNickname() {
+        return nickname;
+    }
+
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
+    }
+
+    public String getFaceImageBig() {
+        return faceImageBig;
+    }
+
+    public void setFaceImageBig(String faceImageBig) {
+        this.faceImageBig = faceImageBig;
+    }
+
+    public String getFaceImage() {
+        return faceImage;
+    }
+
+    public void setFaceImage(String faceImage) {
+        this.faceImage = faceImage;
+    }
+
+    public String getClientId() {
+        return clientId;
+    }
+
+    public void setClientId(String clientId) {
+        this.clientId = clientId;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 }

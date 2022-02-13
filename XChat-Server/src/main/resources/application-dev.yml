@@ -1,3 +1,37 @@
+server:
+  port: 8080
+  tomcat:
+    uri-encoding: UTF-8
 spring:
-  profiles:
-    active: dev
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://127.0.0.1:3306/xchat-dev?serverTimezone=UTC&useUnicode=true&characterEncoding=UTF-8&useSSL=false
+    username: root
+    password: 123456
+    type: com.alibaba.druid.pool.DruidDataSource
+    druid:
+      initial-size: 5
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      min-idle: 5
+      max-active: 50
+      max-wait: 50000
+      time-between-eviction-runs-millis: 50000
+      filter:
+        stat:
+          log-slow-sql: true
+  jpa:
+    show-sql: true
+  jackson:
+      default-property-inclusion: non_null
+  redis:
+    host: 127.0.0.1
+    port: 6379
+    jedis:
+      pool:
+        enabled: true
+        max-active: 8
+        max-idle: 8
+        min-idle: 2
+    timeout: 500
+
+# Netty的配置
