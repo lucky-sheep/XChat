@@ -4,12 +4,11 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.StringRes;
 import androidx.fragment.app.Fragment;
 
 import android.text.Editable;
 import android.text.TextUtils;
-import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,9 +20,9 @@ import android.widget.TextView;
 import com.alibaba.android.arouter.facade.annotation.Route;
 import com.alibaba.android.arouter.launcher.ARouter;
 import com.google.android.material.textfield.TextInputLayout;
+import com.tencent.mmkv.MMKV;
 
-import java.util.regex.Pattern;
-
+import cn.tim.xchat.common.constans.StorageKey;
 import cn.tim.xchat.common.utils.RegexUtil;
 import cn.tim.xchat.common.widget.toast.XChatToast;
 import cn.tim.xchat.login.adapter.MyEditTextWatcher;
@@ -63,6 +62,7 @@ public class RegisterFragment extends Fragment {
             Fragment regFragment = (Fragment) ARouter.getInstance()
                     .build("/login/login")
                     .navigation();
+            XChatToast.INSTANCE.cancelToast();
             getParentFragmentManager().beginTransaction()
                     .remove(this)
                     .add(R.id.login_main_content, regFragment)
@@ -81,6 +81,8 @@ public class RegisterFragment extends Fragment {
                 return;
             }
             OkHttpClient instance = OkHttpUtils.getInstance();
+            String deviceIdMd5 = MMKV.defaultMMKV().getString(StorageKey.DEVICE_ID_KEY, "");
+            Log.i(LoginActivity.TAG, "initView: deviceId = " + deviceIdMd5);
         });
 
 

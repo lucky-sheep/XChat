@@ -2,12 +2,9 @@ package cn.tim.xchat.login;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
 
 import android.os.Bundle;
 import android.view.Window;
-import android.widget.Button;
-import android.widget.EditText;
 
 import com.alibaba.android.arouter.facade.annotation.Route;
 import com.alibaba.android.arouter.launcher.ARouter;
@@ -16,7 +13,7 @@ import cn.tim.xchat.common.utils.StatusBarUtil;
 
 @Route(path = "/login/main")
 public class LoginActivity extends AppCompatActivity {
-
+    public static final String TAG = "LoginActivity";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

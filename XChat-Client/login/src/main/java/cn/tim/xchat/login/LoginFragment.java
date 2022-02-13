@@ -1,7 +1,5 @@
 package cn.tim.xchat.login;
 
-import androidx.lifecycle.ViewModelProvider;
-
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -78,10 +76,16 @@ public class LoginFragment extends Fragment {
             Fragment regFragment = (Fragment) ARouter.getInstance()
                     .build("/login/register")
                     .navigation();
+            XChatToast.INSTANCE.cancelToast();
             getParentFragmentManager().beginTransaction()
                     .remove(this)
                     .add(R.id.login_main_content, regFragment)
                     .commit();
         });
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
     }
 }
