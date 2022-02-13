@@ -7,6 +7,8 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import android.text.Editable;
+import android.text.InputFilter;
+import android.text.Spanned;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
@@ -22,7 +24,11 @@ import com.alibaba.android.arouter.launcher.ARouter;
 import com.google.android.material.textfield.TextInputLayout;
 import com.tencent.mmkv.MMKV;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import cn.tim.xchat.common.constans.StorageKey;
+import cn.tim.xchat.common.utils.InputFilterUtil;
 import cn.tim.xchat.common.utils.RegexUtil;
 import cn.tim.xchat.common.widget.toast.XChatToast;
 import cn.tim.xchat.login.adapter.MyEditTextWatcher;
@@ -85,11 +91,12 @@ public class RegisterFragment extends Fragment {
             Log.i(LoginActivity.TAG, "initView: deviceId = " + deviceIdMd5);
         });
 
-
+        usernameEdit.setFilters(new InputFilter[]{InputFilterUtil.englishAndNumberFilter});
         usernameEdit.addTextChangedListener(new MyEditTextWatcher() {
             @Override
             public void afterTextChanged(Editable editable) {
-                usernameTIL.setError(usernameEdit.getText().length() >
+                String text = usernameEdit.getText().toString();
+                usernameTIL.setError(text.length() >
                         usernameTIL.getCounterMaxLength() ? "输入过长":null);
             }
         });

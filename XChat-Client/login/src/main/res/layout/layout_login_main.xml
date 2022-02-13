@@ -29,7 +29,7 @@
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             app:boxStrokeColor="@color/black"
             app:boxStrokeWidth="2dp"
-            android:hint="用户名"
+            android:hint="用户名 (仅英文和数字)"
 
             app:errorIconDrawable="@drawable/icon_login_error_input_tips"
             app:errorEnabled="true"

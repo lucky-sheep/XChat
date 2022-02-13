@@ -7,6 +7,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import android.text.Editable;
+import android.text.InputFilter;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -20,6 +21,7 @@ import com.alibaba.android.arouter.facade.annotation.Route;
 import com.alibaba.android.arouter.launcher.ARouter;
 import com.google.android.material.textfield.TextInputLayout;
 
+import cn.tim.xchat.common.utils.InputFilterUtil;
 import cn.tim.xchat.common.utils.RegexUtil;
 import cn.tim.xchat.common.widget.toast.XChatToast;
 import cn.tim.xchat.login.adapter.MyEditTextWatcher;
@@ -52,6 +54,7 @@ public class LoginFragment extends Fragment {
         TextInputLayout usernameTIL = view.findViewById(R.id.login_username_et_til);
         TextInputLayout passwordTIL = view.findViewById(R.id.login_password_et_til);
 
+        usernameEdit.setFilters(new InputFilter[]{InputFilterUtil.englishAndNumberFilter});
         usernameEdit.addTextChangedListener(new MyEditTextWatcher() {
             @Override
             public void afterTextChanged(Editable editable) {
