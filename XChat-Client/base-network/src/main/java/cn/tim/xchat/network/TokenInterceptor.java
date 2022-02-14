@@ -31,7 +31,7 @@ public class TokenInterceptor implements Interceptor {
     private static final String TAG = "TokenInterceptor";
     MMKV mmkv = MMKV.defaultMMKV();
 
-    private Context context;
+    private final Context context;
     public TokenInterceptor(Context context) {
         this.context = context;
     }
