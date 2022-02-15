@@ -14,6 +14,7 @@ import com.tencent.mmkv.MMKV;
 
 import cn.tim.xchat.common.constans.StorageKey;
 import cn.tim.xchat.common.utils.StatusBarUtil;
+import cn.tim.xchat.common.widget.toast.XChatToast;
 import cn.tim.xchat.login.module.UserInfo;
 import cn.tim.xchat.network.model.ResponseModule;
 
@@ -36,6 +37,8 @@ public class LoginActivity extends AppCompatActivity {
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.login_main_content, loginFragment)
                 .commit();
+
+        getLifecycle().addObserver(XChatToast.INSTANCE);
     }
 
     public void successAuthHandle(ResponseModule responseModule) {

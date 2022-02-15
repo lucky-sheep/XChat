@@ -2,6 +2,8 @@ plugins {
     id 'com.android.application'
 }
 
+apply plugin: 'com.google.protobuf'
+
 android {
     compileSdkVersion app_android.compileSdkVersion
     buildToolsVersion app_android.buildToolsVersion

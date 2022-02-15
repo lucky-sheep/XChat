@@ -42,17 +42,12 @@ public class StatusBarUtil {
      */
     public static void setHalfTransparent(Activity activity) {
 
-        if (Build.VERSION.SDK_INT >= 21) {//21表示5.0
-            View decorView = activity.getWindow().getDecorView();
-            int option = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_LAYOUT_STABLE;
-            decorView.setSystemUiVisibility(option);
-            activity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        //21表示5.0
+        View decorView = activity.getWindow().getDecorView();
+        int option = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_LAYOUT_STABLE;
+        decorView.setSystemUiVisibility(option);
+        activity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
 
-        } else if (Build.VERSION.SDK_INT >= 19) {//19表示4.4
-            activity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-            //虚拟键盘也透明
-            // getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
-        }
     }
 
     /**
@@ -83,8 +78,6 @@ public class StatusBarUtil {
 
     /**
      * 和5.0+设置Activity移动到顶端的方式不同
-     * @param window
-     * @param activity
      */
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     public static void setStatusBarTransparentKITKAT(
@@ -112,8 +105,6 @@ public class StatusBarUtil {
      * View.SYSTEM_UI_FLAG_LAYOUT_STABLE     稳定的布局，不会随系统栏的隐藏、显示而变化
      * View.SYSTEM_UI_FLAG_IMMERSIVE     沉浸模式，用户可以交互的界面
      * View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY     沉浸模式，用户可以交互的界面。同时，用户上下拉系统栏时，会自动隐藏系统栏
-     * @param window
-     * @param activity
      */
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     public static void setStatusBarTransparentLOLLIPOP(
@@ -131,7 +122,6 @@ public class StatusBarUtil {
 
     /**
      * 先使用 FLAG_TRANSLUCENT_STATUS 设置状态栏透明。然后用一个期望的背景色view填充statusBar
-     * @param window
      */
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     public static void setStatusBarColorKITKAT(
@@ -171,21 +161,6 @@ public class StatusBarUtil {
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
         // 设置状态栏颜色
         window.setStatusBarColor(color);
-    }
-
-    /**
-     * 修改状态栏颜色。
-     * @param window
-     * @param activity
-     * @param color
-     */
-    public static void setStatusBarColor(
-            Window window, Activity activity, int color) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            setStatusBarColorLOLLIPOP(window, activity, color);
-        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            setStatusBarColorKITKAT(window, activity, color);
-        }
     }
 
     /**

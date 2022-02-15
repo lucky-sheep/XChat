@@ -7,10 +7,14 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.lifecycle.DefaultLifecycleObserver;
+import androidx.lifecycle.LifecycleOwner;
+
 import cn.tim.xchat.common.R;
 import cn.tim.xchat.common.utils.DensityUtil;
 
-public enum XChatToast {
+public enum XChatToast implements DefaultLifecycleObserver {
     INSTANCE;
     private Toast mToast;
     private TextView mTvToast;
@@ -39,5 +43,10 @@ public enum XChatToast {
             mToast.cancel();
             mToast = null;
         }
+    }
+
+    @Override
+    public void onPause(@NonNull LifecycleOwner owner) {
+        INSTANCE.cancelToast();
     }
 }

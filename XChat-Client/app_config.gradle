@@ -44,8 +44,8 @@ ext {
             "okhttp3": "com.squareup.okhttp3:okhttp:3.12.0",
             "mmkv": "com.tencent:mmkv:1.2.12",
             "permissionx": "com.guolindev.permissionx:permissionx:1.6.1",
-            "fastjson": "com.alibaba:fastjson:1.2.79"
-
+            "fastjson": "com.alibaba:fastjson:1.2.79",
+            "lottie": "com.airbnb.android:lottie:4.2.2"
     ]
 
     app_annotationProcessors = [
