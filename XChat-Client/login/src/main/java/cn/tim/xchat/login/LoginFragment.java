@@ -5,18 +5,17 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
 
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.alibaba.android.arouter.facade.annotation.Route;
@@ -34,10 +33,9 @@ import java.util.UUID;
 import cn.tim.xchat.common.constans.StorageKey;
 import cn.tim.xchat.common.utils.InputFilterUtil;
 import cn.tim.xchat.common.utils.MD5Utils;
-import cn.tim.xchat.common.utils.RegexUtil;
+import cn.tim.xchat.common.widget.loading.LoadingComponent;
 import cn.tim.xchat.common.widget.toast.XChatToast;
 import cn.tim.xchat.login.adapter.MyEditTextWatcher;
-import cn.tim.xchat.login.module.UserInfo;
 import cn.tim.xchat.network.OkHttpUtils;
 import cn.tim.xchat.network.config.NetworkConfig;
 import cn.tim.xchat.network.model.ResponseModule;
@@ -61,6 +59,7 @@ public class LoginFragment extends Fragment {
     private LoginActivity activity;
 
     MMKV mmkv = MMKV.defaultMMKV();
+    private LoadingComponent loadingComponent;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
@@ -78,7 +77,7 @@ public class LoginFragment extends Fragment {
         goToRegisterBtn = view.findViewById(R.id.login_goto_register_btn);
 
         TextInputLayout usernameTIL = view.findViewById(R.id.login_username_et_til);
-        TextInputLayout passwordTIL = view.findViewById(R.id.login_password_et_til);
+//        TextInputLayout passwordTIL = view.findViewById(R.id.login_password_et_til);
 
         usernameEdit.setFilters(new InputFilter[]{InputFilterUtil.englishAndNumberFilter});
         usernameEdit.addTextChangedListener(new MyEditTextWatcher() {
@@ -95,7 +94,8 @@ public class LoginFragment extends Fragment {
             if(TextUtils.isEmpty(username)
                     || TextUtils.isEmpty(username)
                     || TextUtils.isEmpty(password)) {
-                XChatToast.INSTANCE.showToast(getContext(), "请正确填写登录信息", Gravity.TOP, 50);
+                XChatToast.INSTANCE.showToast(getContext(), "请正确填写登录信息",
+                        Gravity.TOP, LoginActivity.Y_OFFSET);
                 return;
             }
             loginCall(username, password);
@@ -111,6 +111,8 @@ public class LoginFragment extends Fragment {
                     .add(R.id.login_main_content, regFragment)
                     .commit();
         });
+
+        loadingComponent = new LoadingComponent(getContext(), (FrameLayout) view);
     }
 
     private void loginCall(String username, String password) {
@@ -127,13 +129,15 @@ public class LoginFragment extends Fragment {
                 .post(requestBody)
                 .url(NetworkConfig.baseUrl + NetworkConfig.USER_LOGIN_URL)
                 .build();
-
+        loadingComponent.start();
         client.newCall(request)
                 .enqueue(new Callback() {
                     @Override
                     public void onFailure(@NonNull Call call, @NonNull IOException e) {
                         activity.runOnUiThread(() -> {
-                            XChatToast.INSTANCE.showToast(getContext(), "请检查网络连接", Gravity.TOP, 50);
+                            loadingComponent.stop();
+                            XChatToast.INSTANCE.showToast(getContext(), "请检查网络连接",
+                                    Gravity.TOP, LoginActivity.Y_OFFSET);
                         });
                     }
 
@@ -145,8 +149,12 @@ public class LoginFragment extends Fragment {
                         ResponseModule responseModule = JSON.parseObject(
                                 responseBody.string(), ResponseModule.class);
 
-                        activity.runOnUiThread(()-> XChatToast.INSTANCE.showToast(
-                                getContext(), responseModule.getMessage(), Gravity.TOP, 50));
+                        activity.runOnUiThread(()-> {
+                            loadingComponent.stop();
+                            XChatToast.INSTANCE.showToast(
+                                    getContext(), responseModule.getMessage(),
+                                    Gravity.TOP, LoginActivity.Y_OFFSET);
+                        });
                         if(responseModule.getSuccess()) {
                             activity.successAuthHandle(responseModule);
                         }

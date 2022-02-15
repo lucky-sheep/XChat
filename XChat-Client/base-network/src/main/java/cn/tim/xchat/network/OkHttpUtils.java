@@ -3,9 +3,7 @@ package cn.tim.xchat.network;
 import android.content.Context;
 
 import com.readystatesoftware.chuck.ChuckInterceptor;
-
 import java.util.concurrent.TimeUnit;
-
 import okhttp3.OkHttpClient;
 
 public class OkHttpUtils {
@@ -20,8 +18,8 @@ public class OkHttpUtils {
                 if(client == null){
                     client = new OkHttpClient.Builder()
                             .connectTimeout(3, TimeUnit.SECONDS)
-                            .writeTimeout(10, TimeUnit.SECONDS)
-                            .readTimeout(10, TimeUnit.SECONDS)
+                            .writeTimeout(5, TimeUnit.SECONDS)
+                            .readTimeout(5, TimeUnit.SECONDS)
                             .addInterceptor(new TokenInterceptor(context))
                             .addInterceptor(new ChuckInterceptor(context))
                             .build();

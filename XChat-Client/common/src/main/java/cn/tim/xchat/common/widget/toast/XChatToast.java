@@ -1,6 +1,7 @@
 package cn.tim.xchat.common.widget.toast;
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,8 +25,7 @@ public enum XChatToast implements DefaultLifecycleObserver {
     }
 
     public void showToast(Context ctx, String content, int gravity, int yOffset) {
-//        if(mToast != null) mToast.cancel();
-        if (mToast == null) {
+        if (mToast == null && ctx != null) {
             mToast = new Toast(ctx);
             mToast.setGravity(gravity, 0, DensityUtil.dp2px(yOffset));
             mToast.setDuration(Toast.LENGTH_SHORT);
@@ -33,8 +33,11 @@ public enum XChatToast implements DefaultLifecycleObserver {
             mTvToast = _root.findViewById(R.id.xchat_toast_tv);
             mToast.setView(_root);
         }
-        mTvToast.setText(content);
-        mToast.show();
+
+        if(mTvToast != null && mToast != null && !TextUtils.isEmpty(content)){
+            mTvToast.setText(content);
+            mToast.show();
+        }
     }
 
 

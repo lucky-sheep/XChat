@@ -24,6 +24,8 @@ public class LoginActivity extends AppCompatActivity {
 
     MMKV mmkv = MMKV.defaultMMKV();
 
+    public static final int Y_OFFSET = 50;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
