@@ -148,18 +148,23 @@ public class LoginFragment extends Fragment {
                         assert responseBody != null;
                         ResponseModule responseModule = JSON.parseObject(
                                 responseBody.string(), ResponseModule.class);
-
-                        activity.runOnUiThread(()-> {
+                        activity.runOnUiThread(() -> {
                             loadingComponent.stop();
-                            XChatToast.INSTANCE.showToast(
-                                    getContext(), responseModule.getMessage(),
-                                    Gravity.TOP, LoginActivity.Y_OFFSET);
+                            if(responseModule != null) {
+                                showNetWorkError(responseModule.getMessage());
+                                if (responseModule.getSuccess()) {
+                                    activity.successAuthHandle(responseModule);
+                                }
+                            }else {
+                                showNetWorkError("请检查网络连接");
+                            }
                         });
-                        if(responseModule.getSuccess()) {
-                            activity.successAuthHandle(responseModule);
-                        }
                     }
                 });
     }
 
+    private void showNetWorkError(String error) {
+        XChatToast.INSTANCE.showToast(getContext(), error,
+                Gravity.TOP, LoginActivity.Y_OFFSET);
+    }
 }

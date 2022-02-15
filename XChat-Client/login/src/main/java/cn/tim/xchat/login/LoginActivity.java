@@ -34,13 +34,10 @@ public class LoginActivity extends AppCompatActivity {
         // 设置沉浸式状态栏
         StatusBarUtil.setStatusBarFullTransparent(this);
         StatusBarUtil.setDarkStatusIcon(getWindow(),true);
-
         Fragment loginFragment = (Fragment) ARouter.getInstance().build("/login/register").navigation();
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.login_main_content, loginFragment)
                 .commit();
-
-        getLifecycle().addObserver(XChatToast.INSTANCE);
     }
 
     public void successAuthHandle(ResponseModule responseModule) {
@@ -62,6 +59,7 @@ public class LoginActivity extends AppCompatActivity {
             ARouter.getInstance()
                     .build("/home/main")
                     .withString("token", token)
+                    .withString("tab", "personal")
                     .navigation();
         }else {
             Log.e(LoginActivity.TAG, "userInfo == null!!!");

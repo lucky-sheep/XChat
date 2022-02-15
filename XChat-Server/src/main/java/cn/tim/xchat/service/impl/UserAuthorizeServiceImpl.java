@@ -57,7 +57,7 @@ public class UserAuthorizeServiceImpl implements UserAuthorizeService {
 
         // 保存信息
         UserInfo userInfo = new UserInfo();
-        userInfo.setId(KeyUtil.genUniqueKey());
+        userInfo.setId(KeyUtil.genUserKey());
         userInfo.setUsername(form.getUsername());
         userInfo.setEmail(form.getEmail());
         userInfo.setPassword(form.getPassword());

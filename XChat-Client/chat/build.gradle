@@ -62,6 +62,9 @@ android {
 dependencies {
     annotationProcessor app_annotationProcessors.arouter_compiler
     implementation project(':common')
+
+    api "com.google.protobuf:protobuf-java:3.10.0"
+    api "com.google.protobuf:protoc:3.5.1"
 }
 
 protobuf {

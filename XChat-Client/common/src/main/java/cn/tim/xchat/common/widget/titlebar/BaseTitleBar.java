@@ -42,26 +42,31 @@ public class BaseTitleBar extends RelativeLayout implements TitleBarFun {
     @CallSuper
     @Override
     public void autoChangeByType(TitleBarType type) {
+        reset();
         switch (type) {
             case MESSAGE_MAIN_PAGER:
-                descTv.setVisibility(VISIBLE);
                 descTv.setText("会话列表");
-                findBtn.setVisibility(VISIBLE);
-                addBtn.setVisibility(VISIBLE);
+                backBtn.setVisibility(GONE);
+                menuBtn.setVisibility(GONE);
+                addBtn.setVisibility(GONE);
                 break;
             case CONTACTS_MAIN_PAGER:
-                descTv.setVisibility(VISIBLE);
                 descTv.setText("通讯录");
-                findBtn.setVisibility(VISIBLE);
-                addBtn.setVisibility(GONE);
+                backBtn.setVisibility(GONE);
                 break;
             case PERSONAL_MAIN_PAGER:
-                descTv.setVisibility(GONE);
-                descTv.setVisibility(GONE);
-                findBtn.setVisibility(GONE);
-                addBtn.setVisibility(GONE);
+                titleBarView.setVisibility(INVISIBLE);
                 break;
         }
+    }
+
+    private void reset(){
+        titleBarView.setVisibility(VISIBLE);
+        backBtn.setVisibility(VISIBLE);
+        descTv.setVisibility(VISIBLE);
+        findBtn.setVisibility(VISIBLE);
+        addBtn.setVisibility(VISIBLE);
+        menuBtn.setVisibility(VISIBLE);
     }
 
     @CallSuper

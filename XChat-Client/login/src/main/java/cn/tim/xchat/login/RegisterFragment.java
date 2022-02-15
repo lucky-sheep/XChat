@@ -104,8 +104,7 @@ public class RegisterFragment extends Fragment {
                     || TextUtils.isEmpty(username)
                     || TextUtils.isEmpty(password)
                     || !RegexUtil.isEmail(email)) {
-                XChatToast.INSTANCE.showToast(getContext(), "请正确填写注册信息",
-                        Gravity.TOP, LoginActivity.Y_OFFSET);
+                showNetWorkError("请正确填写注册信息");
                 return;
             }
             String deviceIdMd5 = mmkv.getString(StorageKey.DEVICE_ID_KEY, "");
@@ -164,8 +163,7 @@ public class RegisterFragment extends Fragment {
                 public void onFailure(@NonNull Call call, @NonNull IOException e) {
                     activity.runOnUiThread(() -> {
                         loadingComponent.stop();
-                        XChatToast.INSTANCE.showToast(getContext(), "请检查网络连接",
-                                Gravity.TOP, LoginActivity.Y_OFFSET);
+                        showNetWorkError("请检查网络连接");
                     });
                 }
 
@@ -176,17 +174,23 @@ public class RegisterFragment extends Fragment {
                     assert responseBody != null;
                     ResponseModule responseModule = JSON.parseObject(
                             responseBody.string(), ResponseModule.class);
-
-                    activity.runOnUiThread(()-> {
+                    activity.runOnUiThread(() -> {
                         loadingComponent.stop();
-                        XChatToast.INSTANCE.showToast(
-                                getContext(), responseModule.getMessage(),
-                                Gravity.TOP, LoginActivity.Y_OFFSET);
+                        if(responseModule != null) {
+                            showNetWorkError(responseModule.getMessage());
+                            if (responseModule.getSuccess()) {
+                                activity.successAuthHandle(responseModule);
+                            }
+                        }else {
+                            showNetWorkError("请检查网络连接");
+                        }
                     });
-                    if(responseModule.getSuccess()) {
-                        activity.successAuthHandle(responseModule);
-                    }
                 }
             });
+    }
+
+    private void showNetWorkError(String error) {
+        XChatToast.INSTANCE.showToast(getContext(), error,
+                Gravity.TOP, LoginActivity.Y_OFFSET);
     }
 }

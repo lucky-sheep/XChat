@@ -43,7 +43,7 @@
             app:hintTextColor="@color/grayness_200">
             <EditText
                 android:id="@+id/login_username_et"
-                tools:text="@string/app_name"
+                android:text="zouchanglin"
                 android:drawableStart="@drawable/icon_login_username"
                 android:drawablePadding="10dp"
                 android:layout_width="match_parent"
@@ -69,7 +69,7 @@
             app:errorTextAppearance="@style/MyErrorText">
             <EditText
                 android:id="@+id/login_password_et"
-                tools:text="@string/app_name"
+                android:text="123456"
                 android:drawableStart="@drawable/icon_login_password"
                 android:drawablePadding="10dp"
                 android:layout_width="match_parent"

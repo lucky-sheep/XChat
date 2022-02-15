@@ -3,6 +3,7 @@ package cn.tim.xchat;
 import android.graphics.Rect;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.DisplayCutout;
 import android.view.Gravity;
@@ -39,10 +40,14 @@ public class MainActivityLogic implements DefaultLifecycleObserver {
     protected QBadgeView chatQBadgeView;
     protected ActivityProvider activityProvider;
     protected Bundle savedStateBundle;
+    protected String currentTab;
 
-    public MainActivityLogic(MainActivity activity, Bundle savedInstanceState) {
+    public MainActivityLogic(MainActivity activity,
+                             Bundle savedInstanceState,
+                             String tab) {
         activityProvider = activity;
         savedStateBundle = savedInstanceState;
+        currentTab = tab;
     }
 
     @Override
@@ -69,6 +74,7 @@ public class MainActivityLogic implements DefaultLifecycleObserver {
 
         ViewPager2 viewPager = activityProvider.findViewById(R.id.app_main_viewpager);
         setupViewPager(viewPager);
+
         bottomNavView.setOnItemSelectedListener(item -> {
             int itemId = item.getItemId();
             if(itemId == R.id.tab_menu_chat){
@@ -86,26 +92,46 @@ public class MainActivityLogic implements DefaultLifecycleObserver {
             @Override
             public void onPageSelected(int position) {
                 super.onPageSelected(position);
-                Log.i(TAG, "onPageSelected: position = " + position);
-                int itemId = -1;
                 switch (position){
                     case 0:
-                        itemId = R.id.tab_menu_chat;
-                        baseTitleBar.autoChangeByType(TitleBarType.MESSAGE_MAIN_PAGER);
+                        currentTab = "chat";
+                        selectTabByName(viewPager, bottomNavView, baseTitleBar);
                         break;
                     case 1:
-                        itemId = R.id.tab_menu_contact;
-                        baseTitleBar.autoChangeByType(TitleBarType.CONTACTS_MAIN_PAGER);
-                        MMKV.defaultMMKV().clearAll();
+                        currentTab = "contacts";
+                        selectTabByName(viewPager, bottomNavView, baseTitleBar);
                         break;
                     case 2:
-                        itemId = R.id.tab_menu_personal;
-                        baseTitleBar.autoChangeByType(TitleBarType.PERSONAL_MAIN_PAGER);
+                        currentTab = "personal";
+                        selectTabByName(viewPager, bottomNavView, baseTitleBar);
                         break;
                 }
-                bottomNavView.setSelectedItemId(itemId);
             }
         });
+
+        selectTabByName(viewPager, bottomNavView, baseTitleBar);
+    }
+
+    private void selectTabByName(ViewPager2 viewPager,
+                                 BottomNavigationView bottomNavView,
+                                 BaseTitleBar baseTitleBar) {
+        int itemIndex = 0;
+        int navItemId = R.id.tab_menu_chat;
+        TitleBarType type = TitleBarType.MESSAGE_MAIN_PAGER;
+        if(!TextUtils.isEmpty(currentTab)) {
+            if (currentTab.equals("contacts")) {
+                itemIndex = 1;
+                navItemId = R.id.tab_menu_contact;
+                type = TitleBarType.CONTACTS_MAIN_PAGER;
+            } else if (currentTab.equals("personal")) {
+                itemIndex = 2;
+                navItemId = R.id.tab_menu_personal;
+                type = TitleBarType.PERSONAL_MAIN_PAGER;
+            }
+        }
+        if(bottomNavView != null) bottomNavView.setSelectedItemId(navItemId);
+        if(viewPager != null) viewPager.setCurrentItem(itemIndex);
+        if(baseTitleBar != null) baseTitleBar.autoChangeByType(type);
     }
 
 

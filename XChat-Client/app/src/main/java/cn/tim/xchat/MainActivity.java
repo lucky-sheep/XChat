@@ -8,7 +8,10 @@ import android.view.Window;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.alibaba.android.arouter.facade.annotation.Autowired;
+import com.alibaba.android.arouter.facade.annotation.Param;
 import com.alibaba.android.arouter.facade.annotation.Route;
+import com.alibaba.android.arouter.launcher.ARouter;
 
 import java.lang.ref.WeakReference;
 
@@ -16,6 +19,12 @@ import cn.tim.xchat.common.utils.StatusBarUtil;
 
 @Route(path = "/home/main")
 public class MainActivity extends AppCompatActivity implements ActivityProvider {
+
+    @Autowired(name = "token", required = true)
+    String token;
+
+    @Autowired(name = "tab", required = false, desc = "chat")
+    String tab;
 
     private final Handler handler = new MainHandler(this);
 
@@ -29,8 +38,9 @@ public class MainActivity extends AppCompatActivity implements ActivityProvider 
         // 设置沉浸式状态栏
         StatusBarUtil.setStatusBarFullTransparent(MainActivity.this);
         StatusBarUtil.setDarkStatusIcon(getWindow(),true);
+        ARouter.getInstance().inject(this);
 
-        MainActivityLogic activityLogic = new MainActivityLogic(this, savedInstanceState);
+        MainActivityLogic activityLogic = new MainActivityLogic(this, savedInstanceState, tab);
         getLifecycle().addObserver(activityLogic);
     }
 

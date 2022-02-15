@@ -6,7 +6,7 @@ ext {
     app_android = [
             compileSdkVersion: 31,
             buildToolsVersion: "30.0.2",
-            minSdkVersion: 23,
+            minSdkVersion: 26,
             targetSdkVersion: 32,
             versionCode: 1,
             versionName: "1.0",
