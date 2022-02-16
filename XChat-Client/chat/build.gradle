@@ -48,11 +48,17 @@ android {
     }
 
     buildTypes {
+        debug {
+            buildConfigField("String", "WEBSOCKET_URL", "\"${app_server_url.wsdebug}\"")
+        }
+
         release {
+            buildConfigField("String", "WEBSOCKET_URL", "\"${app_server_url.wsrelease}\"")
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+
     compileOptions {
         sourceCompatibility app_android.sourceCompatibility
         targetCompatibility app_android.targetCompatibility

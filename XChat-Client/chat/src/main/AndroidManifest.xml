@@ -1,7 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="cn.tim.xchat.chat">
+
     <application>
-        <activity android:name=".ChatActivity" android:screenOrientation="portrait" />
+        <service
+            android:name=".core.WebSocketService"
+            android:enabled="true"
+            android:exported="true"></service>
+
+        <activity
+            android:name=".ChatActivity"
+            android:screenOrientation="portrait" />
     </application>
+
 </manifest>

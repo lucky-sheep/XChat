@@ -40,11 +40,13 @@ android {
         debug {
             // 测试环境用debug_url
             buildConfigField("String", "SERVER_URL", "\"${app_server_url.debug}\"")
+            buildConfigField("String", "WEBSOCKET_URL", "\"${app_server_url.wsdebug}\"")
         }
 
         release {
             // 正式环境用release_url
             buildConfigField("String", "SERVER_URL", "\"${app_server_url.release}\"")
+            buildConfigField("String", "WEBSOCKET_URL", "\"${app_server_url.wsrelease}\"")
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }

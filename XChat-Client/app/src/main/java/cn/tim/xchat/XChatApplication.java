@@ -1,6 +1,10 @@
 package cn.tim.xchat;
 
 import android.app.Application;
+import android.content.ComponentName;
+import android.content.Intent;
+import android.content.ServiceConnection;
+import android.os.IBinder;
 import android.provider.Settings;
 import android.text.TextUtils;
 import android.util.Log;
@@ -11,6 +15,7 @@ import com.tencent.mmkv.MMKV;
 
 import java.util.UUID;
 
+import cn.tim.xchat.chat.core.WebSocketService;
 import cn.tim.xchat.common.constans.StorageKey;
 import cn.tim.xchat.common.utils.MD5Utils;
 import cn.tim.xchat.common.utils.MMKVUtil;
@@ -18,6 +23,7 @@ import cn.tim.xchat.login.LoginActivity;
 import cn.tim.xchat.network.OkHttpUtils;
 
 public class XChatApplication extends Application {
+    private WebSocketService.WebSocketClientBinder webSocketClientBinder;
 
     @Override
     public void onCreate() {
@@ -37,12 +43,34 @@ public class XChatApplication extends Application {
 
         saveDeviceId();
 
-//        if(BuildConfig.DEBUG) {
-//            new DoKit.Builder(this)
-//                    .productId("4b16245fb438845e09386178c9dda449")
-//                    .build();
-//        }
+        if(!BuildConfig.DEBUG) {
+            new DoKit.Builder(this)
+                    .productId("4b16245fb438845e09386178c9dda449")
+                    .build();
+        }
+
+        startWebSocketService();
     }
+
+    ServiceConnection serviceConnection = new ServiceConnection() {
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            webSocketClientBinder = (WebSocketService.WebSocketClientBinder) service;
+        }
+
+        public void onServiceDisconnected(ComponentName name) {
+            webSocketClientBinder.cancel();
+        }
+    };
+
+    /**
+     * 开启并绑定WebSocket服务
+     */
+    public void startWebSocketService() {
+        Intent bindIntent = new Intent(this, WebSocketService.class);
+        startService(bindIntent);
+        bindService(bindIntent, serviceConnection, BIND_AUTO_CREATE);
+    }
+
 
     private void saveDeviceId() {
         String deviceId = Settings.System.getString(getContentResolver(),

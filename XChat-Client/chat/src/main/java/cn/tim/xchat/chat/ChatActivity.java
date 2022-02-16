@@ -29,6 +29,8 @@ public class ChatActivity extends XChatBaseActivity {
         DataContentSerializer.DataContent dataContent = builder.build();
         byte[] protoBytes = dataContent.toByteArray();
         Log.i(TAG, "onCreate: protoBytes.length = " + protoBytes.length);
+
+
     }
 
     @Override

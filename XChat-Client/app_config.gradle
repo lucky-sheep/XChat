@@ -27,7 +27,9 @@ ext {
     // 测试环境与正式环境的URL
     app_server_url  = [
             "debug": "http://192.168.31.156:8080",
-            "release": "http://192.168.31.156:8080"
+            "release": "http://192.168.31.156:8080",
+            "wsdebug": "ws://192.168.31.156:8088",
+            "wslease": "http://192.168.31.156:8088"
     ]
 
     // 定义依赖项目
@@ -47,6 +49,7 @@ ext {
             "fastjson": "com.alibaba:fastjson:1.2.79",
             "lottie": "com.airbnb.android:lottie:4.2.2",
             "AvatarImageView": 'cn.carbs.android:AvatarImageView:1.0.4',
+            "WebSocket": "org.java-websocket:Java-WebSocket:1.5.2"
     ]
 
     app_annotationProcessors = [
