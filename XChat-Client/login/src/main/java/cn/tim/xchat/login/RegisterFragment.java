@@ -37,7 +37,6 @@ import cn.tim.xchat.common.utils.RegexUtil;
 import cn.tim.xchat.common.widget.loading.LoadingComponent;
 import cn.tim.xchat.common.widget.toast.XChatToast;
 import cn.tim.xchat.login.adapter.MyEditTextWatcher;
-import cn.tim.xchat.login.module.UserInfo;
 import cn.tim.xchat.network.OkHttpUtils;
 import cn.tim.xchat.network.config.NetworkConfig;
 import cn.tim.xchat.network.model.ResponseModule;

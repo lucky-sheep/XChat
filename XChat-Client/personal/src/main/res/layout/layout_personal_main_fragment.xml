@@ -3,8 +3,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:paddingStart="10dp"
-    android:paddingEnd="10dp"
+    android:paddingStart="15dp"
+    android:paddingEnd="15dp"
+    android:id="@+id/personal_main_content"
     android:layout_height="match_parent">
 
     <LinearLayout
@@ -12,16 +13,15 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <com.google.android.material.imageview.ShapeableImageView
+        <cn.carbs.android.avatarimageview.library.AvatarImageView
             android:id="@+id/personal_main_header_iv"
+            android:padding="12dp"
             android:layout_width="80dp"
             android:layout_height="80dp"
-            android:src="@drawable/icon_default_account"
-            android:elevation="0dp"
-            app:shapeAppearanceOverlay="@style/RoundStyle"
-            app:strokeColor="#00FFFFFF"
-            app:strokeWidth="5dp" />
-
+            app:aiv_BoarderWidth="1dp"
+            app:aiv_ShowBoarder="true"
+            app:aiv_BoarderColor="@color/black"
+            app:aiv_TextSizeRatio="0.3"/>
         <LinearLayout
             android:paddingTop="5dp"
             android:paddingBottom="5dp"
@@ -34,8 +34,7 @@
                 android:textColor="@color/black"
                 android:gravity="center_vertical"
                 android:text="zouchanglin"
-                android:textSize="18sp"
-                android:textStyle="bold"
+                android:textSize="19sp"
                 android:layout_width="match_parent"
                 android:layout_weight="1"
                 android:layout_height="0dp"/>

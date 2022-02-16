@@ -1,5 +1,6 @@
 package cn.tim.xchat.personal;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,9 +11,10 @@ import android.widget.TextView;
 import androidx.fragment.app.Fragment;
 
 import com.alibaba.android.arouter.facade.annotation.Route;
-import com.google.android.material.imageview.ShapeableImageView;
+import com.alibaba.android.arouter.launcher.ARouter;
 import com.tencent.mmkv.MMKV;
 
+import cn.carbs.android.avatarimageview.library.AvatarImageView;
 import cn.tim.xchat.common.constans.StorageKey;
 
 
@@ -28,20 +30,28 @@ public class PersonalFragment extends Fragment {
     }
 
     private void initView(View view) {
-        ShapeableImageView headerIv = view.findViewById(R.id.personal_main_header_iv);
+        String username = mmkv.getString(StorageKey.USERNAME_KEY, "X");
+        AvatarImageView headerIv = view.findViewById(R.id.personal_main_header_iv);
         TextView userIdTv = view.findViewById(R.id.personal_main_userid);
         TextView userNameTv = view.findViewById(R.id.personal_main_username);
         ImageView qrCodeBtn = view.findViewById(R.id.personal_main_qrcode_btn);
         ImageView detailBtn = view.findViewById(R.id.personal_main_detail_btn);
 
-        userNameTv.setText(mmkv.getString(StorageKey.USERNAME_KEY, ""));
+        assert username != null;
+        userNameTv.setText(username);
         userIdTv.setText(mmkv.getString(StorageKey.USERID_KEY, ""));
+        headerIv.setTextAndColor(username.substring(0, 1), Color.BLACK);
         qrCodeBtn.setOnClickListener(v -> {
 
         });
 
         detailBtn.setOnClickListener(v -> {
-
+            Fragment detailFragment = (Fragment) ARouter.getInstance()
+                    .build("/personal/detail")
+                    .navigation();
+            getParentFragmentManager().beginTransaction()
+                    .add(R.id.personal_main_content, detailFragment)
+                    .commit();
         });
     }
 }

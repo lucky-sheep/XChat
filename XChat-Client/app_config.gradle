@@ -45,7 +45,8 @@ ext {
             "mmkv": "com.tencent:mmkv:1.2.12",
             "permissionx": "com.guolindev.permissionx:permissionx:1.6.1",
             "fastjson": "com.alibaba:fastjson:1.2.79",
-            "lottie": "com.airbnb.android:lottie:4.2.2"
+            "lottie": "com.airbnb.android:lottie:4.2.2",
+            "AvatarImageView": 'cn.carbs.android:AvatarImageView:1.0.4',
     ]
 
     app_annotationProcessors = [
