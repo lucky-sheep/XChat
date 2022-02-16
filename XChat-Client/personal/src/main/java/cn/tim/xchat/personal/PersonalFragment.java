@@ -1,5 +1,6 @@
 package cn.tim.xchat.personal;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -46,12 +47,9 @@ public class PersonalFragment extends Fragment {
         });
 
         detailBtn.setOnClickListener(v -> {
-            Fragment detailFragment = (Fragment) ARouter.getInstance()
+            ARouter.getInstance()
                     .build("/personal/detail")
-                    .navigation();
-            getParentFragmentManager().beginTransaction()
-                    .add(R.id.personal_main_content, detailFragment)
-                    .commit();
+                    .navigation(getContext());
         });
     }
 }

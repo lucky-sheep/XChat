@@ -4,21 +4,20 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.view.ViewGroup;
 import android.view.Window;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import com.alibaba.android.arouter.facade.annotation.Autowired;
-import com.alibaba.android.arouter.facade.annotation.Param;
 import com.alibaba.android.arouter.facade.annotation.Route;
 import com.alibaba.android.arouter.launcher.ARouter;
 
 import java.lang.ref.WeakReference;
 
+import cn.tim.xchat.common.XChatBaseActivity;
 import cn.tim.xchat.common.utils.StatusBarUtil;
 
 @Route(path = "/home/main")
-public class MainActivity extends AppCompatActivity implements ActivityProvider {
+public class MainActivity extends XChatBaseActivity implements ActivityProvider {
 
     @Autowired(name = "token", required = true)
     String token;
@@ -31,15 +30,8 @@ public class MainActivity extends AppCompatActivity implements ActivityProvider 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_main);
-
-        // 设置沉浸式状态栏
-        StatusBarUtil.setStatusBarFullTransparent(MainActivity.this);
-        StatusBarUtil.setDarkStatusIcon(getWindow(),true);
         ARouter.getInstance().inject(this);
-
         MainActivityLogic activityLogic = new MainActivityLogic(this, savedInstanceState, tab);
         getLifecycle().addObserver(activityLogic);
     }
@@ -74,6 +66,10 @@ public class MainActivity extends AppCompatActivity implements ActivityProvider 
         }
     }
 
+    @Override
+    protected ViewGroup getContentView() {
+        return findViewById(android.R.id.content);
+    }
 
     protected void onDestroy() {
         super.onDestroy();

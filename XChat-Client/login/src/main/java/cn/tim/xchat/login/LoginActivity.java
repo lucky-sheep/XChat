@@ -1,10 +1,10 @@
 package cn.tim.xchat.login;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.ViewGroup;
 import android.view.Window;
 
 import com.alibaba.android.arouter.facade.annotation.Route;
@@ -12,14 +12,14 @@ import com.alibaba.android.arouter.launcher.ARouter;
 import com.alibaba.fastjson.JSONObject;
 import com.tencent.mmkv.MMKV;
 
+import cn.tim.xchat.common.XChatBaseActivity;
 import cn.tim.xchat.common.constans.StorageKey;
 import cn.tim.xchat.common.utils.StatusBarUtil;
-import cn.tim.xchat.common.widget.toast.XChatToast;
 import cn.tim.xchat.login.module.UserInfo;
 import cn.tim.xchat.network.model.ResponseModule;
 
 @Route(path = "/login/main")
-public class LoginActivity extends AppCompatActivity {
+public class LoginActivity extends XChatBaseActivity {
     public static final String TAG = "LoginActivity";
 
     MMKV mmkv = MMKV.defaultMMKV();
@@ -38,6 +38,11 @@ public class LoginActivity extends AppCompatActivity {
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.login_main_content, loginFragment)
                 .commit();
+    }
+
+    @Override
+    protected ViewGroup getContentView() {
+        return findViewById(android.R.id.content);
     }
 
     public void successAuthHandle(ResponseModule responseModule) {

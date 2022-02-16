@@ -1,18 +1,10 @@
 package cn.tim.xchat;
 
-import android.graphics.Rect;
-import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
-import android.view.DisplayCutout;
 import android.view.Gravity;
-import android.view.View;
-import android.view.WindowInsets;
-import android.widget.RelativeLayout;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.DefaultLifecycleObserver;
@@ -22,21 +14,15 @@ import androidx.viewpager2.widget.ViewPager2;
 
 import com.google.android.material.bottomnavigation.BottomNavigationItemView;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.tencent.mmkv.MMKV;
-
-import java.util.List;
 
 import cn.tim.xchat.chat.MessageListFragment;
-import cn.tim.xchat.common.utils.DensityUtil;
 import cn.tim.xchat.common.widget.titlebar.BaseTitleBar;
 import cn.tim.xchat.common.widget.titlebar.TitleBarType;
-import cn.tim.xchat.common.widget.toast.XChatToast;
 import cn.tim.xchat.contacts.ContactsFragment;
 import cn.tim.xchat.personal.PersonalFragment;
 import q.rorbin.badgeview.QBadgeView;
 
 public class MainActivityLogic implements DefaultLifecycleObserver {
-    private static final String TAG = ActivityProvider.TAG;
     protected QBadgeView chatQBadgeView;
     protected ActivityProvider activityProvider;
     protected Bundle savedStateBundle;
@@ -52,10 +38,6 @@ public class MainActivityLogic implements DefaultLifecycleObserver {
 
     @Override
     public void onCreate(@NonNull LifecycleOwner owner) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-            getNotchParams();
-        }
-
         BottomNavigationView bottomNavView = activityProvider.findViewById(R.id.app_main_bottom_navigation);
         BottomNavigationItemView chat = bottomNavView.findViewById(R.id.tab_menu_chat);
 
@@ -134,7 +116,6 @@ public class MainActivityLogic implements DefaultLifecycleObserver {
         if(baseTitleBar != null) baseTitleBar.autoChangeByType(type);
     }
 
-
     private void setupViewPager(ViewPager2 viewPager) {
         Fragment[] fragments = new Fragment[]{
                 new MessageListFragment(),
@@ -155,38 +136,5 @@ public class MainActivityLogic implements DefaultLifecycleObserver {
             }
         };
         viewPager.setAdapter(stateAdapter);
-    }
-
-    @RequiresApi(api = Build.VERSION_CODES.P)
-    public void getNotchParams() {
-        final View decorView = activityProvider.getWindow().getDecorView();
-        RelativeLayout topSafeLayout = activityProvider.findViewById(R.id.app_main_top_safe);
-        RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) topSafeLayout.getLayoutParams();
-
-        decorView.post(() -> {
-            WindowInsets rootWindowInsets = decorView.getRootWindowInsets();
-            DisplayCutout displayCutout = rootWindowInsets.getDisplayCutout();
-            if(displayCutout != null) {
-                Log.v(TAG, "安全区域距离屏幕左边的距离 SafeInsetLeft:" + displayCutout.getSafeInsetLeft());
-                Log.v(TAG, "安全区域距离屏幕右部的距离 SafeInsetRight:" + displayCutout.getSafeInsetRight());
-                Log.v(TAG, "安全区域距离屏幕顶部的距离 SafeInsetTop:" + displayCutout.getSafeInsetTop());
-                Log.v(TAG, "安全区域距离屏幕底部的距离 SafeInsetBottom:" + displayCutout.getSafeInsetBottom());
-                List<Rect> rectList = displayCutout.getBoundingRects();
-                if (rectList == null || rectList.size() == 0) {
-                    Log.v(TAG, "不是刘海屏");
-                } else {
-                    Log.v(TAG, "刘海屏数量:" + rectList.size());
-                    for (Rect rect : rectList) {
-                        Log.v(TAG, "刘海屏区域：" + rect);
-                    }
-                }
-
-                layoutParams.height = displayCutout.getSafeInsetTop();
-                Log.i(TAG, "getNotchParams: layoutParams.height = " + layoutParams.height);
-            }else {
-                layoutParams.height = DensityUtil.dp2px(50);
-            }
-            topSafeLayout.setLayoutParams(layoutParams);
-        });
     }
 }
