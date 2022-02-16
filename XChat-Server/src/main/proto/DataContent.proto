@@ -4,9 +4,9 @@ option java_outer_classname = "DataContentSerializer";
 
 message DataContent{
   required uint32 action = 1;
-  required string senderId = 2;
-  required string receiveId = 3;
-  required int32 timestamp = 4;
+  optional string senderId = 2;
+  optional string receiveId = 3;
+  optional int32 timestamp = 4;
 
   message ChatMessage {
     required uint32 type = 1;
@@ -16,5 +16,5 @@ message DataContent{
     optional string reply = 5;
   }
 
-  required ChatMessage chatMessage = 5;
+  optional ChatMessage chatMessage = 5;
 }

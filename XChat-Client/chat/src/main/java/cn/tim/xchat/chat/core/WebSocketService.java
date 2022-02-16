@@ -27,10 +27,11 @@ public class WebSocketService extends Service {
     private final static int GRAY_SERVICE_ID = 1001;
     private final static int NOTIFY_ID = 10080;
     private WebSocketClientBinder mBinder = new WebSocketClientBinder();
+    private final WebSocketHelper webSocketHelper;
 
     public WebSocketService() {
+        webSocketHelper = new WebSocketHelper();
     }
-
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -60,7 +61,11 @@ public class WebSocketService extends Service {
         }
 
         public void cancel() {
-            WebSocketHelper.cancelWebSocket();
+            webSocketHelper.cancelWebSocket();
+        }
+
+        public void startSendTestMsg() {
+            webSocketHelper.sendKeepAliveMsg();
         }
     }
 
@@ -68,7 +73,7 @@ public class WebSocketService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.i(TAG, "onStartCommand: ");
         //初始化WebSocket
-        WebSocketHelper.launchWebSocket();
+        webSocketHelper.launchWebSocket();
         //mHandler.postDelayed(heartBeatRunnable, HEART_BEAT_RATE);//开启心跳检测
         //设置service为前台服务，提高优先级
         NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);

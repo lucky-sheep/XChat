@@ -19,7 +19,7 @@ public class SplashActivity extends AppCompatActivity {
     Handler handler = new Handler(Looper.getMainLooper());
     MMKV mmkv = MMKV.defaultMMKV();
 
-    boolean isDebugUI = true;
+    boolean isDebugUI = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,8 +34,8 @@ public class SplashActivity extends AppCompatActivity {
         String userToken = mmkv.getString(StorageKey.TOKEN_KEY, null);
         if(TextUtils.isEmpty(userToken)) {
             if(isDebugUI) {
-                //ARouter.getInstance().build("/home/main").navigation();
-                ARouter.getInstance().build("/chat/list").navigation();
+                ARouter.getInstance().build("/home/main").navigation();
+//                ARouter.getInstance().build("/chat/list").navigation();
                 mmkv.putString(StorageKey.USERID_KEY, "37901789");
                 mmkv.putString(StorageKey.USERNAME_KEY, "zouchanglin");
                 mmkv.putString(StorageKey.EMAIL_KEY, "zchanglin@163.com");

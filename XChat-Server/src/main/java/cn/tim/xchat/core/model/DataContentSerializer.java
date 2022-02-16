@@ -28,52 +28,52 @@ public final class DataContentSerializer {
     int getAction();
 
     /**
-     * <code>required string senderId = 2;</code>
+     * <code>optional string senderId = 2;</code>
      */
     boolean hasSenderId();
     /**
-     * <code>required string senderId = 2;</code>
+     * <code>optional string senderId = 2;</code>
      */
     java.lang.String getSenderId();
     /**
-     * <code>required string senderId = 2;</code>
+     * <code>optional string senderId = 2;</code>
      */
     com.google.protobuf.ByteString
     getSenderIdBytes();
 
     /**
-     * <code>required string receiveId = 3;</code>
+     * <code>optional string receiveId = 3;</code>
      */
     boolean hasReceiveId();
     /**
-     * <code>required string receiveId = 3;</code>
+     * <code>optional string receiveId = 3;</code>
      */
     java.lang.String getReceiveId();
     /**
-     * <code>required string receiveId = 3;</code>
+     * <code>optional string receiveId = 3;</code>
      */
     com.google.protobuf.ByteString
     getReceiveIdBytes();
 
     /**
-     * <code>required int32 timestamp = 4;</code>
+     * <code>optional int32 timestamp = 4;</code>
      */
     boolean hasTimestamp();
     /**
-     * <code>required int32 timestamp = 4;</code>
+     * <code>optional int32 timestamp = 4;</code>
      */
     int getTimestamp();
 
     /**
-     * <code>required .DataContent.ChatMessage chatMessage = 5;</code>
+     * <code>optional .DataContent.ChatMessage chatMessage = 5;</code>
      */
     boolean hasChatMessage();
     /**
-     * <code>required .DataContent.ChatMessage chatMessage = 5;</code>
+     * <code>optional .DataContent.ChatMessage chatMessage = 5;</code>
      */
     cn.tim.xchat.core.model.DataContentSerializer.DataContent.ChatMessage getChatMessage();
     /**
-     * <code>required .DataContent.ChatMessage chatMessage = 5;</code>
+     * <code>optional .DataContent.ChatMessage chatMessage = 5;</code>
      */
     cn.tim.xchat.core.model.DataContentSerializer.DataContent.ChatMessageOrBuilder getChatMessageOrBuilder();
   }
@@ -1374,13 +1374,13 @@ public final class DataContentSerializer {
     public static final int SENDERID_FIELD_NUMBER = 2;
     private volatile java.lang.Object senderId_;
     /**
-     * <code>required string senderId = 2;</code>
+     * <code>optional string senderId = 2;</code>
      */
     public boolean hasSenderId() {
       return ((bitField0_ & 0x00000002) != 0);
     }
     /**
-     * <code>required string senderId = 2;</code>
+     * <code>optional string senderId = 2;</code>
      */
     public java.lang.String getSenderId() {
       java.lang.Object ref = senderId_;
@@ -1397,7 +1397,7 @@ public final class DataContentSerializer {
       }
     }
     /**
-     * <code>required string senderId = 2;</code>
+     * <code>optional string senderId = 2;</code>
      */
     public com.google.protobuf.ByteString
     getSenderIdBytes() {
@@ -1416,13 +1416,13 @@ public final class DataContentSerializer {
     public static final int RECEIVEID_FIELD_NUMBER = 3;
     private volatile java.lang.Object receiveId_;
     /**
-     * <code>required string receiveId = 3;</code>
+     * <code>optional string receiveId = 3;</code>
      */
     public boolean hasReceiveId() {
       return ((bitField0_ & 0x00000004) != 0);
     }
     /**
-     * <code>required string receiveId = 3;</code>
+     * <code>optional string receiveId = 3;</code>
      */
     public java.lang.String getReceiveId() {
       java.lang.Object ref = receiveId_;
@@ -1439,7 +1439,7 @@ public final class DataContentSerializer {
       }
     }
     /**
-     * <code>required string receiveId = 3;</code>
+     * <code>optional string receiveId = 3;</code>
      */
     public com.google.protobuf.ByteString
     getReceiveIdBytes() {
@@ -1458,13 +1458,13 @@ public final class DataContentSerializer {
     public static final int TIMESTAMP_FIELD_NUMBER = 4;
     private int timestamp_;
     /**
-     * <code>required int32 timestamp = 4;</code>
+     * <code>optional int32 timestamp = 4;</code>
      */
     public boolean hasTimestamp() {
       return ((bitField0_ & 0x00000008) != 0);
     }
     /**
-     * <code>required int32 timestamp = 4;</code>
+     * <code>optional int32 timestamp = 4;</code>
      */
     public int getTimestamp() {
       return timestamp_;
@@ -1473,19 +1473,19 @@ public final class DataContentSerializer {
     public static final int CHATMESSAGE_FIELD_NUMBER = 5;
     private cn.tim.xchat.core.model.DataContentSerializer.DataContent.ChatMessage chatMessage_;
     /**
-     * <code>required .DataContent.ChatMessage chatMessage = 5;</code>
+     * <code>optional .DataContent.ChatMessage chatMessage = 5;</code>
      */
     public boolean hasChatMessage() {
       return ((bitField0_ & 0x00000010) != 0);
     }
     /**
-     * <code>required .DataContent.ChatMessage chatMessage = 5;</code>
+     * <code>optional .DataContent.ChatMessage chatMessage = 5;</code>
      */
     public cn.tim.xchat.core.model.DataContentSerializer.DataContent.ChatMessage getChatMessage() {
       return chatMessage_ == null ? cn.tim.xchat.core.model.DataContentSerializer.DataContent.ChatMessage.getDefaultInstance() : chatMessage_;
     }
     /**
-     * <code>required .DataContent.ChatMessage chatMessage = 5;</code>
+     * <code>optional .DataContent.ChatMessage chatMessage = 5;</code>
      */
     public cn.tim.xchat.core.model.DataContentSerializer.DataContent.ChatMessageOrBuilder getChatMessageOrBuilder() {
       return chatMessage_ == null ? cn.tim.xchat.core.model.DataContentSerializer.DataContent.ChatMessage.getDefaultInstance() : chatMessage_;
@@ -1502,25 +1502,11 @@ public final class DataContentSerializer {
         memoizedIsInitialized = 0;
         return false;
       }
-      if (!hasSenderId()) {
-        memoizedIsInitialized = 0;
-        return false;
-      }
-      if (!hasReceiveId()) {
-        memoizedIsInitialized = 0;
-        return false;
-      }
-      if (!hasTimestamp()) {
-        memoizedIsInitialized = 0;
-        return false;
-      }
-      if (!hasChatMessage()) {
-        memoizedIsInitialized = 0;
-        return false;
-      }
-      if (!getChatMessage().isInitialized()) {
-        memoizedIsInitialized = 0;
-        return false;
+      if (hasChatMessage()) {
+        if (!getChatMessage().isInitialized()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
       }
       memoizedIsInitialized = 1;
       return true;
@@ -1920,20 +1906,10 @@ public final class DataContentSerializer {
         if (!hasAction()) {
           return false;
         }
-        if (!hasSenderId()) {
-          return false;
-        }
-        if (!hasReceiveId()) {
-          return false;
-        }
-        if (!hasTimestamp()) {
-          return false;
-        }
-        if (!hasChatMessage()) {
-          return false;
-        }
-        if (!getChatMessage().isInitialized()) {
-          return false;
+        if (hasChatMessage()) {
+          if (!getChatMessage().isInitialized()) {
+            return false;
+          }
         }
         return true;
       }
@@ -1992,13 +1968,13 @@ public final class DataContentSerializer {
 
       private java.lang.Object senderId_ = "";
       /**
-       * <code>required string senderId = 2;</code>
+       * <code>optional string senderId = 2;</code>
        */
       public boolean hasSenderId() {
         return ((bitField0_ & 0x00000002) != 0);
       }
       /**
-       * <code>required string senderId = 2;</code>
+       * <code>optional string senderId = 2;</code>
        */
       public java.lang.String getSenderId() {
         java.lang.Object ref = senderId_;
@@ -2015,7 +1991,7 @@ public final class DataContentSerializer {
         }
       }
       /**
-       * <code>required string senderId = 2;</code>
+       * <code>optional string senderId = 2;</code>
        */
       public com.google.protobuf.ByteString
       getSenderIdBytes() {
@@ -2031,7 +2007,7 @@ public final class DataContentSerializer {
         }
       }
       /**
-       * <code>required string senderId = 2;</code>
+       * <code>optional string senderId = 2;</code>
        */
       public Builder setSenderId(
               java.lang.String value) {
@@ -2044,7 +2020,7 @@ public final class DataContentSerializer {
         return this;
       }
       /**
-       * <code>required string senderId = 2;</code>
+       * <code>optional string senderId = 2;</code>
        */
       public Builder clearSenderId() {
         bitField0_ = (bitField0_ & ~0x00000002);
@@ -2053,7 +2029,7 @@ public final class DataContentSerializer {
         return this;
       }
       /**
-       * <code>required string senderId = 2;</code>
+       * <code>optional string senderId = 2;</code>
        */
       public Builder setSenderIdBytes(
               com.google.protobuf.ByteString value) {
@@ -2068,13 +2044,13 @@ public final class DataContentSerializer {
 
       private java.lang.Object receiveId_ = "";
       /**
-       * <code>required string receiveId = 3;</code>
+       * <code>optional string receiveId = 3;</code>
        */
       public boolean hasReceiveId() {
         return ((bitField0_ & 0x00000004) != 0);
       }
       /**
-       * <code>required string receiveId = 3;</code>
+       * <code>optional string receiveId = 3;</code>
        */
       public java.lang.String getReceiveId() {
         java.lang.Object ref = receiveId_;
@@ -2091,7 +2067,7 @@ public final class DataContentSerializer {
         }
       }
       /**
-       * <code>required string receiveId = 3;</code>
+       * <code>optional string receiveId = 3;</code>
        */
       public com.google.protobuf.ByteString
       getReceiveIdBytes() {
@@ -2107,7 +2083,7 @@ public final class DataContentSerializer {
         }
       }
       /**
-       * <code>required string receiveId = 3;</code>
+       * <code>optional string receiveId = 3;</code>
        */
       public Builder setReceiveId(
               java.lang.String value) {
@@ -2120,7 +2096,7 @@ public final class DataContentSerializer {
         return this;
       }
       /**
-       * <code>required string receiveId = 3;</code>
+       * <code>optional string receiveId = 3;</code>
        */
       public Builder clearReceiveId() {
         bitField0_ = (bitField0_ & ~0x00000004);
@@ -2129,7 +2105,7 @@ public final class DataContentSerializer {
         return this;
       }
       /**
-       * <code>required string receiveId = 3;</code>
+       * <code>optional string receiveId = 3;</code>
        */
       public Builder setReceiveIdBytes(
               com.google.protobuf.ByteString value) {
@@ -2144,19 +2120,19 @@ public final class DataContentSerializer {
 
       private int timestamp_ ;
       /**
-       * <code>required int32 timestamp = 4;</code>
+       * <code>optional int32 timestamp = 4;</code>
        */
       public boolean hasTimestamp() {
         return ((bitField0_ & 0x00000008) != 0);
       }
       /**
-       * <code>required int32 timestamp = 4;</code>
+       * <code>optional int32 timestamp = 4;</code>
        */
       public int getTimestamp() {
         return timestamp_;
       }
       /**
-       * <code>required int32 timestamp = 4;</code>
+       * <code>optional int32 timestamp = 4;</code>
        */
       public Builder setTimestamp(int value) {
         bitField0_ |= 0x00000008;
@@ -2165,7 +2141,7 @@ public final class DataContentSerializer {
         return this;
       }
       /**
-       * <code>required int32 timestamp = 4;</code>
+       * <code>optional int32 timestamp = 4;</code>
        */
       public Builder clearTimestamp() {
         bitField0_ = (bitField0_ & ~0x00000008);
@@ -2178,13 +2154,13 @@ public final class DataContentSerializer {
       private com.google.protobuf.SingleFieldBuilderV3<
               cn.tim.xchat.core.model.DataContentSerializer.DataContent.ChatMessage, cn.tim.xchat.core.model.DataContentSerializer.DataContent.ChatMessage.Builder, cn.tim.xchat.core.model.DataContentSerializer.DataContent.ChatMessageOrBuilder> chatMessageBuilder_;
       /**
-       * <code>required .DataContent.ChatMessage chatMessage = 5;</code>
+       * <code>optional .DataContent.ChatMessage chatMessage = 5;</code>
        */
       public boolean hasChatMessage() {
         return ((bitField0_ & 0x00000010) != 0);
       }
       /**
-       * <code>required .DataContent.ChatMessage chatMessage = 5;</code>
+       * <code>optional .DataContent.ChatMessage chatMessage = 5;</code>
        */
       public cn.tim.xchat.core.model.DataContentSerializer.DataContent.ChatMessage getChatMessage() {
         if (chatMessageBuilder_ == null) {
@@ -2194,7 +2170,7 @@ public final class DataContentSerializer {
         }
       }
       /**
-       * <code>required .DataContent.ChatMessage chatMessage = 5;</code>
+       * <code>optional .DataContent.ChatMessage chatMessage = 5;</code>
        */
       public Builder setChatMessage(cn.tim.xchat.core.model.DataContentSerializer.DataContent.ChatMessage value) {
         if (chatMessageBuilder_ == null) {
@@ -2210,7 +2186,7 @@ public final class DataContentSerializer {
         return this;
       }
       /**
-       * <code>required .DataContent.ChatMessage chatMessage = 5;</code>
+       * <code>optional .DataContent.ChatMessage chatMessage = 5;</code>
        */
       public Builder setChatMessage(
               cn.tim.xchat.core.model.DataContentSerializer.DataContent.ChatMessage.Builder builderForValue) {
@@ -2224,7 +2200,7 @@ public final class DataContentSerializer {
         return this;
       }
       /**
-       * <code>required .DataContent.ChatMessage chatMessage = 5;</code>
+       * <code>optional .DataContent.ChatMessage chatMessage = 5;</code>
        */
       public Builder mergeChatMessage(cn.tim.xchat.core.model.DataContentSerializer.DataContent.ChatMessage value) {
         if (chatMessageBuilder_ == null) {
@@ -2244,7 +2220,7 @@ public final class DataContentSerializer {
         return this;
       }
       /**
-       * <code>required .DataContent.ChatMessage chatMessage = 5;</code>
+       * <code>optional .DataContent.ChatMessage chatMessage = 5;</code>
        */
       public Builder clearChatMessage() {
         if (chatMessageBuilder_ == null) {
@@ -2257,7 +2233,7 @@ public final class DataContentSerializer {
         return this;
       }
       /**
-       * <code>required .DataContent.ChatMessage chatMessage = 5;</code>
+       * <code>optional .DataContent.ChatMessage chatMessage = 5;</code>
        */
       public cn.tim.xchat.core.model.DataContentSerializer.DataContent.ChatMessage.Builder getChatMessageBuilder() {
         bitField0_ |= 0x00000010;
@@ -2265,7 +2241,7 @@ public final class DataContentSerializer {
         return getChatMessageFieldBuilder().getBuilder();
       }
       /**
-       * <code>required .DataContent.ChatMessage chatMessage = 5;</code>
+       * <code>optional .DataContent.ChatMessage chatMessage = 5;</code>
        */
       public cn.tim.xchat.core.model.DataContentSerializer.DataContent.ChatMessageOrBuilder getChatMessageOrBuilder() {
         if (chatMessageBuilder_ != null) {
@@ -2276,7 +2252,7 @@ public final class DataContentSerializer {
         }
       }
       /**
-       * <code>required .DataContent.ChatMessage chatMessage = 5;</code>
+       * <code>optional .DataContent.ChatMessage chatMessage = 5;</code>
        */
       private com.google.protobuf.SingleFieldBuilderV3<
               cn.tim.xchat.core.model.DataContentSerializer.DataContent.ChatMessage, cn.tim.xchat.core.model.DataContentSerializer.DataContent.ChatMessage.Builder, cn.tim.xchat.core.model.DataContentSerializer.DataContent.ChatMessageOrBuilder>
@@ -2364,9 +2340,9 @@ public final class DataContentSerializer {
   static {
     java.lang.String[] descriptorData = {
             "\n\021DataContent.proto\"\327\001\n\013DataContent\022\016\n\006a" +
-                    "ction\030\001 \002(\r\022\020\n\010senderId\030\002 \002(\t\022\021\n\treceive" +
-                    "Id\030\003 \002(\t\022\021\n\ttimestamp\030\004 \002(\005\022-\n\013chatMessa" +
-                    "ge\030\005 \002(\0132\030.DataContent.ChatMessage\032Q\n\013Ch" +
+                    "ction\030\001 \002(\r\022\020\n\010senderId\030\002 \001(\t\022\021\n\treceive" +
+                    "Id\030\003 \001(\t\022\021\n\ttimestamp\030\004 \001(\005\022-\n\013chatMessa" +
+                    "ge\030\005 \001(\0132\030.DataContent.ChatMessage\032Q\n\013Ch" +
                     "atMessage\022\014\n\004type\030\001 \002(\r\022\014\n\004text\030\002 \001(\t\022\n\n" +
                     "\002at\030\003 \001(\t\022\013\n\003url\030\004 \001(\t\022\r\n\005reply\030\005 \001(\tB0\n" +
                     "\027cn.tim.xchat.core.modelB\025DataContentSer" +

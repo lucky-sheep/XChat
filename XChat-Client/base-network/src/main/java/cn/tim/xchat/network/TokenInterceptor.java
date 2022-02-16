@@ -12,12 +12,15 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.tencent.mmkv.MMKV;
 
+import org.greenrobot.eventbus.EventBus;
+
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
 import cn.tim.xchat.common.constans.StorageKey;
+import cn.tim.xchat.common.event.TokenEvent;
 import cn.tim.xchat.network.config.NetworkConfig;
 import cn.tim.xchat.network.model.ResponseModule;
 import okhttp3.Interceptor;
@@ -73,9 +76,9 @@ public class TokenInterceptor implements Interceptor {
         return chain.proceed(request);
     }
 
-    private String flushToken() {
+    public String flushToken() {
         Map<String, Object> map = new HashMap<>();
-        map.put("password", mmkv.getString(StorageKey.TOKEN_KEY, ""));
+        map.put("password", mmkv.getString(StorageKey.PASSWORD_KEY, ""));
         map.put("username", mmkv.getString(StorageKey.USERNAME_KEY, ""));
         map.put("deviceId", mmkv.getString(StorageKey.DEVICE_ID_KEY, UUID.randomUUID().toString()));
 
@@ -97,6 +100,7 @@ public class TokenInterceptor implements Interceptor {
             if(responseModule.getSuccess()) {
                 String token = responseModule.getData().getString("token");
                 mmkv.putString(StorageKey.TOKEN_KEY, token);
+                EventBus.getDefault().post(new TokenEvent(TokenEvent.TokenType.TOKEN_REFRESH));
                 Log.e(TAG, "========= 自动获取Token成功 =========");
                 return token;
             }

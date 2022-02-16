@@ -32,17 +32,18 @@ public class ChatHandler extends SimpleChannelInboundHandler<TextWebSocketFrame>
 
 		// 获取客户端传输过来的消息
 		DataContent dataContent = JSON.parseObject(msg.text(), DataContent.class);
+		if(dataContent != null) {
+			int action = dataContent.getAction();
 
-		int action = dataContent.getAction();
-
-		// 判断消息类型, 根据不同的类型来处理不同的业务
-		if (action == MsgActionEnum.CONNECT.type) {
-			UserChannelHelper.put(dataContent.getSenderId(), currentChannel);
-			// 写回Success
-			currentChannel.writeAndFlush(new TextWebSocketFrame("ok"));
-		} else if (action == MsgActionEnum.CHAT.type) {
-		} else if (action == MsgActionEnum.SIGNED.type) {
-		} else if (action == MsgActionEnum.KEEPALIVE.type) {
+			// 判断消息类型, 根据不同的类型来处理不同的业务
+			if (action == MsgActionEnum.CONNECT.type) {
+				UserChannelHelper.put(dataContent.getSenderId(), currentChannel);
+				// 写回Success
+				currentChannel.writeAndFlush(new TextWebSocketFrame("ok"));
+			} else if (action == MsgActionEnum.CHAT.type) {
+			} else if (action == MsgActionEnum.SIGNED.type) {
+			} else if (action == MsgActionEnum.KEEPALIVE.type) {
+			}
 		}
 	}
 

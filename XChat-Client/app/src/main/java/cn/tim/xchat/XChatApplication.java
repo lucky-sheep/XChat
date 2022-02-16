@@ -13,17 +13,25 @@ import com.alibaba.android.arouter.launcher.ARouter;
 import com.didichuxing.doraemonkit.DoKit;
 import com.tencent.mmkv.MMKV;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import java.util.UUID;
 
 import cn.tim.xchat.chat.core.WebSocketService;
 import cn.tim.xchat.common.constans.StorageKey;
+import cn.tim.xchat.common.event.TokenEvent;
 import cn.tim.xchat.common.utils.MD5Utils;
-import cn.tim.xchat.common.utils.MMKVUtil;
-import cn.tim.xchat.login.LoginActivity;
 import cn.tim.xchat.network.OkHttpUtils;
+import cn.tim.xchat.network.TokenInterceptor;
 
 public class XChatApplication extends Application {
     private WebSocketService.WebSocketClientBinder webSocketClientBinder;
+    private static final String TAG = "XChatApplication";
+    private MMKV mmkv;
+    private TokenInterceptor tokenInterceptor;
+
 
     @Override
     public void onCreate() {
@@ -43,18 +51,36 @@ public class XChatApplication extends Application {
 
         saveDeviceId();
 
-        if(!BuildConfig.DEBUG) {
+        if(BuildConfig.DEBUG) {
             new DoKit.Builder(this)
                     .productId("4b16245fb438845e09386178c9dda449")
                     .build();
         }
 
-        startWebSocketService();
+        EventBus.getDefault().register(this);
+        new Thread(this::startWebSocketService).start();
+    }
+
+
+    @Subscribe(threadMode = ThreadMode.ASYNC)
+    public void onEvent(TokenEvent tokenEvent){
+        if(TokenEvent.TokenType.TOKEN_OVERDUE.equals(tokenEvent.getType())) {
+            Log.e(TAG, "刷新Token");
+            if(tokenInterceptor == null) {
+                synchronized (TokenInterceptor.class) {
+                    if (tokenInterceptor == null)
+                        tokenInterceptor = new TokenInterceptor(this);
+                }
+            }
+        }
+        tokenInterceptor.flushToken();
     }
 
     ServiceConnection serviceConnection = new ServiceConnection() {
         public void onServiceConnected(ComponentName name, IBinder service) {
             webSocketClientBinder = (WebSocketService.WebSocketClientBinder) service;
+            webSocketClientBinder.startSendTestMsg();
+            Log.i(TAG, "onServiceConnected: ");
         }
 
         public void onServiceDisconnected(ComponentName name) {
@@ -67,10 +93,9 @@ public class XChatApplication extends Application {
      */
     public void startWebSocketService() {
         Intent bindIntent = new Intent(this, WebSocketService.class);
-        startService(bindIntent);
+        startForegroundService(bindIntent);
         bindService(bindIntent, serviceConnection, BIND_AUTO_CREATE);
     }
-
 
     private void saveDeviceId() {
         String deviceId = Settings.System.getString(getContentResolver(),
