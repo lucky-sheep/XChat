@@ -37,6 +37,7 @@ public class WebSocketManager {
         void onConnected(Map<String, List<String>> headers);
         void onTextMessage(String text);
         void onByteMessage(byte[] retByte);
+        void onDisconnect(boolean closedByServer);
     }
 
     public enum ConnectStatus {
@@ -68,11 +69,11 @@ public class WebSocketManager {
                     .setFrameQueueSize(FRAME_QUEUE_SIZE)//设置帧队列最大值为5
                     .setMissingCloseFrameAllowed(false)//设置不允许服务端关闭连接却未发送关闭帧
                     .addListener(new NVWebSocketListener())
-                    .connectAsynchronously();  // 这里我改成了同步调用 异步调用请使用connectAsynchronously()
+                    .connect();
             setConnectStatus(ConnectStatus.CONNECTING);
-        } catch (IOException e) {
+        } catch (IOException | WebSocketException e) {
             e.printStackTrace();
-            reconnect();
+            //reconnect();
         }
     }
 
@@ -100,19 +101,6 @@ public class WebSocketManager {
         setConnectStatus(null);
     }
 
-    public void reconnect() {
-        if (mWebSocket != null && !mWebSocket.isOpen() && getConnectStatus() != ConnectStatus.CONNECTING) {
-            mReconnectTimerTask = new TimerTask() {
-                @Override
-                public void run() {
-                    connect();
-                }
-            };
-            mReconnectTimer.schedule(mReconnectTimerTask, DEFAULT_SOCKET_RECONNECT_INTERVAL);
-        }
-    }
-
-
     /**
      *  Adapter的回调中主要做三件事
      *  1、设置连接状态
@@ -124,7 +112,6 @@ public class WebSocketManager {
         @Override
         public void onConnected(WebSocket websocket, Map<String, List<String>> headers) throws Exception {
             super.onConnected(websocket, headers);
-            System.out.println("OS. WebSocket onConnected");
             setConnectStatus(WebSocketManager.ConnectStatus.CONNECT_SUCCESS);
             if (mWebSocketListener != null) {
                 mWebSocketListener.onConnected(headers);
@@ -134,9 +121,8 @@ public class WebSocketManager {
         @Override
         public void onConnectError(WebSocket websocket, WebSocketException exception) throws Exception {
             super.onConnectError(websocket, exception);
-            Log.e(Constants.TAG, "OS. WebSocket onConnectError");
+            Log.e(Constants.TAG, "onConnectError, exception = " + exception);
             setConnectStatus(WebSocketManager.ConnectStatus.CONNECT_FAIL);
-            exception.printStackTrace(System.err);
         }
 
         @Override
@@ -144,9 +130,11 @@ public class WebSocketManager {
                                    WebSocketFrame clientCloseFrame, boolean closedByServer)
                 throws Exception {
             super.onDisconnected(websocket, serverCloseFrame, clientCloseFrame, closedByServer);
-            System.out.println("OS. WebSocket onDisconnected");
+            Log.e(Constants.TAG, "onDisconnected");
             setConnectStatus(WebSocketManager.ConnectStatus.CONNECT_DISCONNECT);
-            reconnect();
+            if (mWebSocketListener != null) {
+                mWebSocketListener.onDisconnect(closedByServer);
+            }
         }
 
         @Override

@@ -104,6 +104,8 @@ public class UserAuthorizeServiceImpl implements UserAuthorizeService {
                 if(!userInfo.getClientId().equals(form.getDeviceId())){
                     // TODO 记录一下设备变更
                 }
+                // 更新用户请求数量
+                redisTemplate.opsForValue().set(form.getUsername(), 0);
                 return ret;
             }
         }

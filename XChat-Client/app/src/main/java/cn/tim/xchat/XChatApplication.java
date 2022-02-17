@@ -62,7 +62,7 @@ public class XChatApplication extends Application {
     }
 
 
-    @Subscribe(threadMode = ThreadMode.ASYNC)
+    @Subscribe(threadMode = ThreadMode.BACKGROUND)
     public void onEvent(TokenEvent tokenEvent){
         if(TokenEvent.TokenType.TOKEN_OVERDUE.equals(tokenEvent.getType())) {
             Log.e(TAG, "刷新Token");
@@ -72,15 +72,14 @@ public class XChatApplication extends Application {
                         tokenInterceptor = new TokenInterceptor(this);
                 }
             }
+            tokenInterceptor.flushToken();
         }
-        tokenInterceptor.flushToken();
     }
 
     ServiceConnection serviceConnection = new ServiceConnection() {
         public void onServiceConnected(ComponentName name, IBinder service) {
             webSocketClientBinder = (WebSocketService.WebSocketClientBinder) service;
-            webSocketClientBinder.startSendTestMsg();
-            Log.i(TAG, "onServiceConnected: ");
+            webSocketClientBinder.startForeground();
         }
 
         public void onServiceDisconnected(ComponentName name) {

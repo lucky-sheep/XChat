@@ -25,9 +25,10 @@ public class WebSocketService extends Service {
     private final static String CHANNEL_ID = "100500";
     private final static String CHANNEL_NAME = "XChat";
     private final static int GRAY_SERVICE_ID = 1001;
-    private final static int NOTIFY_ID = 10080;
+    public final static int NOTIFY_ID = 10080;
     private WebSocketClientBinder mBinder = new WebSocketClientBinder();
     private final WebSocketHelper webSocketHelper;
+    private Notification notification;
 
     public WebSocketService() {
         webSocketHelper = new WebSocketHelper();
@@ -64,8 +65,8 @@ public class WebSocketService extends Service {
             webSocketHelper.cancelWebSocket();
         }
 
-        public void startSendTestMsg() {
-            webSocketHelper.sendKeepAliveMsg();
+        public void startForeground() {
+            WebSocketService.this.startForeground(NOTIFY_ID, notification);
         }
     }
 
@@ -81,7 +82,7 @@ public class WebSocketService extends Service {
                 CHANNEL_NAME, NotificationManager.IMPORTANCE_LOW);
 
         PendingIntent pi = PendingIntent.getActivity(this, 0, new Intent(this, ChatActivity.class), 0);
-        Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
+        notification = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setContentTitle("This is content title.")
                 .setContentText("This is content text.")
                 .setWhen(System.currentTimeMillis())

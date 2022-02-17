@@ -35,15 +35,14 @@ public class WSServerInitializer extends ChannelInitializer<SocketChannel> {
 		 * 会帮你处理握手动作： handshaking（close, ping, pong） ping + pong = 心跳
 		 * 对于websocket来讲，都是以frames进行传输的，不同的数据类型对应的frames也不同
 		 */
-		//pipeline.addLast(new AuthHandler());
-
-		pipeline.addLast(new WebSocketServerProtocolHandler("/ws", true));
+		pipeline.addLast(new AuthHandler());
+		pipeline.addLast(new WebSocketServerProtocolHandler("/ws"));
 
 		// 如果是读空闲或者写空闲，不处理
 		pipeline.addLast(new IdleStateHandler(4, 8, 12));
 		// 自定义的空闲状态检测
 		pipeline.addLast(new HeartBeatHandler());
-		
+
 		// 聊天消息处理的Handler
 		pipeline.addLast(new ChatHandler());
 		pipeline.addLast(new ChatHandlerByProtobuf());

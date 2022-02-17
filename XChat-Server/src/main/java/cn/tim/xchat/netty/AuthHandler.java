@@ -3,41 +3,46 @@ package cn.tim.xchat.netty;
 import cn.tim.xchat.constant.RedisConstant;
 import cn.tim.xchat.utils.SpringUtil;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.handler.codec.http.FullHttpRequest;
-import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
-import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
-import io.netty.util.AttributeKey;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
+/**
+ * 事实证明：最简单的才是最强的！
+ */
 @Slf4j
-@Component
-public class AuthHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
-    public static AttributeKey<String> TOKEN = AttributeKey.valueOf("token");
+@Service
+public class AuthHandler extends ChannelInboundHandlerAdapter {
+
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, FullHttpRequest msg) {
-        String token = msg.headers().get("token");
-        log.info("token = " + token);
-        StringRedisTemplate redisTemplate = SpringUtil.getBean(StringRedisTemplate.class);
-        String userId = redisTemplate.opsForValue().get(String.format(RedisConstant.TOKEN_PREFIX, token));
-        if (!ObjectUtils.isEmpty(userId)) {
-            ctx.pipeline().remove(this);
-            // 对事件进行传播，知道完成WebSocket连接。
-            ctx.channel().attr(TOKEN).set(token);
-            ctx.fireChannelRead(msg.retain());
-        }else {
-            ctx.channel().writeAndFlush(new TextWebSocketFrame("NoAuth"));
-            ctx.close();
+    public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+        super.channelRead(ctx, msg);
+        if(msg instanceof FullHttpRequest) {
+            FullHttpRequest request = (FullHttpRequest) msg;
+            String token = request.headers().get("token");
+            if(token == null) {
+                log.warn("token is null!!");
+                ctx.channel().close();
+            }else {
+                StringRedisTemplate redisTemplate = SpringUtil.getBean(StringRedisTemplate.class);
+                String userId = redisTemplate.opsForValue().get(String.format(RedisConstant.TOKEN_PREFIX, token));
+                if(ObjectUtils.isEmpty(userId)) {
+                    log.warn("Redis无对应token, 主动断开");
+                    ctx.channel().close();
+                } else {
+                    // 连接建立，后续的内容无需校验
+                    ctx.pipeline().remove(this);
+                }
+            }
         }
     }
 
-    public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
-        if (evt == WebSocketServerProtocolHandler.ServerHandshakeStateEvent.HANDSHAKE_COMPLETE) {
-            // 移除性能更加
-            ctx.pipeline().remove(AuthHandler.class);
-        }
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+        cause.printStackTrace();
+        ctx.channel().close();
     }
 }

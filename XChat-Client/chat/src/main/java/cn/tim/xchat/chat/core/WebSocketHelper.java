@@ -13,6 +13,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import cn.tim.xchat.chat.BuildConfig;
 import cn.tim.xchat.chat.msg.MsgActionEnum;
@@ -25,6 +27,7 @@ public class WebSocketHelper {
     private static final String TAG = "WebSocketHelper";
     private static MMKV mmkv;
     private WebSocketManager manager;
+    private TimerTask keepAliveTask;
 
 
     public WebSocketHelper() {
@@ -35,6 +38,7 @@ public class WebSocketHelper {
         new Thread(this::launchHandle).start();
     }
 
+    AtomicBoolean flag = new AtomicBoolean(true);
     private void launchHandle(){
         String webSocketUrl = BuildConfig.WEBSOCKET_URL;
         mmkv = MMKV.defaultMMKV();
@@ -46,25 +50,31 @@ public class WebSocketHelper {
             manager.setWebSocketListener(new WebSocketManager.WebSocketListener() {
                 @Override
                 public void onConnected(Map<String, List<String>> headers) {
-                    Log.i(TAG, "onConnected: ");
+                    Log.e(TAG, "onConnected: ");
                     sendKeepAliveMsg();
                 }
 
                 @Override
                 public void onTextMessage(String text) {
-                    Log.i(TAG, "onTextMessage: text = " + text);
-                    if("NoAuth".equals(text)){
-                        // 说明验证未通过
-                        EventBus.getDefault().post(new TokenEvent(TokenEvent.TokenType.TOKEN_OVERDUE));
-                    }
+                    Log.e(TAG, "onTextMessage: text = " + text);
                 }
 
                 @Override
                 public void onByteMessage(byte[] retByte) {
 
                 }
-            });
 
+                @Override
+                public void onDisconnect(boolean closedByServer) {
+                    Log.e(TAG, "onDisconnect: closedByServer = " + closedByServer);
+                    if(closedByServer) {
+                        EventBus.getDefault().post(new TokenEvent(TokenEvent.TokenType.TOKEN_OVERDUE));
+                    }
+                    keepAliveTask.cancel();
+                    manager.disconnect();
+                    manager = null;
+                }
+            });
             manager.connect();
         }
     }
@@ -72,6 +82,7 @@ public class WebSocketHelper {
     @Subscribe(threadMode = ThreadMode.BACKGROUND)
     public void onTokenEvent(TokenEvent event){
         if(event.getType().equals(TokenEvent.TokenType.TOKEN_REFRESH)) {
+            flag.set(false);
             launchWebSocket();
         }
     }
@@ -81,14 +92,16 @@ public class WebSocketHelper {
     }
 
     public void sendKeepAliveMsg(){
-//        Timer timer = new Timer();
-//        TimerTask task = new TimerTask() {
-//            @Override
-//            public void run() {
-//                manager.sendMessage(keepAlive.toByteArray());
-//            }
-//        };
-//        timer.schedule(task, 2_000, 10_000);
+        Timer timer = new Timer();
+        AtomicInteger i = new AtomicInteger(0);
+        keepAliveTask = new TimerTask() {
+            @Override
+            public void run() {
+                Log.d(TAG, "sendKeepAliveMsg, " + (i.getAndIncrement()));
+                manager.sendMessage(keepAlive.toByteArray());
+            }
+        };
+        timer.schedule(keepAliveTask, 2_000, 10_000);
     }
 
     static DataContentSerializer.DataContent keepAlive = DataContentSerializer
