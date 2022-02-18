@@ -85,4 +85,16 @@ public class DataContentSerializerTest {
 
         System.out.println(content);
     }
+
+
+    @Test
+    public void xx(){
+        DataContentSerializer.DataContent.Builder builder = DataContentSerializer.DataContent.newBuilder()
+                .setAction(MsgActionEnum.KEEPALIVE.type);
+        DataContentSerializer.DataContent dataContent = builder.build();
+        System.out.println(dataContent.toByteArray().length);
+        System.out.println(new String(dataContent.toByteArray()));
+        System.out.println(dataContent.toByteArray()[0]);
+        System.out.println(dataContent.toByteArray()[1]);
+    }
 }

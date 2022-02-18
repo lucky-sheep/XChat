@@ -43,7 +43,8 @@ public class WebSocketService extends Service {
             startForeground(GRAY_SERVICE_ID, new Notification());
             stopForeground(true);
             stopSelf();
-            return super.onStartCommand(intent, flags, startId);
+//            return super.onStartCommand(intent, flags, startId);
+            return Service.START_CONTINUATION_MASK;
         }
 
         @Override

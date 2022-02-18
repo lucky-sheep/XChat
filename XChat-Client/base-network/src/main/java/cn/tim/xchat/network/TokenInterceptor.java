@@ -9,6 +9,7 @@ import androidx.annotation.NonNull;
 
 import com.alibaba.android.arouter.launcher.ARouter;
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONException;
 import com.alibaba.fastjson.JSONObject;
 import com.tencent.mmkv.MMKV;
 
@@ -102,8 +103,9 @@ public class TokenInterceptor implements Interceptor {
             ResponseBody responseBody = OkHttpUtils.getInstance()
                     .newCall(request).execute().body();
             assert responseBody != null;
-            ResponseModule responseModule = JSON.parseObject(
-                    responseBody.string(), ResponseModule.class);
+            String responseStr = responseBody.string();
+            Log.e(TAG, "responseStr = " + responseStr);
+            ResponseModule responseModule = JSON.parseObject(responseStr, ResponseModule.class);
             if(responseModule.getSuccess()) {
                 String token = responseModule.getData().getString("token");
                 mmkv.putString(StorageKey.TOKEN_KEY, token);
@@ -111,8 +113,10 @@ public class TokenInterceptor implements Interceptor {
                 Log.e(TAG, "========= 自动获取Token成功 =========");
                 return token;
             }
-        } catch (IOException e) {
-            Log.e(TAG, "========= 自动获取Token失败，网络故障 =========");
+        } catch (IOException | JSONException e) {
+            Log.e(TAG, "========= 自动获取Token失败: 服务器故障, 联系管理员 zchanglin@163.com ========");
+            EventBus.getDefault().post(new TokenEvent(TokenEvent.TokenType.SERVER_ERROR));
+
         }
         return null;
     }

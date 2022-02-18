@@ -31,10 +31,16 @@ ext {
 //            "wsdebug": "ws://192.168.31.156:8088/ws",
 //            "wslease": "http://192.168.31.156:8088/ws"
 
-            "debug": "http://10.170.230.85:8080",
-            "release": "http://10.170.230.85:8080",
-            "wsdebug": "ws://10.170.230.85:8088/ws",
-            "wslease": "http://10.170.230.85:8088/ws"
+//            "debug": "http://10.170.230.85:8080",
+//            "release": "http://10.170.230.85:8080",
+//            "wsdebug": "ws://10.170.230.85:8088/ws",
+//            "wslease": "http://10.170.230.85:8088/ws"
+
+                "debug": "http://192.168.199.188:8080",
+                "release": "http://192.168.199.188:8080",
+                "wsdebug": "ws://192.168.199.188:8088/ws",
+                "wslease": "http://192.168.199.188:8088/ws"
+
     ]
 
     // 定义依赖项目
@@ -54,8 +60,7 @@ ext {
             "fastjson": "com.alibaba:fastjson:1.2.79",
             "lottie": "com.airbnb.android:lottie:4.2.2",
             "AvatarImageView": 'cn.carbs.android:AvatarImageView:1.0.4',
-//            "WebSocket": "org.java-websocket:Java-WebSocket:1.5.2",
-            "nv-websocket": "com.neovisionaries:nv-websocket-client:2.6",
+            "WebSocket": "org.java-websocket:Java-WebSocket:1.5.2",
             "eventbus": "org.greenrobot:eventbus:3.1.1"
     ]
 

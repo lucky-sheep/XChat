@@ -69,13 +69,14 @@ dependencies {
     annotationProcessor app_annotationProcessors.arouter_compiler
     implementation project(':common')
 
-    api "com.google.protobuf:protobuf-java:3.10.0"
-    api "com.google.protobuf:protoc:3.5.1"
+    api "com.google.protobuf:protobuf-java:3.7.0"
+    // TODO protoc的版本
+    api "com.google.protobuf:protoc:3.7.0"
 }
 
 protobuf {
     protoc {
-        artifact = 'com.google.protobuf:protoc:3.17.0' // 也可以配置本地编译器路径
+        artifact = 'com.google.protobuf:protoc:3.7.0' // 也可以配置本地编译器路径
     }
 
     generateProtoTasks {
