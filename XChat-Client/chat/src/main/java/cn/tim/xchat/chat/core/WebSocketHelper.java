@@ -24,11 +24,10 @@ import cn.tim.xchat.common.event.TokenEvent;
 import cn.tim.xchat.core.model.DataContentSerializer;
 
 public class WebSocketHelper {
-    private static final String TAG = "WebSocketHelper";
-    private static MMKV mmkv;
+    private static final String TAG = Constants.TAG;
     private WebSocketManager manager;
     private TimerTask keepAliveTask;
-
+    private static final MMKV mmkv = MMKV.defaultMMKV();
 
     public WebSocketHelper() {
         EventBus.getDefault().register(this);
@@ -38,10 +37,7 @@ public class WebSocketHelper {
         new Thread(this::launchHandle).start();
     }
 
-    AtomicBoolean flag = new AtomicBoolean(true);
     private void launchHandle(){
-        String webSocketUrl = BuildConfig.WEBSOCKET_URL;
-        mmkv = MMKV.defaultMMKV();
         String token = mmkv.getString(StorageKey.TOKEN_KEY, null);
         if(TextUtils.isEmpty(token)) {
             EventBus.getDefault().post(new TokenEvent(TokenEvent.TokenType.TOKEN_OVERDUE));
@@ -67,12 +63,18 @@ public class WebSocketHelper {
                 @Override
                 public void onDisconnect(boolean closedByServer) {
                     Log.e(TAG, "onDisconnect: closedByServer = " + closedByServer);
+                    keepAliveTask.cancel();
                     if(closedByServer) {
                         EventBus.getDefault().post(new TokenEvent(TokenEvent.TokenType.TOKEN_OVERDUE));
+                        manager.disconnect();
+                    }else {
+                        manager.reconnect();
                     }
-                    keepAliveTask.cancel();
-                    manager.disconnect();
-                    manager = null;
+                }
+
+                @Override
+                public void connectFailed() {
+                    Log.e(TAG, "connectFailed");
                 }
             });
             manager.connect();
@@ -82,7 +84,6 @@ public class WebSocketHelper {
     @Subscribe(threadMode = ThreadMode.BACKGROUND)
     public void onTokenEvent(TokenEvent event){
         if(event.getType().equals(TokenEvent.TokenType.TOKEN_REFRESH)) {
-            flag.set(false);
             launchWebSocket();
         }
     }

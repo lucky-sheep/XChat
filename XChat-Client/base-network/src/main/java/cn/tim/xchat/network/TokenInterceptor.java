@@ -57,10 +57,10 @@ public class TokenInterceptor implements Interceptor {
         if(TextUtils.isEmpty(token)) {
             Log.e(TAG, "Token获取失败，检查服务器问题...");
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                context.getMainExecutor().execute(()-> {ARouter.getInstance()
-                        .build("/login/main")
-                        .navigation(context);
-                });
+                context.getMainExecutor().execute(()->
+                        ARouter.getInstance()
+                                .build("/login/main")
+                                .navigation(context));
             }
             // 此时取消请求
             chain.call().cancel();
@@ -77,10 +77,17 @@ public class TokenInterceptor implements Interceptor {
     }
 
     public String flushToken() {
+        String password = mmkv.getString(StorageKey.PASSWORD_KEY, null);
+        String username = mmkv.getString(StorageKey.USERNAME_KEY, null);
         Map<String, Object> map = new HashMap<>();
-        map.put("password", mmkv.getString(StorageKey.PASSWORD_KEY, ""));
-        map.put("username", mmkv.getString(StorageKey.USERNAME_KEY, ""));
+        map.put("password", password);
+        map.put("username", username);
         map.put("deviceId", mmkv.getString(StorageKey.DEVICE_ID_KEY, UUID.randomUUID().toString()));
+
+        if(password == null || username == null){
+            // 由TokenInterceptor内部处理
+            return null;
+        }
 
         RequestBody requestBody = RequestBody.create(
                 MediaType.parse("application/json; charset=utf-8"),

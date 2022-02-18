@@ -1,6 +1,5 @@
 package cn.tim.xchat.common;
 
-import android.graphics.Rect;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -56,7 +55,8 @@ public abstract class XChatBaseActivity extends AppCompatActivity {
                     Log.v(TAG, "Safe top of the screen" + displayCutout.getSafeInsetTop());
                     layoutParams.topMargin = displayCutout.getSafeInsetTop();
                 } else {
-                    layoutParams.topMargin = DensityUtil.dp2px(50);
+                    // 默认设置为0即可
+                    layoutParams.topMargin = DensityUtil.dp2px(0);
                 }
                 frameLayout.setLayoutParams(layoutParams);
             });

@@ -10,18 +10,17 @@ import android.text.Editable;
 import android.text.InputFilter;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.alibaba.android.arouter.facade.annotation.Route;
 import com.alibaba.android.arouter.launcher.ARouter;
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONException;
 import com.alibaba.fastjson.JSONObject;
 import com.google.android.material.textfield.TextInputLayout;
 import com.tencent.mmkv.MMKV;
@@ -34,7 +33,6 @@ import cn.tim.xchat.common.constans.StorageKey;
 import cn.tim.xchat.common.utils.InputFilterUtil;
 import cn.tim.xchat.common.utils.MD5Utils;
 import cn.tim.xchat.common.utils.RegexUtil;
-import cn.tim.xchat.common.widget.loading.LoadingComponent;
 import cn.tim.xchat.common.widget.toast.XChatToast;
 import cn.tim.xchat.login.adapter.MyEditTextWatcher;
 import cn.tim.xchat.network.OkHttpUtils;
@@ -54,14 +52,11 @@ public class RegisterFragment extends Fragment {
     private EditText usernameEdit;
     private EditText passwordEdit;
     private EditText emailEdit;
-    private Button registerBtn;
-    private TextView goToLoginBtn;
 
     private View view;
 
     MMKV mmkv = MMKV.defaultMMKV();
-    private LoginActivity activity;
-    private LoadingComponent loadingComponent;
+    private LoginActivity bll;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
@@ -72,17 +67,17 @@ public class RegisterFragment extends Fragment {
     }
 
     private void initView() {
-        activity = (LoginActivity) getActivity();
+        bll = (LoginActivity) getActivity();
         passwordEdit = view.findViewById(R.id.login_password_et);
         usernameEdit = view.findViewById(R.id.login_username_et);
         emailEdit = view.findViewById(R.id.login_email_et);
-        registerBtn = view.findViewById(R.id.login_register_btn);
-        goToLoginBtn = view.findViewById(R.id.login_goto_login_btn);
+        Button registerBtn = view.findViewById(R.id.login_register_btn);
+        TextView goToLoginBtn = view.findViewById(R.id.login_goto_login_btn);
 
 
         TextInputLayout usernameTIL = view.findViewById(R.id.login_username_et_til);
         TextInputLayout emailTIL = view.findViewById(R.id.login_email_et_til);
-        TextInputLayout passwordTIL = view.findViewById(R.id.login_password_et_til);
+//        TextInputLayout passwordTIL = view.findViewById(R.id.login_password_et_til);
 
         goToLoginBtn.setOnClickListener(v -> {
             Fragment regFragment = (Fragment) ARouter.getInstance()
@@ -103,7 +98,7 @@ public class RegisterFragment extends Fragment {
                     || TextUtils.isEmpty(username)
                     || TextUtils.isEmpty(password)
                     || !RegexUtil.isEmail(email)) {
-                showNetWorkError("请正确填写注册信息");
+                bll.showToast("请正确填写注册信息");
                 return;
             }
             String deviceIdMd5 = mmkv.getString(StorageKey.DEVICE_ID_KEY, "");
@@ -134,9 +129,6 @@ public class RegisterFragment extends Fragment {
                 }
             }
         });
-
-        loadingComponent = new LoadingComponent(getContext(), (FrameLayout) view);
-
     }
 
     private void registerCall(String username, String deviceIdMd5,
@@ -155,15 +147,12 @@ public class RegisterFragment extends Fragment {
                 .post(requestBody)
                 .url(NetworkConfig.baseUrl + NetworkConfig.USER_REGISTER_URL)
                 .build();
-        loadingComponent.start();
+        bll.loadingComponent.start();
         client.newCall(request)
             .enqueue(new Callback() {
                 @Override
                 public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                    activity.runOnUiThread(() -> {
-                        loadingComponent.stop();
-                        showNetWorkError("请检查网络连接");
-                    });
+                    bll.showResultUITask("请检查网络连接");
                 }
 
                 @Override
@@ -171,25 +160,23 @@ public class RegisterFragment extends Fragment {
                         throws IOException {
                     ResponseBody responseBody = response.body();
                     assert responseBody != null;
-                    ResponseModule responseModule = JSON.parseObject(
-                            responseBody.string(), ResponseModule.class);
-                    activity.runOnUiThread(() -> {
-                        loadingComponent.stop();
+                    String responseBodyStr = responseBody.string();
+                    try {
+                        ResponseModule responseModule = JSON.parseObject(
+                                responseBodyStr, ResponseModule.class);
                         if(responseModule != null) {
-                            showNetWorkError(responseModule.getMessage());
+                            bll.showResultUITask(responseModule.getMessage());
                             if (responseModule.getSuccess()) {
-                                activity.successAuthHandle(responseModule);
+                                bll.successAuthHandle(responseModule);
                             }
                         }else {
-                            showNetWorkError("请检查网络连接");
+                            bll.loadingComponent.stop();
+                            bll.showToast("服务器正忙，请联系管理员");
                         }
-                    });
+                    } catch (JSONException e){
+                        bll.showResultUITask("服务器正忙，请联系管理员");
+                    }
                 }
             });
-    }
-
-    private void showNetWorkError(String error) {
-        XChatToast.INSTANCE.showToast(getContext(), error,
-                Gravity.TOP, LoginActivity.Y_OFFSET);
     }
 }

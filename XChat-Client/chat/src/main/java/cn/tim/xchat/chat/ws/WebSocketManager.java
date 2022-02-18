@@ -16,16 +16,17 @@ import java.util.TimerTask;
 
 import cn.tim.xchat.chat.BuildConfig;
 import cn.tim.xchat.chat.core.Constants;
+import cn.tim.xchat.chat.core.WebSocketService;
 
 public class WebSocketManager {
     private static final int DEFAULT_SOCKET_CONNECT_TIMEOUT = 3000;
     private static final int DEFAULT_SOCKET_RECONNECT_INTERVAL = 3000;
     private static final int FRAME_QUEUE_SIZE = 5;
     private final String token;
-
-    WebSocketListener mWebSocketListener;
-    WebSocketFactory mWebSocketFactory;
-    WebSocket mWebSocket;
+    private static final String TAG = WebSocketService.TAG;
+    WebSocketListener wsListener;
+    WebSocketFactory wsFactory;
+    WebSocket webSocket;
 
     private ConnectStatus mConnectStatus = ConnectStatus.CONNECT_DISCONNECT;
     private final Timer mReconnectTimer = new Timer();
@@ -38,6 +39,7 @@ public class WebSocketManager {
         void onTextMessage(String text);
         void onByteMessage(byte[] retByte);
         void onDisconnect(boolean closedByServer);
+        void connectFailed();
     }
 
     public enum ConnectStatus {
@@ -55,37 +57,42 @@ public class WebSocketManager {
     public WebSocketManager(String token, int timeout) {
         mUri = BuildConfig.WEBSOCKET_URL;
         this.token = token;
-        mWebSocketFactory = new WebSocketFactory().setConnectionTimeout(timeout);
+        wsFactory = new WebSocketFactory().setConnectionTimeout(timeout);
     }
 
     public void setWebSocketListener(WebSocketListener webSocketListener) {
-        mWebSocketListener = webSocketListener;
+        wsListener = webSocketListener;
     }
 
     public void connect() {
         try {
-            mWebSocket = mWebSocketFactory.createSocket(mUri)
+            webSocket = wsFactory.createSocket(mUri)
                     .addHeader("token", token)
-                    .setFrameQueueSize(FRAME_QUEUE_SIZE)//设置帧队列最大值为5
-                    .setMissingCloseFrameAllowed(false)//设置不允许服务端关闭连接却未发送关闭帧
+                    .setFrameQueueSize(FRAME_QUEUE_SIZE) // 设置帧队列最大值为5
+                    .setMissingCloseFrameAllowed(false) // 设置不允许服务端关闭连接却未发送关闭帧
                     .addListener(new NVWebSocketListener())
                     .connect();
             setConnectStatus(ConnectStatus.CONNECTING);
         } catch (IOException | WebSocketException e) {
             e.printStackTrace();
-            //reconnect();
+            if(wsListener != null) {
+                //wsListener.connectFailed();
+
+            }
+            Log.e(TAG, "重连");
+            reconnect();
         }
     }
 
     // 客户端像服务器发送消息
     public void sendMessage(byte[] array) {
-        if(mWebSocket != null) {
-            mWebSocket.sendBinary(array);
+        if(webSocket != null) {
+            webSocket.sendBinary(array);
         }
     }
 
     private void setConnectStatus(ConnectStatus connectStatus) {
-        if(mWebSocket != null) {
+        if(webSocket != null) {
             mConnectStatus = connectStatus;
         }
     }
@@ -95,10 +102,10 @@ public class WebSocketManager {
     }
 
     public void disconnect() {
-        if (mWebSocket != null) {
-            mWebSocket.disconnect();
+        if (webSocket != null) {
+            webSocket.disconnect();
         }
-        setConnectStatus(null);
+        setConnectStatus(ConnectStatus.CONNECT_DISCONNECT);
     }
 
     /**
@@ -113,8 +120,8 @@ public class WebSocketManager {
         public void onConnected(WebSocket websocket, Map<String, List<String>> headers) throws Exception {
             super.onConnected(websocket, headers);
             setConnectStatus(WebSocketManager.ConnectStatus.CONNECT_SUCCESS);
-            if (mWebSocketListener != null) {
-                mWebSocketListener.onConnected(headers);
+            if (wsListener != null) {
+                wsListener.onConnected(headers);
             }
         }
 
@@ -132,25 +139,38 @@ public class WebSocketManager {
             super.onDisconnected(websocket, serverCloseFrame, clientCloseFrame, closedByServer);
             Log.e(Constants.TAG, "onDisconnected");
             setConnectStatus(WebSocketManager.ConnectStatus.CONNECT_DISCONNECT);
-            if (mWebSocketListener != null) {
-                mWebSocketListener.onDisconnect(closedByServer);
+            if (wsListener != null) {
+                wsListener.onDisconnect(closedByServer);
             }
         }
 
         @Override
         public void onTextMessage(WebSocket websocket, String text) throws Exception {
             super.onTextMessage(websocket, text);
-            if (mWebSocketListener != null) {
-                mWebSocketListener.onTextMessage(text);
+            if (wsListener != null) {
+                wsListener.onTextMessage(text);
             }
         }
 
         @Override
         public void onBinaryMessage(WebSocket websocket, byte[] binary) throws Exception {
             super.onBinaryMessage(websocket, binary);
-            if (mWebSocketListener != null) {
-                mWebSocketListener.onByteMessage(binary);
+            if (wsListener != null) {
+                wsListener.onByteMessage(binary);
             }
+        }
+    }
+
+    public void reconnect() {
+        if (webSocket != null && !webSocket.isOpen()
+                && getConnectStatus() != ConnectStatus.CONNECTING) {
+            mReconnectTimerTask = new TimerTask() {
+                @Override
+                public void run() {
+                    connect();
+                }
+            };
+            mReconnectTimer.schedule(mReconnectTimerTask, DEFAULT_SOCKET_RECONNECT_INTERVAL);
         }
     }
 }
