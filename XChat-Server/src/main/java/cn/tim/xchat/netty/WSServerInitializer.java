@@ -25,7 +25,7 @@ public class WSServerInitializer extends ChannelInitializer<SocketChannel> {
 		// 对写大数据流的支持
 //		pipeline.addLast(new ChunkedWriteHandler());
 		// 对httpMessage进行聚合，聚合成FullHttpRequest或FullHttpResponse
-		pipeline.addLast(new HttpObjectAggregator(1024 * 128));
+		//pipeline.addLast(new HttpObjectAggregator(1024 * 128));
 		// 针对客户端，如果在30S时没有向服务端发送读写心跳(ALL)，则主动断开
 
 //		pipeline.addLast(new IdleStateHandler(8, 10, 12));
@@ -40,13 +40,14 @@ public class WSServerInitializer extends ChannelInitializer<SocketChannel> {
 		 */
 //		pipeline.addLast(new AuthHandler());
 
-		pipeline.addLast(new AuthHandler());
+//		pipeline.addLast(new AuthHandler());
 
 		pipeline.addLast(new ProtobufVarint32FrameDecoder());
 		pipeline.addLast(new ProtobufVarint32LengthFieldPrepender());
 		//处理FullHttpRequest
 		pipeline.addLast(new WebSocketServerProtocolHandler("/ws"));
-		pipeline.addLast("decoder", new ProtobufDecoder(DataContentSerializer.DataContent.getDefaultInstance()));
+		pipeline.addLast("decoder" +
+				"", new ProtobufDecoder(DataContentSerializer.DataContent.getDefaultInstance()));
 		pipeline.addLast(new ChatHandlerByProtobuf());
 
 		// 如果是读空闲或者写空闲，不处理

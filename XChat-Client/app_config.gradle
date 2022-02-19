@@ -61,7 +61,8 @@ ext {
             "lottie": "com.airbnb.android:lottie:4.2.2",
             "AvatarImageView": 'cn.carbs.android:AvatarImageView:1.0.4',
             "WebSocket": "org.java-websocket:Java-WebSocket:1.5.2",
-            "eventbus": "org.greenrobot:eventbus:3.1.1"
+            "eventbus": "org.greenrobot:eventbus:3.1.1",
+            "netty": "io.netty:netty-all:4.1.73.Final"
     ]
 
     app_annotationProcessors = [

@@ -34,6 +34,22 @@ public class ChatHandlerByProtobuf extends SimpleChannelInboundHandler<DataConte
 //        } else if (action == MsgActionEnum.KEEPALIVE.type) {
 //            log.info("KEEPALIVE MSG, size = " + dataContent.toByteArray().length);
 //        }
+
+        DataContentSerializer.DataContent build = DataContentSerializer.DataContent.newBuilder()
+                .setAction(3)
+                .build();
+        ctx.channel().writeAndFlush(build);
+        //ctx.fireChannelRead();
+    }
+
+    @Override
+    public void channelActive(ChannelHandlerContext ctx) throws Exception {
+        super.channelActive(ctx);
+        log.info("channelActive = ");
+        DataContentSerializer.DataContent build = DataContentSerializer.DataContent.newBuilder()
+                .setAction(3)
+                .build();
+        ctx.channel().writeAndFlush(build);
     }
 
     /**
