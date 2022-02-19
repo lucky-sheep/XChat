@@ -1,0 +1,1 @@
+.\protoc.exe .\DataContent.proto --java_out=./

@@ -25,7 +25,7 @@ public class WSServerInitializer extends ChannelInitializer<SocketChannel> {
 		// 对写大数据流的支持
 //		pipeline.addLast(new ChunkedWriteHandler());
 		// 对httpMessage进行聚合，聚合成FullHttpRequest或FullHttpResponse
-		//pipeline.addLast(new HttpObjectAggregator(1024 * 128));
+		pipeline.addLast(new HttpObjectAggregator(1024 * 128));
 		// 针对客户端，如果在30S时没有向服务端发送读写心跳(ALL)，则主动断开
 
 //		pipeline.addLast(new IdleStateHandler(8, 10, 12));
