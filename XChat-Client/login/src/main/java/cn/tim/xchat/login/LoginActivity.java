@@ -1,7 +1,9 @@
 package cn.tim.xchat.login;
 
+import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
@@ -19,7 +21,7 @@ import cn.tim.xchat.common.constans.StorageKey;
 import cn.tim.xchat.common.event.TokenEvent;
 import cn.tim.xchat.common.widget.loading.LoadingComponent;
 import cn.tim.xchat.common.widget.toast.XChatToast;
-import cn.tim.xchat.login.module.UserInfo;
+import cn.tim.xchat.common.module.UserInfo;
 import cn.tim.xchat.network.model.ResponseModule;
 
 @Route(path = "/login/main")
@@ -40,6 +42,12 @@ public class LoginActivity extends XChatBaseActivity {
                 .add(R.id.login_main_content, loginFragment)
                 .commit();
         loadingComponent = new LoadingComponent(this, getContentView());
+    }
+
+    @Override
+    @RequiresApi(api = Build.VERSION_CODES.P)
+    public void getNotchParams(int defaultTopMargin) {
+        super.getNotchParams(0);
     }
 
     @Override
@@ -69,9 +77,15 @@ public class LoginActivity extends XChatBaseActivity {
                     .withString("token", token)
                     .withString("tab", "personal")
                     .navigation();
+            finish();
         }else {
             Log.e(LoginActivity.TAG, "userInfo == null!!!");
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
     }
 
     public void showToast(String error) {

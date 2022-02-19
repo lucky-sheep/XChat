@@ -1,4 +1,4 @@
-package cn.tim.xchat.login.module;
+package cn.tim.xchat.common.module;
 
 public class UserInfo {
     private String id;

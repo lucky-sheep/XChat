@@ -3,6 +3,9 @@
     package="cn.tim.xchat.personal">
 
     <application>
-        <activity android:name=".PersonalDetailActivity" />
+        <activity android:name=".PersonalDetailActivity"
+            android:launchMode="singleTask"
+            android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar"
+            />
     </application>
 </manifest>

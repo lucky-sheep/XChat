@@ -10,8 +10,9 @@
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent">
         <cn.tim.xchat.common.widget.titlebar.BaseTitleBar
+            android:id="@+id/personal_detail_titlebar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
         <LinearLayout
@@ -33,15 +34,15 @@
                     android:layout_height="wrap_content"/>
 
                 <cn.carbs.android.avatarimageview.library.AvatarImageView
-                    android:id="@+id/personal_main_header_iv"
-                    android:padding="12dp"
-                    android:layout_toStartOf="@id/personal_detail_header_btn"
+                    android:id="@+id/personal_detail_header_iv"
                     android:layout_width="80dp"
                     android:layout_height="80dp"
+                    android:layout_toStartOf="@id/personal_detail_header_btn"
+                    android:padding="12dp"
+                    app:aiv_BoarderColor="@color/black"
                     app:aiv_BoarderWidth="1dp"
                     app:aiv_ShowBoarder="true"
-                    app:aiv_BoarderColor="@color/black"
-                    app:aiv_TextSizeRatio="0.3"/>
+                    app:aiv_TextSizeRatio="0.3" />
 
                 <ImageView
                     android:id="@+id/personal_detail_header_btn"
@@ -71,10 +72,37 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
                     android:layout_centerVertical="true"
-                    android:text="zouchanglin"
-                    android:textColor="@color/black"
-                    android:drawableEnd="@drawable/icon_personal_account_detail" />
+                    android:drawableEnd="@drawable/icon_personal_copy"
+                    android:drawablePadding="8dp"
+                    tools:text="zouchanglin"
+                    android:textColor="#96000000" />
             </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="60dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerVertical="true"
+                    android:text="用户ID"
+                    android:textColor="@color/black"
+                    />
+
+                <TextView
+                    android:id="@+id/personal_detail_userid_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="12dp"
+                    android:drawablePadding="8dp"
+                    android:textColor="#96000000"
+                    tools:text="zouchanglin" />
+            </RelativeLayout>
+
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="60dp">
@@ -96,8 +124,7 @@
                     android:layout_centerVertical="true"
                     android:drawableEnd="@drawable/icon_personal_account_detail"
                     android:text="昵称未设置（默认为用户名）"
-                    android:textColor="@color/black"
-                    />
+                    android:textColor="@color/black" />
             </RelativeLayout>
 
             <RelativeLayout
@@ -119,9 +146,9 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
                     android:layout_centerVertical="true"
-                    android:text="zchanglin@163.com"
-                    android:textColor="@color/black"
-                    android:drawableEnd="@drawable/icon_personal_account_detail" />
+                    android:drawableEnd="@drawable/icon_personal_account_detail"
+                    tools:text="zchanglin@163.com"
+                    android:textColor="@color/black" />
             </RelativeLayout>
 
             <RelativeLayout
@@ -174,9 +201,23 @@
                     android:layout_marginEnd="12dp"
                     android:clickable="false"
                     android:maxLength="15"
-                    android:text="106306a1ba1320106fc03ddcd80be98b"
-                    android:textColor="#96000000" />
+                    android:textColor="#96000000"
+                    tools:text="106306a1ba1320ddcd80be98b" />
             </RelativeLayout>
         </LinearLayout>
     </LinearLayout>
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/personal_detail_user_logout"
+        android:text="退出登录"
+        android:textColor="@color/white"
+        android:backgroundTint="@color/purple_500"
+        app:icon="@drawable/icon_personal_logout"
+        app:iconGravity="textStart"
+        app:cornerRadius="20dp"
+        android:layout_gravity="bottom"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"/>
 </FrameLayout>

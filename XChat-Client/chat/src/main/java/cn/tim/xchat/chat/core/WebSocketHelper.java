@@ -23,6 +23,7 @@ import cn.tim.xchat.chat.msg.MsgActionEnum;
 import cn.tim.xchat.chat.ws.XWebSocketClient;
 import cn.tim.xchat.common.constans.StorageKey;
 import cn.tim.xchat.common.event.TokenEvent;
+import cn.tim.xchat.common.event.WSEvent;
 import cn.tim.xchat.core.model.DataContentSerializer;
 
 public class WebSocketHelper {
@@ -53,11 +54,22 @@ public class WebSocketHelper {
         }
     }
 
+    private void stopWebSocket() {
+        if(socketClient != null) socketClient.close();
+    }
+
     @Subscribe(threadMode = ThreadMode.BACKGROUND)
     public void onTokenEvent(TokenEvent event){
         if(event.getType().equals(TokenEvent.TokenType.TOKEN_REFRESH)) {
             if(socketClient != null) socketClient.close();
             launchWebSocket();
+        }
+    }
+
+    public void onWSEvent(WSEvent event){
+        if(WSEvent.Type.ACTIVE_CLOSE.equals(event.getType())) {
+            if(socketClient != null) socketClient.close();
+            stopWebSocket();
         }
     }
 

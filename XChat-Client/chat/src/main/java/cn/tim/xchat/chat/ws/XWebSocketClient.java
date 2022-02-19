@@ -2,11 +2,11 @@ package cn.tim.xchat.chat.ws;
 
 import android.util.Log;
 
+import com.google.protobuf.InvalidProtocolBufferException;
+
 import org.greenrobot.eventbus.EventBus;
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.framing.BinaryFrame;
-import org.java_websocket.framing.DataFrame;
-import org.java_websocket.framing.FramedataImpl1;
 import org.java_websocket.handshake.ServerHandshake;
 
 import java.net.URI;
@@ -17,8 +17,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import cn.tim.xchat.chat.msg.MsgActionEnum;
-import cn.tim.xchat.chat.ws.event.WSEvent;
+
 import cn.tim.xchat.common.event.TokenEvent;
+import cn.tim.xchat.common.event.WSEvent;
 import cn.tim.xchat.core.model.DataContentSerializer;
 
 public class XWebSocketClient extends WebSocketClient {
@@ -44,8 +45,16 @@ public class XWebSocketClient extends WebSocketClient {
     }
 
     @Override
-    public void onMessage(ByteBuffer bytes) {
-        Log.e(TAG, "ByteBuffer onMessage() -> ");
+    public void onMessage(ByteBuffer byteBuffer) {
+        byteBuffer.flip();
+        try {
+            DataContentSerializer.DataContent dataContent =
+                    DataContentSerializer.DataContent.parseFrom(byteBuffer.array());
+            Log.d(TAG, "onMessage: dataContent = " + dataContent);
+        } catch (InvalidProtocolBufferException e) {
+            e.printStackTrace();
+        }
+        byteBuffer.clear();
     }
 
     @Override
@@ -77,49 +86,19 @@ public class XWebSocketClient extends WebSocketClient {
             @Override
             public void run() {
                 Log.d(TAG, "send keepAlive msg, " + (i.getAndIncrement()) + ", isOpen() = " + isOpen() + ", keepAlive.toByteArray().length = " + keepAlive.toByteArray().length);
-//                Log.d(TAG, keepAlive.toByteArray()[0]);
-//                Log.d(TAG, keepAlive.toByteArray()[1]);
-                //if(isOpen()) send(keepAlive.toByteArray());
                 if(isOpen()) {
-//                    BinaryFrame binaryFrame = new BinaryFrame();
-//                    binaryFrame.setPayload(ByteBuffer.wrap(keepAlive.toByteArray()));
-//                    sendFrame(binaryFrame);
-                    //send(ByteBuffer.wrap(keepAlive.toByteArray()));
-
-//                    //sendFrame();
-                    byte[] bytes = keepAlive.toByteArray();
-                    byte[] msg = new byte[ 2 + bytes.length];
-                    System.arraycopy(bytes, 0, msg, 2, bytes.length);
-
-                    short length = (short) bytes.length;
-                    System.arraycopy(shortToByte(length), 0, msg, 0, 2);
-                    msg[0] = 0;
-                    msg[1] = (byte) 2;
-//                    Log.i(TAG, "" + msg[0]);
-//                    Log.i(TAG, "" + msg[1]);
-                    //System.ArrayCopy(System.BitConverter.GetBytes(data.Length), 0, msg, 0, 2);
-                    send(msg);
+                    BinaryFrame binaryFrame = new BinaryFrame();
+                    binaryFrame.setPayload(ByteBuffer.wrap(keepAlive.toByteArray()));
+                    sendFrame(binaryFrame);
                 }
-
-//                if(isOpen()) send(("keepAlive->" + System.currentTimeMillis()));
             }
         };
-        timer.schedule(keepAliveTask, 2_000, 2);
-
+        timer.schedule(keepAliveTask, 2_000, 2_000);
     }
 
-    static DataContentSerializer.DataContent keepAlive = DataContentSerializer
-            .DataContent
-            .newBuilder()
-            .setAction(MsgActionEnum.KEEPALIVE.type).build();
-
-    public static byte[] shortToByte(short number) {
-        int temp = number;
-        byte[] b = new byte[2];
-        for (int i = 0; i < b.length; i++) {
-            b[i] = new Integer(temp & 0xff).byteValue();
-            temp = temp >> 8; // 向右移8位
-        }
-        return b;
-    }
+    static DataContentSerializer.DataContent keepAlive =
+            DataContentSerializer
+                    .DataContent
+                    .newBuilder()
+                    .setAction(MsgActionEnum.KEEPALIVE.type).build();
 }

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -18,7 +19,8 @@ public class BaseTitleBar extends RelativeLayout implements TitleBarFun {
     protected ImageView findBtn;
     protected ImageView addBtn;
     protected ImageView menuBtn;
-    private RelativeLayout titleBarView;
+    protected RelativeLayout titleBarView;
+    protected LinearLayout rightAll;
 
     public BaseTitleBar(Context context) {
         this(context, null);
@@ -57,6 +59,9 @@ public class BaseTitleBar extends RelativeLayout implements TitleBarFun {
             case PERSONAL_MAIN_PAGER:
                 titleBarView.setVisibility(INVISIBLE);
                 break;
+            case PERSONAL_DETAIL_PAGER:
+                rightAll.setVisibility(INVISIBLE);
+                break;
         }
     }
 
@@ -77,5 +82,6 @@ public class BaseTitleBar extends RelativeLayout implements TitleBarFun {
         findBtn = titleBarView.findViewById(R.id.common_base_titlebar_find_btn);
         addBtn = titleBarView.findViewById(R.id.common_base_titlebar_add_btn);
         menuBtn = titleBarView.findViewById(R.id.common_base_titlebar_menu_btn);
+        rightAll = titleBarView.findViewById(R.id.common_base_titlebar_right_all);
     }
 }

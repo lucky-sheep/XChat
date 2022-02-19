@@ -7,7 +7,8 @@ public enum TitleBarType {
 
     CONTACTS_MAIN_PAGER(201, "联系人主页"),
 
-    PERSONAL_MAIN_PAGER(301, "个人信息页");
+    PERSONAL_MAIN_PAGER(301, "个人信息页"),
+    PERSONAL_DETAIL_PAGER(302, "个人信息详情页");
 
     private int type;
     private final String desc;

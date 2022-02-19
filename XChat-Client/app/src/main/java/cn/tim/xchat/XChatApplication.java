@@ -4,6 +4,7 @@ import android.app.Application;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.os.Build;
 import android.os.IBinder;
 import android.provider.Settings;
 import android.text.TextUtils;
@@ -22,6 +23,7 @@ import java.util.UUID;
 import cn.tim.xchat.chat.core.WebSocketService;
 import cn.tim.xchat.common.constans.StorageKey;
 import cn.tim.xchat.common.event.TokenEvent;
+import cn.tim.xchat.common.event.WSEvent;
 import cn.tim.xchat.common.utils.MD5Utils;
 import cn.tim.xchat.network.OkHttpUtils;
 import cn.tim.xchat.network.TokenInterceptor;
@@ -51,7 +53,7 @@ public class XChatApplication extends Application {
 
         saveDeviceId();
 
-        if(BuildConfig.DEBUG) {
+        if(!BuildConfig.DEBUG) {
             new DoKit.Builder(this)
                     .productId("4b16245fb438845e09386178c9dda449")
                     .build();
@@ -72,7 +74,15 @@ public class XChatApplication extends Application {
                         tokenInterceptor = new TokenInterceptor(this);
                 }
             }
-            tokenInterceptor.flushToken();
+            String token = tokenInterceptor.flushToken();
+            if(TextUtils.isEmpty(token)) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                    this.getMainExecutor().execute(()->
+                            ARouter.getInstance()
+                                    .build("/login/main")
+                                    .navigation(this));
+                }
+            }
         }
     }
 

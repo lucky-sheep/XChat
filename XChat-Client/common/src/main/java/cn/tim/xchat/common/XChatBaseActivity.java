@@ -36,12 +36,16 @@ public abstract class XChatBaseActivity extends AppCompatActivity {
         setTheme(R.style.Theme_MaterialComponents_DayNight_NoActionBar);
         super.setContentView(layoutResID);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-            getNotchParams();
+            getNotchParams(50);
         }
     }
 
+    /**
+     * 距离顶部默认距离 ——> 安全距离
+     * @param defaultTopMargin 默认值
+     */
     @RequiresApi(api = Build.VERSION_CODES.P)
-    public void getNotchParams() {
+    public void getNotchParams(int defaultTopMargin) {
         final View decorView = getWindow().getDecorView();
         ViewGroup contentView = getContentView();
         if(contentView instanceof FrameLayout) {
@@ -56,7 +60,7 @@ public abstract class XChatBaseActivity extends AppCompatActivity {
                     layoutParams.topMargin = displayCutout.getSafeInsetTop();
                 } else {
                     // 默认设置为0即可
-                    layoutParams.topMargin = DensityUtil.dp2px(0);
+                    layoutParams.topMargin = DensityUtil.dp2px(defaultTopMargin);
                 }
                 frameLayout.setLayoutParams(layoutParams);
             });

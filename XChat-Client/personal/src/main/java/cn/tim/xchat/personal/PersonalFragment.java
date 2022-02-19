@@ -1,6 +1,5 @@
 package cn.tim.xchat.personal;
 
-import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -31,7 +30,7 @@ public class PersonalFragment extends Fragment {
     }
 
     private void initView(View view) {
-        String username = mmkv.getString(StorageKey.USERNAME_KEY, "X");
+        String username = mmkv.getString(StorageKey.USERNAME_KEY, "XX");
         AvatarImageView headerIv = view.findViewById(R.id.personal_main_header_iv);
         TextView userIdTv = view.findViewById(R.id.personal_main_userid);
         TextView userNameTv = view.findViewById(R.id.personal_main_username);
@@ -41,7 +40,7 @@ public class PersonalFragment extends Fragment {
         assert username != null;
         userNameTv.setText(username);
         userIdTv.setText(mmkv.getString(StorageKey.USERID_KEY, ""));
-        headerIv.setTextAndColor(username.substring(0, 1), Color.BLACK);
+        headerIv.setTextAndColor(username.substring(0, 2), Color.BLACK);
         qrCodeBtn.setOnClickListener(v -> {
 
         });

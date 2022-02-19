@@ -28,6 +28,7 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/common_base_titlebar_right_all"
         android:layout_alignParentEnd="true"
         android:orientation="horizontal"
         android:layout_width="wrap_content"
