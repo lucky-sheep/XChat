@@ -76,7 +76,7 @@ public class XWebSocketClient extends WebSocketClient {
     @Override
     public void onError(Exception ex) {
         EventBus.getDefault().postSticky(new WSEvent(WSEvent.Type.DISCONNECTED));
-        Log.e(TAG, "onError()");
+        //Log.e(TAG, "onError()");
         // 如果存在心跳连接，则取消心跳任务
         if(timer != null) timer.cancel();
         if(retry.get()) {
@@ -90,7 +90,7 @@ public class XWebSocketClient extends WebSocketClient {
         TimerTask keepAliveTask = new TimerTask() {
             @Override
             public void run() {
-                Log.d(TAG, "send keepAlive msg, " + (i.getAndIncrement()) + ", isOpen() = " + isOpen() + ", keepAlive.toByteArray().length = " + keepAlive.toByteArray().length);
+                //Log.d(TAG, "send keepAlive msg, " + (i.getAndIncrement()) + ", isOpen() = " + isOpen() + ", keepAlive.toByteArray().length = " + keepAlive.toByteArray().length);
                 if(isOpen()) {
                     BinaryFrame binaryFrame = new BinaryFrame();
                     binaryFrame.setPayload(ByteBuffer.wrap(keepAlive.toByteArray()));
@@ -98,7 +98,7 @@ public class XWebSocketClient extends WebSocketClient {
                 }
             }
         };
-        timer.schedule(keepAliveTask, 2_000, 2_000);
+        timer.schedule(keepAliveTask, 2_000, 10_000);
     }
 
     static DataContentSerializer.DataContent keepAlive =

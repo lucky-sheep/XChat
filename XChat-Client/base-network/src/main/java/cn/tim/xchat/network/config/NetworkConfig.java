@@ -8,4 +8,8 @@ public interface NetworkConfig {
     String USER_LOGIN_URL = "/user/login";
 
     String USER_REGISTER_URL = "/user/register";
+
+    String GET_FRIENDS_URL = "/friend/list";
+
+    String REQUEST_FRIENDS_URL = "/friend/request";
 }

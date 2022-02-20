@@ -28,7 +28,7 @@
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             app:boxStrokeColor="@color/black"
             app:boxStrokeWidth="2dp"
-            android:hint="用户名 (仅英文和数字)"
+            android:hint="用户名"
 
             app:errorIconDrawable="@drawable/icon_login_error_input_tips"
             app:errorEnabled="true"
@@ -43,7 +43,7 @@
             app:hintTextColor="@color/grayness_200">
             <EditText
                 android:id="@+id/login_username_et"
-                android:text="zouchanglin"
+                android:text="邹长林"
                 android:drawableStart="@drawable/icon_login_username"
                 android:drawablePadding="10dp"
                 android:layout_width="match_parent"

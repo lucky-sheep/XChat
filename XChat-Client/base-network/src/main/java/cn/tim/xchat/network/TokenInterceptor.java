@@ -16,6 +16,8 @@ import com.tencent.mmkv.MMKV;
 import org.greenrobot.eventbus.EventBus;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -30,6 +32,8 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
+import okio.Buffer;
+import okio.BufferedSource;
 
 public class TokenInterceptor implements Interceptor {
     private static final String TAG = "TokenInterceptor";
@@ -74,6 +78,27 @@ public class TokenInterceptor implements Interceptor {
         request = chain.request().newBuilder()
                 .addHeader("token", token)
                 .build();
+//        return chain.proceed(request);
+
+        // 下面为了应对服务端Token失效
+        Response response = chain.proceed(request);
+        BufferedSource source = response.body().source();
+        Buffer buffer = source.getBuffer();
+        String readString = buffer.clone().readString(StandardCharsets.UTF_8);
+        ResponseModule responseModule = JSON.parseObject(readString, ResponseModule.class);
+        if(responseModule != null && !responseModule.getSuccess()) {
+            if(responseModule.getCode() == 50001) {
+                // 说明Token过期
+                token = flushToken();
+
+                request = chain.request().newBuilder()
+                        .removeHeader("token")
+                        .addHeader("token", token)
+                        .build();
+
+                return chain.proceed(request);
+            }
+        }
         return chain.proceed(request);
     }
 

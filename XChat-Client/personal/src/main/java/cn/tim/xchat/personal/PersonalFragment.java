@@ -40,7 +40,7 @@ public class PersonalFragment extends Fragment {
         assert username != null;
         userNameTv.setText(username);
         userIdTv.setText(mmkv.getString(StorageKey.USERID_KEY, ""));
-        headerIv.setTextAndColor(username.substring(0, 3), Color.BLACK);
+        headerIv.setTextAndColor(username.substring(0, 1), Color.BLACK);
         qrCodeBtn.setOnClickListener(v -> {
 
         });

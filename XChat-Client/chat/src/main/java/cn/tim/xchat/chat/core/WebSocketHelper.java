@@ -15,6 +15,7 @@ import cn.tim.xchat.common.constans.StorageKey;
 import cn.tim.xchat.common.event.NetworkStateEvent;
 import cn.tim.xchat.common.event.TokenEvent;
 import cn.tim.xchat.common.event.WSEvent;
+import cn.tim.xchat.common.task.ThreadManager;
 
 public class WebSocketHelper {
     public static WebSocketHelper instance;
@@ -39,7 +40,7 @@ public class WebSocketHelper {
     }
 
     public void launchWebSocket(){
-        new Thread(this::launchHandle).start();
+        ThreadManager.getInstance().runTask(this::launchHandle);
     }
 
     private void launchHandle(){
@@ -60,11 +61,14 @@ public class WebSocketHelper {
         if(socketClient != null) socketClient.close();
     }
 
+    // TODO 这一块的逻辑可能需要重新写
     @Subscribe(threadMode = ThreadMode.BACKGROUND)
     public void onTokenEvent(TokenEvent event){
         if(event.getType().equals(TokenEvent.TokenType.TOKEN_REFRESH)) {
-            if(socketClient != null) socketClient.close();
-            launchWebSocket();
+            if(socketClient != null) {
+                socketClient.close();
+                launchWebSocket();
+            }
         }
     }
 

@@ -2,7 +2,7 @@
 <selector xmlns:tools="http://schemas.android.com/tools"
     xmlns:android="http://schemas.android.com/apk/res/android"
     tools:ignore="MissingDefaultResource">
-    <item android:color="#e65140" android:state_checked="true" />
+    <item android:color="#5C6BC0" android:state_checked="true" />
     <!-- #666566 -->
     <item android:color="#B2666566" android:state_checked="false" />
 </selector>

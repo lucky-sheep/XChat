@@ -24,6 +24,7 @@ import com.tencent.mmkv.MMKV;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+import org.litepal.LitePal;
 
 import java.util.UUID;
 
@@ -31,6 +32,7 @@ import cn.tim.xchat.chat.core.WebSocketService;
 import cn.tim.xchat.common.constans.StorageKey;
 import cn.tim.xchat.common.event.NetworkStateEvent;
 import cn.tim.xchat.common.event.TokenEvent;
+import cn.tim.xchat.common.task.ThreadManager;
 import cn.tim.xchat.common.utils.MD5Utils;
 import cn.tim.xchat.common.widget.toast.XChatToast;
 import cn.tim.xchat.network.OkHttpUtils;
@@ -72,8 +74,9 @@ public class XChatApplication extends Application {
 
         EventBus.getDefault().register(this);
         registerNetStateListener();
-
-        new Thread(this::startWebSocketService).start();
+        // 初始化ROM
+        LitePal.initialize(this);
+        ThreadManager.getInstance().runTask(this::startWebSocketService);
     }
 
 

@@ -152,7 +152,7 @@ public class MainActivityLogic implements DefaultLifecycleObserver {
     private void setupViewPager(ViewPager2 viewPager) {
         Fragment[] fragments = new Fragment[]{
                 new MessageListFragment(),
-                new ContactsFragment(),
+                new ContactsFragment(baseTitleBar),
                 new PersonalFragment()
         };
         FragmentStateAdapter stateAdapter = new FragmentStateAdapter

@@ -23,6 +23,6 @@ public class UserLoginForm {
 
     @ApiModelProperty(value = "用户名")
     @NotEmpty(message = "缺失用户名")
-    @Length(min=5, max=15, message = "用户名长度请保持在5-15个字符")
+    @Length(min=2, max=15, message = "用户名长度请保持在2-15个字符")
     private String username;
 }

@@ -40,7 +40,7 @@ public class PersonalDetailActivity extends XChatBaseActivity {
         titleBar.autoChangeByType(TitleBarType.PERSONAL_DETAIL_PAGER);
         titleBar.getBackBtn().setOnClickListener(v -> finish());
         UserInfo userInfo = UserUtil.get();
-        avatarIv.setTextAndColor(userInfo.getUsername().substring(0, 3), Color.BLACK);
+        avatarIv.setTextAndColor(userInfo.getUsername().substring(0, 1), Color.BLACK);
         unameTv.setText(userInfo.getUsername());
         emailTv.setText(userInfo.getEmail());
         clientTv.setText(userInfo.getClientId());

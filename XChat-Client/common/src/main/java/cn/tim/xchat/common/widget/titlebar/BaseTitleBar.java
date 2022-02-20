@@ -14,14 +14,14 @@ import cn.tim.xchat.common.R;
 
 public class BaseTitleBar extends RelativeLayout implements TitleBarFun {
 
-    protected ImageView backBtn;
-    protected TextView descTv;
-    protected TextView centerTitle;
-    protected ImageView findBtn;
-    protected ImageView addBtn;
-    protected ImageView menuBtn;
-    protected RelativeLayout titleBarView;
-    protected LinearLayout rightAll;
+    public ImageView backBtn;
+    public TextView descTv;
+    public TextView centerTitle;
+    public ImageView findBtn;
+    public ImageView addBtn;
+    public ImageView menuBtn;
+    public RelativeLayout titleBarView;
+    public LinearLayout rightAll;
 
     public BaseTitleBar(Context context) {
         this(context, null);
@@ -56,6 +56,11 @@ public class BaseTitleBar extends RelativeLayout implements TitleBarFun {
             case CONTACTS_MAIN_PAGER:
                 descTv.setText("通讯录");
                 backBtn.setVisibility(GONE);
+                menuBtn.setVisibility(GONE);
+                break;
+            case CONTACTS_FRIEND_INFO:
+                descTv.setVisibility(GONE);
+                rightAll.setVisibility(GONE);
                 break;
             case PERSONAL_MAIN_PAGER:
                 titleBarView.setVisibility(INVISIBLE);

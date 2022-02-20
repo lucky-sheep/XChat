@@ -3,10 +3,7 @@ package cn.tim.xchat.entity;
 import lombok.*;
 import org.hibernate.Hibernate;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.Objects;
 
 @Getter
@@ -14,7 +11,9 @@ import java.util.Objects;
 @ToString
 @RequiredArgsConstructor
 @Entity
-@Table(name = "my_friends")
+@Table(name = "my_friends", indexes = {
+        @Index(name = "myuserid_index", columnList = "my_user_id", unique = false),
+})
 public class MyFriend {
     @Id
     @Column(name = "id", nullable = false, length = 64)
@@ -25,6 +24,10 @@ public class MyFriend {
 
     @Column(name = "my_friend_id", nullable = false, length = 64)
     private String myFriendId;
+
+    // 备注名
+    @Column(name = "notes", length = 64)
+    private String notes;
 
     @Override
     public boolean equals(Object o) {

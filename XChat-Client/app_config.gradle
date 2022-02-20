@@ -61,7 +61,8 @@ ext {
             "AvatarImageView": 'cn.carbs.android:AvatarImageView:1.0.4',
             "WebSocket": "org.java-websocket:Java-WebSocket:1.5.2",
             "eventbus": "org.greenrobot:eventbus:3.1.1",
-            //"netty": "io.netty:netty-all:4.1.73.Final"
+            "litepal": "org.litepal.android:core:2.0.0",
+            "glide":"com.github.bumptech.glide:glide:4.12.0"
     ]
 
     app_annotationProcessors = [

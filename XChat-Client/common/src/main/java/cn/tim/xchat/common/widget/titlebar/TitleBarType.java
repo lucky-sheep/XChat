@@ -6,9 +6,11 @@ public enum TitleBarType {
     MESSAGE_CHAT_TARGET_INFO(103, "聊天对象信息页"),
 
     CONTACTS_MAIN_PAGER(201, "联系人主页"),
+    CONTACTS_FRIEND_INFO(202, "联系人详情"),
 
     PERSONAL_MAIN_PAGER(301, "个人信息页"),
     PERSONAL_DETAIL_PAGER(302, "个人信息详情页");
+
 
     private int type;
     private final String desc;
