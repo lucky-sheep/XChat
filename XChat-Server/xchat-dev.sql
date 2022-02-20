@@ -46,18 +46,24 @@ CREATE TABLE `friend_request` (
 
 /*Data for the table `friend_request` */
 
+insert  into `friend_request`(`id`,`send_user_id`,`accept_user_id`,`request_datetime`) values ('211419008','210507275','211331714','2022-02-20 16:31:01');
+
 /*Table structure for table `my_friends` */
 
 DROP TABLE IF EXISTS `my_friends`;
 
 CREATE TABLE `my_friends` (
-  `id` varchar(64) NOT NULL,
-  `my_user_id` varchar(64) NOT NULL,
+  `id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+  `my_user_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
   `my_friend_id` varchar(64) NOT NULL,
-  PRIMARY KEY (`id`)
+  `notes` varchar(64) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  FULLTEXT KEY `myuserid_index` (`my_user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
 /*Data for the table `my_friends` */
+
+insert  into `my_friends`(`id`,`my_user_id`,`my_friend_id`,`notes`) values ('211302712','210507275','211331712','BBQ'),('211302713','210507275','211331713',NULL),('211331714','211331712','210507275','老李'),('211331715','211331713','210507275',NULL);
 
 /*Table structure for table `user_info` */
 
@@ -80,7 +86,7 @@ CREATE TABLE `user_info` (
 
 /*Data for the table `user_info` */
 
-insert  into `user_info`(`id`,`username`,`email`,`password`,`client_id`,`face_image`,`face_image_big`,`nickname`,`qrcode`) values ('210507275','zouchanglin','zchanglin@aliyun.com','e10adc3949ba59abbe56e057f20f883e','106306a1ba1320106fc03ddcd80be98b',NULL,NULL,NULL,NULL),('210555904','zouchanglin2','zchanglin2@aliyun.com','e10adc3949ba59abbe56e057f20f883e','106306a1ba1320106fc03ddcd80be98b',NULL,NULL,NULL,NULL);
+insert  into `user_info`(`id`,`username`,`email`,`password`,`client_id`,`face_image`,`face_image_big`,`nickname`,`qrcode`) values ('210507275','邹长林','zchanglin@aliyun.com','e10adc3949ba59abbe56e057f20f883e','106306a1ba1320106fc03ddcd80be98b',NULL,NULL,NULL,NULL),('211331712','张三','zhangsan@aliyun.com','e10adc3949ba59abbe56e057f20f883e','a6dbf34690b693bfd2b8612d769fd8b2','https://zouchanglin.cn/images/avatar.png',NULL,NULL,NULL),('211331713','李四','lisi@aliyun.com','e10adc3949ba59abbe56e057f20f883e','a6dbf34690b693bfd2b8612d769fd8b2',NULL,NULL,NULL,NULL),('211331714','小可爱','lilililala@qq.com','e10adc3949ba59abbe56e057f20f883e','a6dbf34690b693bfd2b8612d769fd8b2','https://zouchanglin.cn/images/avatar.png',NULL,NULL,NULL);
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
