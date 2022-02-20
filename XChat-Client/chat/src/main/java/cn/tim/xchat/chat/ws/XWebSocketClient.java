@@ -3,6 +3,7 @@ package cn.tim.xchat.chat.ws;
 import android.util.Log;
 
 import com.google.protobuf.InvalidProtocolBufferException;
+import com.tencent.mmkv.MMKV;
 
 import org.greenrobot.eventbus.EventBus;
 import org.java_websocket.client.WebSocketClient;
@@ -18,6 +19,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import cn.tim.xchat.chat.msg.MsgActionEnum;
 
+import cn.tim.xchat.common.constans.StorageKey;
 import cn.tim.xchat.common.event.TokenEvent;
 import cn.tim.xchat.common.event.WSEvent;
 import cn.tim.xchat.core.model.DataContentSerializer;
@@ -36,7 +38,8 @@ public class XWebSocketClient extends WebSocketClient {
     public void onOpen(ServerHandshake handshakeData) {
         Log.e(TAG, "onOpen()");
         sendKeepAliveMsg();
-        EventBus.getDefault().post(new WSEvent(WSEvent.Type.CONN_SUCCESS));
+        EventBus.getDefault().postSticky(new WSEvent(WSEvent.Type.CONNECTED));
+//        MMKV.defaultMMKV().putBoolean(StorageKey.WEB_SOCKET_STATUS, true);
     }
 
     @Override
@@ -64,18 +67,20 @@ public class XWebSocketClient extends WebSocketClient {
         if(remote) {
             EventBus.getDefault().post(new TokenEvent(TokenEvent.TokenType.TOKEN_OVERDUE));
         }else {
-            reconnect();
             retry.set(true);
+            reconnect();
         }
+        EventBus.getDefault().postSticky(new WSEvent(WSEvent.Type.DISCONNECTED));
     }
 
     @Override
     public void onError(Exception ex) {
+        EventBus.getDefault().postSticky(new WSEvent(WSEvent.Type.DISCONNECTED));
         Log.e(TAG, "onError()");
         // 如果存在心跳连接，则取消心跳任务
         if(timer != null) timer.cancel();
-        if(retry.get()) { // 已经重试过了
-            EventBus.getDefault().post(new WSEvent(WSEvent.Type.DIS_CONN));
+        if(retry.get()) {
+            Log.e(TAG, "onError: 已经尝试重连仍然失败");
         }
     }
 

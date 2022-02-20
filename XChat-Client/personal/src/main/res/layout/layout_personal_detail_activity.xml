@@ -210,7 +210,7 @@
         android:id="@+id/personal_detail_user_logout"
         android:text="退出登录"
         android:textColor="@color/white"
-        android:backgroundTint="@color/purple_500"
+        android:backgroundTint="#A60E0D0E"
         app:icon="@drawable/icon_personal_logout"
         app:iconGravity="textStart"
         app:cornerRadius="20dp"

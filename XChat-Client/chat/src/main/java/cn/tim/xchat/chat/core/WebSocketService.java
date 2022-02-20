@@ -23,12 +23,12 @@ public class WebSocketService extends Service {
     private final static String CHANNEL_NAME = "XChat";
     private final static int GRAY_SERVICE_ID = 1001;
     public final static int NOTIFY_ID = 10080;
-    private WebSocketClientBinder mBinder = new WebSocketClientBinder();
+    private final WebSocketClientBinder mBinder = new WebSocketClientBinder();
     private final WebSocketHelper webSocketHelper;
     private Notification notification;
 
     public WebSocketService() {
-        webSocketHelper = new WebSocketHelper();
+        webSocketHelper = WebSocketHelper.getInstance();
     }
 
     @Override
@@ -43,8 +43,8 @@ public class WebSocketService extends Service {
             startForeground(GRAY_SERVICE_ID, new Notification());
             stopForeground(true);
             stopSelf();
-//            return super.onStartCommand(intent, flags, startId);
-            return Service.START_CONTINUATION_MASK;
+//            return Service.START_CONTINUATION_MASK;
+            return START_STICKY;
         }
 
         @Override

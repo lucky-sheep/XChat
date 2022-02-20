@@ -1,5 +1,6 @@
 package cn.tim.xchat.common;
 
+import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -24,7 +25,6 @@ public abstract class XChatBaseActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         // 设置沉浸式状态栏
         StatusBarUtil.setStatusBarFullTransparent(this);
@@ -33,7 +33,7 @@ public abstract class XChatBaseActivity extends AppCompatActivity {
 
     @Override
     public void setContentView(int layoutResID) {
-        setTheme(R.style.Theme_MaterialComponents_DayNight_NoActionBar);
+        setTheme(R.style.Theme_XChatClient);
         super.setContentView(layoutResID);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
             getNotchParams(50);

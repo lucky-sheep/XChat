@@ -4,20 +4,17 @@ package cn.tim.xchat.personal;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.alibaba.android.arouter.facade.annotation.Route;
 import com.alibaba.android.arouter.launcher.ARouter;
 import com.google.android.material.button.MaterialButton;
-import com.tencent.mmkv.MMKV;
 
 import org.greenrobot.eventbus.EventBus;
 
 import cn.carbs.android.avatarimageview.library.AvatarImageView;
 import cn.tim.xchat.common.XChatBaseActivity;
-import cn.tim.xchat.common.constans.StorageKey;
 import cn.tim.xchat.common.event.WSEvent;
 import cn.tim.xchat.common.module.UserInfo;
 import cn.tim.xchat.common.utils.ext.UserUtil;
@@ -41,9 +38,9 @@ public class PersonalDetailActivity extends XChatBaseActivity {
 
         BaseTitleBar titleBar = findViewById(R.id.personal_detail_titlebar);
         titleBar.autoChangeByType(TitleBarType.PERSONAL_DETAIL_PAGER);
-
+        titleBar.getBackBtn().setOnClickListener(v -> finish());
         UserInfo userInfo = UserUtil.get();
-        avatarIv.setTextAndColor(userInfo.getUsername().substring(0, 2), Color.BLACK);
+        avatarIv.setTextAndColor(userInfo.getUsername().substring(0, 3), Color.BLACK);
         unameTv.setText(userInfo.getUsername());
         emailTv.setText(userInfo.getEmail());
         clientTv.setText(userInfo.getClientId());
@@ -51,7 +48,7 @@ public class PersonalDetailActivity extends XChatBaseActivity {
 
         logoutBtn.setOnClickListener(v -> {
             UserUtil.clear();
-            EventBus.getDefault().post(new WSEvent(WSEvent.Type.ACTIVE_CLOSE));
+            EventBus.getDefault().post(new WSEvent(WSEvent.Type.DISCONNECTED_BY_USER));
             // 清除Activity栈
             ARouter.getInstance()
                     .build("/login/main")

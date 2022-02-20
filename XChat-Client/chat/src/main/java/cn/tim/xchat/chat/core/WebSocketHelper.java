@@ -4,36 +4,38 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.tencent.mmkv.MMKV;
-
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.net.URI;
-import java.util.List;
-import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
-
 import cn.tim.xchat.chat.BuildConfig;
-import cn.tim.xchat.chat.msg.MsgActionEnum;
-//import cn.tim.xchat.chat.ws.WebSocketManager;
 import cn.tim.xchat.chat.ws.XWebSocketClient;
 import cn.tim.xchat.common.constans.StorageKey;
+import cn.tim.xchat.common.event.NetworkStateEvent;
 import cn.tim.xchat.common.event.TokenEvent;
 import cn.tim.xchat.common.event.WSEvent;
-import cn.tim.xchat.core.model.DataContentSerializer;
 
 public class WebSocketHelper {
+    public static WebSocketHelper instance;
+
     private static final String TAG = "WebSocketHelper";
-    private TimerTask keepAliveTask;
     private static final MMKV mmkv = MMKV.defaultMMKV();
     private XWebSocketClient socketClient;
 
-    public WebSocketHelper() {
+    private WebSocketHelper(){
         EventBus.getDefault().register(this);
+    }
+
+    public static WebSocketHelper getInstance(){
+        if(instance == null) {
+            synchronized (WebSocketHelper.class){
+                if(instance == null) {
+                    instance = new WebSocketHelper();
+                }
+            }
+        }
+        return instance;
     }
 
     public void launchWebSocket(){
@@ -66,10 +68,23 @@ public class WebSocketHelper {
         }
     }
 
+    @Subscribe(threadMode = ThreadMode.BACKGROUND)
     public void onWSEvent(WSEvent event){
-        if(WSEvent.Type.ACTIVE_CLOSE.equals(event.getType())) {
+        if(WSEvent.Type.DISCONNECTED_BY_USER.equals(event.getType())) {
             if(socketClient != null) socketClient.close();
+            Log.e(TAG, "onWSEvent: 用户主动登出-> WebSocket关闭");
             stopWebSocket();
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.BACKGROUND)
+    public void onNetStateEvent(NetworkStateEvent event){
+        if(NetworkStateEvent.Type.AVAILABLE.equals(event.getType())) {
+            Log.e(TAG, "onNetStateEvent: 检测到网络恢复");
+            // 网络变为可用的时候，重新启动 WebSocket
+            if(socketClient != null && socketClient.isClosed()){
+                launchHandle();
+            }
         }
     }
 

@@ -2,6 +2,7 @@ package cn.tim.xchat;
 
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Gravity;
 
 import androidx.annotation.NonNull;
@@ -9,16 +10,28 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.DefaultLifecycleObserver;
 import androidx.lifecycle.LifecycleOwner;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.google.android.material.bottomnavigation.BottomNavigationItemView;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.tencent.mmkv.MMKV;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
+import java.util.Objects;
 
 import cn.tim.xchat.chat.MessageListFragment;
+import cn.tim.xchat.common.constans.StorageKey;
+import cn.tim.xchat.common.event.WSEvent;
 import cn.tim.xchat.common.widget.titlebar.BaseTitleBar;
 import cn.tim.xchat.common.widget.titlebar.TitleBarType;
 import cn.tim.xchat.contacts.ContactsFragment;
+import cn.tim.xchat.mvvm.MainViewModel;
 import cn.tim.xchat.personal.PersonalFragment;
 import q.rorbin.badgeview.QBadgeView;
 
@@ -27,13 +40,20 @@ public class MainActivityLogic implements DefaultLifecycleObserver {
     protected ActivityProvider activityProvider;
     protected Bundle savedStateBundle;
     protected String currentTab;
+    private BaseTitleBar baseTitleBar;
+
+    private static final String TAG = "MainActivityLogic";
+    private final MMKV mmkv;
+    private MainViewModel mainViewModel;
 
     public MainActivityLogic(MainActivity activity,
                              Bundle savedInstanceState,
                              String tab) {
         activityProvider = activity;
         savedStateBundle = savedInstanceState;
-        currentTab = tab;
+        currentTab = (tab == null ? "chat":tab);
+        mmkv = MMKV.defaultMMKV();
+        baseTitleBar = activityProvider.findViewById(R.id.app_main_titlebar);
     }
 
     @Override
@@ -69,7 +89,6 @@ public class MainActivityLogic implements DefaultLifecycleObserver {
             return true;
         });
 
-        BaseTitleBar baseTitleBar = activityProvider.findViewById(R.id.app_main_titlebar);
         viewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
             @Override
             public void onPageSelected(int position) {
@@ -92,6 +111,10 @@ public class MainActivityLogic implements DefaultLifecycleObserver {
         });
 
         selectTabByName(viewPager, bottomNavView, baseTitleBar);
+        mainViewModel = new ViewModelProvider(activityProvider.getActivity()).get(MainViewModel.class);
+        mainViewModel.status.observe(activityProvider.getActivity(), type -> {
+            if(currentTab.equals("chat")) baseTitleBar.setDescText(type.getName());
+        });
     }
 
     private void selectTabByName(ViewPager2 viewPager,
@@ -111,6 +134,16 @@ public class MainActivityLogic implements DefaultLifecycleObserver {
                 type = TitleBarType.PERSONAL_MAIN_PAGER;
             }
         }
+
+        if(navItemId == R.id.tab_menu_chat){
+            if(mainViewModel != null) {
+                baseTitleBar.setDescText(Objects.requireNonNull(
+                        mainViewModel.status.getValue()).getName());
+            }else {
+                baseTitleBar.setDescText("");
+            }
+        }
+
         if(bottomNavView != null) bottomNavView.setSelectedItemId(navItemId);
         if(viewPager != null) viewPager.setCurrentItem(itemIndex);
         if(baseTitleBar != null) baseTitleBar.autoChangeByType(type);
@@ -136,5 +169,9 @@ public class MainActivityLogic implements DefaultLifecycleObserver {
             }
         };
         viewPager.setAdapter(stateAdapter);
+    }
+
+    @Override
+    public void onDestroy(@NonNull LifecycleOwner owner) {
     }
 }

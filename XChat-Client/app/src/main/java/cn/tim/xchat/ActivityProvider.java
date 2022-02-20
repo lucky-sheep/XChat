@@ -7,6 +7,8 @@ import android.view.Window;
 
 import androidx.annotation.IdRes;
 import androidx.annotation.StringRes;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 
 public interface ActivityProvider {
@@ -21,7 +23,7 @@ public interface ActivityProvider {
 
     Window getWindow();
 
-    Activity getActivity();
+    AppCompatActivity getActivity();
 
     void postRunnable(Runnable runnable);
 

@@ -114,8 +114,8 @@ public class TokenInterceptor implements Interceptor {
                 return token;
             }
         } catch (IOException | JSONException e) {
-            Log.e(TAG, "========= 自动获取Token失败: 服务器故障, 联系管理员 zchanglin@163.com ========");
             EventBus.getDefault().post(new TokenEvent(TokenEvent.TokenType.SERVER_ERROR));
+            return "SERVER_ERROR";
         }
         return null;
     }

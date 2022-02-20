@@ -1,14 +1,21 @@
 package cn.tim.xchat;
 
+import android.annotation.SuppressLint;
 import android.app.Application;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.net.ConnectivityManager;
+import android.net.Network;
+import android.net.NetworkRequest;
 import android.os.Build;
 import android.os.IBinder;
 import android.provider.Settings;
 import android.text.TextUtils;
 import android.util.Log;
+
+import androidx.annotation.NonNull;
 
 import com.alibaba.android.arouter.launcher.ARouter;
 import com.didichuxing.doraemonkit.DoKit;
@@ -22,22 +29,26 @@ import java.util.UUID;
 
 import cn.tim.xchat.chat.core.WebSocketService;
 import cn.tim.xchat.common.constans.StorageKey;
+import cn.tim.xchat.common.event.NetworkStateEvent;
 import cn.tim.xchat.common.event.TokenEvent;
-import cn.tim.xchat.common.event.WSEvent;
 import cn.tim.xchat.common.utils.MD5Utils;
+import cn.tim.xchat.common.widget.toast.XChatToast;
 import cn.tim.xchat.network.OkHttpUtils;
 import cn.tim.xchat.network.TokenInterceptor;
 
 public class XChatApplication extends Application {
     private WebSocketService.WebSocketClientBinder webSocketClientBinder;
     private static final String TAG = "XChatApplication";
-    private MMKV mmkv;
     private TokenInterceptor tokenInterceptor;
 
+    /* Application对象的Context不会有内存泄露的问题 */
+    @SuppressLint("StaticFieldLeak")
+    private static Context context;
 
     @Override
     public void onCreate() {
         super.onCreate();
+        context = this;
         if (BuildConfig.DEBUG) {
             ARouter.openLog();
             ARouter.openDebug();
@@ -60,6 +71,8 @@ public class XChatApplication extends Application {
         }
 
         EventBus.getDefault().register(this);
+        registerNetStateListener();
+
         new Thread(this::startWebSocketService).start();
     }
 
@@ -82,6 +95,11 @@ public class XChatApplication extends Application {
                                     .build("/login/main")
                                     .navigation(this));
                 }
+            }
+        }else if(TokenEvent.TokenType.SERVER_ERROR.equals(tokenEvent.getType())){
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                this.getMainExecutor().execute(()->
+                        XChatToast.INSTANCE.showToast(this, "网络出了点小问题"));
             }
         }
     }
@@ -115,5 +133,32 @@ public class XChatApplication extends Application {
         Log.i(ActivityProvider.TAG, "deviceId = " + deviceId);
         String deviceIdMd5 = MD5Utils.string2MD5(deviceId);
         MMKV.defaultMMKV().putString(StorageKey.DEVICE_ID_KEY, deviceIdMd5);
+    }
+
+    public static Context getContext(){
+        return context;
+    }
+
+
+    /* 通过 WorkManager获取网络状态 */
+    private void registerNetStateListener(){
+        ConnectivityManager connectivityManager = (ConnectivityManager)
+                context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        connectivityManager.requestNetwork(new NetworkRequest.Builder().build(),
+                new ConnectivityManager.NetworkCallback(){
+                    @Override
+                    public void onAvailable(@NonNull Network network) {
+                        super.onAvailable(network);
+                        Log.i(TAG, "onAvailable: ");
+                        EventBus.getDefault().post(new NetworkStateEvent(NetworkStateEvent.Type.AVAILABLE));
+                    }
+
+                    @Override
+                    public void onUnavailable() {
+                        super.onUnavailable();
+                        Log.i(TAG, "onUnavailable: ");
+                        EventBus.getDefault().post(new NetworkStateEvent(NetworkStateEvent.Type.UNAVAILABLE));
+                    }
+        });
     }
 }

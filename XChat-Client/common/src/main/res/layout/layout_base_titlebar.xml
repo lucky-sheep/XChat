@@ -27,6 +27,20 @@
             tools:text="消息/UserName" />
     </LinearLayout>
 
+    <RelativeLayout
+        android:layout_centerInParent="true"
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/common_base_titlebar_center_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            tools:text="标题" />
+    </RelativeLayout>
+
     <LinearLayout
         android:id="@+id/common_base_titlebar_right_all"
         android:layout_alignParentEnd="true"

@@ -16,6 +16,7 @@ public class BaseTitleBar extends RelativeLayout implements TitleBarFun {
 
     protected ImageView backBtn;
     protected TextView descTv;
+    protected TextView centerTitle;
     protected ImageView findBtn;
     protected ImageView addBtn;
     protected ImageView menuBtn;
@@ -47,7 +48,7 @@ public class BaseTitleBar extends RelativeLayout implements TitleBarFun {
         reset();
         switch (type) {
             case MESSAGE_MAIN_PAGER:
-                descTv.setText("会话列表");
+                //descTv.setText("会话列表");
                 backBtn.setVisibility(GONE);
                 menuBtn.setVisibility(GONE);
                 addBtn.setVisibility(GONE);
@@ -60,6 +61,7 @@ public class BaseTitleBar extends RelativeLayout implements TitleBarFun {
                 titleBarView.setVisibility(INVISIBLE);
                 break;
             case PERSONAL_DETAIL_PAGER:
+                centerTitle.setText("资料详情");
                 rightAll.setVisibility(INVISIBLE);
                 break;
         }
@@ -83,5 +85,14 @@ public class BaseTitleBar extends RelativeLayout implements TitleBarFun {
         addBtn = titleBarView.findViewById(R.id.common_base_titlebar_add_btn);
         menuBtn = titleBarView.findViewById(R.id.common_base_titlebar_menu_btn);
         rightAll = titleBarView.findViewById(R.id.common_base_titlebar_right_all);
+        centerTitle = titleBarView.findViewById(R.id.common_base_titlebar_center_title);
+    }
+
+    public void setDescText(String s) {
+        descTv.setText(s);
+    }
+
+    public ImageView getBackBtn() {
+        return backBtn;
     }
 }
