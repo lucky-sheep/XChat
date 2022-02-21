@@ -38,29 +38,31 @@
                 />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/contact_add_new_friend_submit_btn"
-            android:layout_marginTop="20dp"
-            android:text="申请添加好友"
-            app:iconPadding="10dp"
-            app:icon="@drawable/icon_contacts_send_reqfriend"
-            app:backgroundTint="#EC407A"
-            android:textColor="@color/white"
-            app:cornerRadius="12dp"
-            android:layout_width="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_height="60dp"/>
+        <RelativeLayout
+            android:layout_marginTop="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-<!--        <com.google.android.material.button.MaterialButton-->
-<!--            android:visibility="gone"-->
-<!--            android:layout_marginTop="20dp"-->
-<!--            android:text="发送请求成功"-->
-<!--            app:iconPadding="10dp"-->
-<!--            app:icon="@drawable/icon_contacts_send_reqfriend_ok"-->
-<!--            android:textColor="@color/white"-->
-<!--            app:cornerRadius="12dp"-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_gravity="center_horizontal"-->
-<!--            android:layout_height="60dp"/>-->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/contact_add_new_friend_submit_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="60dp"
+                android:layout_centerInParent="true"
+                android:text="申请添加好友"
+                android:textColor="@color/white"
+                app:backgroundTint="#EC407A"
+                app:cornerRadius="12dp"
+                app:icon="@drawable/icon_contacts_send_reqfriend"
+                app:iconPadding="10dp" />
+            <TextView
+                android:visibility="gone"
+                android:id="@+id/contact_add_new_friend_timeout_close"
+                android:text="10s后自动关闭"
+                android:layout_marginTop="25dp"
+                android:layout_below="@id/contact_add_new_friend_submit_btn"
+                android:layout_centerHorizontal="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+        </RelativeLayout>
     </LinearLayout>
 </RelativeLayout>

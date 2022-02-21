@@ -5,12 +5,13 @@ import android.app.Dialog;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.view.Window;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
@@ -19,16 +20,12 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.google.android.material.button.MaterialButton;
 
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
-
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.Executor;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import cn.tim.xchat.common.widget.toast.XChatToast;
@@ -51,8 +48,7 @@ public class AddFriendDialog extends Dialog {
     private MaterialButton submitBtn;
     private Timer timer = new Timer();
 
-    AtomicInteger count = new AtomicInteger(0);
-    AtomicBoolean clickOnce = new AtomicBoolean(false);
+    private TextView timeoutTips;
 
     public AddFriendDialog(@NonNull Context context, int themeResId) {
         super(context);
@@ -67,11 +63,9 @@ public class AddFriendDialog extends Dialog {
 
         EditText usernameOrEmailEt = findViewById(R.id.contact_add_new_friend_et);
         submitBtn = findViewById(R.id.contact_add_new_friend_submit_btn);
+        timeoutTips = findViewById(R.id.contact_add_new_friend_timeout_close);
 
         submitBtn.setOnClickListener(v -> {
-            // 莫名其妙的BUG
-            if(clickOnce.get()) return; clickOnce.set(true);
-
             nameOrEmail = usernameOrEmailEt.getText().toString().trim();
             if(nameOrEmail.length() < 2 || nameOrEmail.length() > 32) {
                 XChatToast.INSTANCE.showToast(getContext(), "用户名/邮箱长度为2-32");
@@ -85,7 +79,6 @@ public class AddFriendDialog extends Dialog {
     }
 
     private void sendData() {
-        Log.i(TAG, "sendData: count = " + count.getAndIncrement());
         OkHttpClient client = OkHttpUtils.getInstance();
         Map<String, Object> map = new HashMap<>();
         map.put("username", nameOrEmail);
@@ -128,6 +121,7 @@ public class AddFriendDialog extends Dialog {
     private void handleSuccess() {
         Executor mainExecutor = getContext().getMainExecutor();
         mainExecutor.execute(() -> {
+            timeoutTips.setVisibility(View.VISIBLE);
             submitBtn.setIcon(getContext().getResources().getDrawable(
                     R.drawable.icon_contacts_send_reqfriend_ok, null));
             submitBtn.setText("发送成功");
@@ -135,24 +129,25 @@ public class AddFriendDialog extends Dialog {
             setCanceledOnTouchOutside(true);
         });
 
-//        timer.schedule(new TimerTask() {
-//            @Override
-//            public void run() {
-//                mainExecutor.execute(AddFriendDialog.this::dismiss);
-//            }
-//        }, 2500);
-//
-//        AtomicInteger count = new AtomicInteger(3);
-//        timer.schedule(new TimerTask() {
-//            @Override
-//            public void run() {
-//                mainExecutor.execute(()-> {
-//                    if(count.getAndDecrement() > 0){
-//                        // 自动关闭Dialog
-//                    }
-//                });
-//            }
-//        }, 0, 1_000);
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                mainExecutor.execute(AddFriendDialog.this::dismiss);
+            }
+        }, 10_000); // 10s 后自动关闭
+
+        AtomicInteger count = new AtomicInteger(10);
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                mainExecutor.execute(()-> {
+                    if(count.getAndDecrement() > 0){
+                        // 自动关闭Dialog
+                        timeoutTips.setText(count + "s后自动关闭");
+                    }
+                });
+            }
+        }, 1_000, 1_000);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.P)

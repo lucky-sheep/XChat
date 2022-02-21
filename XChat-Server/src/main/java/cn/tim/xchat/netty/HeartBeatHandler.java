@@ -19,14 +19,13 @@ public class HeartBeatHandler extends ChannelInboundHandlerAdapter {
 		// 判断evt是否是IdleStateEvent（用于触发用户事件，包含读空闲/写空闲/读写空闲 ）
 		if (evt instanceof IdleStateEvent) {
 			IdleStateEvent event = (IdleStateEvent)evt;
-
 			if (event.state() == IdleState.READER_IDLE) {
-				log.info("进入读空闲...");
+				log.trace("进入读空闲...");
 			} else if (event.state() == IdleState.WRITER_IDLE) {
-				log.info("进入写空闲...");
+				log.trace("进入写空闲...");
 			} else if (event.state() == IdleState.ALL_IDLE) {
 				Channel channel = ctx.channel();
-				log.info("关闭无用的Channel, Id = " + channel.id());
+				log.debug("关闭无用的Channel, Id = " + channel.id());
 				channel.close();
 			}
 		}
