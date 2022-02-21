@@ -89,6 +89,11 @@ public class MainActivityLogic implements DefaultLifecycleObserver {
             return true;
         });
 
+        mainViewModel = new ViewModelProvider(activityProvider.getActivity()).get(MainViewModel.class);
+        mainViewModel.status.observe(activityProvider.getActivity(), type -> {
+            if(currentTab.equals("chat")) baseTitleBar.setDescText(type.getName());
+        });
+
         viewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
             @Override
             public void onPageSelected(int position) {
@@ -111,10 +116,6 @@ public class MainActivityLogic implements DefaultLifecycleObserver {
         });
 
         selectTabByName(viewPager, bottomNavView, baseTitleBar);
-        mainViewModel = new ViewModelProvider(activityProvider.getActivity()).get(MainViewModel.class);
-        mainViewModel.status.observe(activityProvider.getActivity(), type -> {
-            if(currentTab.equals("chat")) baseTitleBar.setDescText(type.getName());
-        });
     }
 
     private void selectTabByName(ViewPager2 viewPager,

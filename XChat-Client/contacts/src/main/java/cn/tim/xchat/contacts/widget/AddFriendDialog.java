@@ -28,6 +28,7 @@ import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.Executor;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import cn.tim.xchat.common.widget.toast.XChatToast;
@@ -51,6 +52,8 @@ public class AddFriendDialog extends Dialog {
     private Timer timer = new Timer();
 
     AtomicInteger count = new AtomicInteger(0);
+    AtomicBoolean clickOnce = new AtomicBoolean(false);
+
     public AddFriendDialog(@NonNull Context context, int themeResId) {
         super(context);
     }
@@ -66,6 +69,9 @@ public class AddFriendDialog extends Dialog {
         submitBtn = findViewById(R.id.contact_add_new_friend_submit_btn);
 
         submitBtn.setOnClickListener(v -> {
+            // 莫名其妙的BUG
+            if(clickOnce.get()) return; clickOnce.set(true);
+
             nameOrEmail = usernameOrEmailEt.getText().toString().trim();
             if(nameOrEmail.length() < 2 || nameOrEmail.length() > 32) {
                 XChatToast.INSTANCE.showToast(getContext(), "用户名/邮箱长度为2-32");
@@ -126,7 +132,27 @@ public class AddFriendDialog extends Dialog {
                     R.drawable.icon_contacts_send_reqfriend_ok, null));
             submitBtn.setText("发送成功");
             submitBtn.setBackgroundColor(Color.parseColor("#66BB6A"));
+            setCanceledOnTouchOutside(true);
         });
+
+//        timer.schedule(new TimerTask() {
+//            @Override
+//            public void run() {
+//                mainExecutor.execute(AddFriendDialog.this::dismiss);
+//            }
+//        }, 2500);
+//
+//        AtomicInteger count = new AtomicInteger(3);
+//        timer.schedule(new TimerTask() {
+//            @Override
+//            public void run() {
+//                mainExecutor.execute(()-> {
+//                    if(count.getAndDecrement() > 0){
+//                        // 自动关闭Dialog
+//                    }
+//                });
+//            }
+//        }, 0, 1_000);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.P)

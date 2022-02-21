@@ -98,8 +98,10 @@ public class TokenInterceptor implements Interceptor {
 
                 return chain.proceed(request);
             }
+
+            // 其他需要在拦截器里面处理的情况 ADD THIS
         }
-        return chain.proceed(request);
+        return response;
     }
 
     public String flushToken() {

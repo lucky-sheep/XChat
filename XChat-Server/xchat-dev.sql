@@ -2,7 +2,8 @@
 SQLyog Professional v12.09 (64 bit)
 MySQL - 8.0.28 : Database - xchat-dev
 *********************************************************************
-*/
+*/
+
 
 /*!40101 SET NAMES utf8 */;
 
