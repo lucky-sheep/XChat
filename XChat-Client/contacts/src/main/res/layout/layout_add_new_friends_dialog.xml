@@ -45,13 +45,14 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/contact_add_new_friend_submit_btn"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="60dp"
                 android:layout_centerInParent="true"
                 android:text="申请添加好友"
                 android:textColor="@color/white"
                 app:backgroundTint="#EC407A"
                 app:cornerRadius="12dp"
+                app:iconGravity="textStart"
                 app:icon="@drawable/icon_contacts_send_reqfriend"
                 app:iconPadding="10dp" />
             <TextView

@@ -2,11 +2,13 @@ package cn.tim.xchat.netty;
 
 import cn.tim.xchat.constant.RedisConstant;
 import cn.tim.xchat.utils.SpringUtil;
+import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.handler.codec.http.FullHttpRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
@@ -14,7 +16,8 @@ import org.springframework.util.ObjectUtils;
  * 事实证明：最简单的才是最强的！
  */
 @Slf4j
-@Service
+@ChannelHandler.Sharable
+@Component
 public class AuthHandler extends ChannelInboundHandlerAdapter {
 
     @Override

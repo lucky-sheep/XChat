@@ -3,6 +3,7 @@ package cn.tim.xchat.netty;
 import cn.tim.xchat.core.enums.MsgActionEnum;
 import cn.tim.xchat.core.model.DataContentSerializer;
 import io.netty.channel.Channel;
+import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.group.ChannelGroup;
@@ -10,9 +11,12 @@ import io.netty.channel.group.DefaultChannelGroup;
 import io.netty.util.AttributeKey;
 import io.netty.util.concurrent.GlobalEventExecutor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 
 @Slf4j
+@ChannelHandler.Sharable
+@Component
 public class ChatHandlerByProtobuf extends SimpleChannelInboundHandler<DataContentSerializer.DataContent> {
     // 用于记录和管理所有客户端的Channel
     public static ChannelGroup users =
@@ -39,6 +43,7 @@ public class ChatHandlerByProtobuf extends SimpleChannelInboundHandler<DataConte
             currentChannel.attr(userIdAttributeKey).set(senderId);
             UserChannelHelper.online(senderId, currentChannel);
             log.info("用户:" + senderId + "上线, channelId:" + currentChannel.id().asLongText() + ", 开始发送积压消息------->");
+
         } else if (action == MsgActionEnum.CHAT.type) {
         } else if (action == MsgActionEnum.SIGNED.type) {
         } else if (action == MsgActionEnum.KEEPALIVE.type) {

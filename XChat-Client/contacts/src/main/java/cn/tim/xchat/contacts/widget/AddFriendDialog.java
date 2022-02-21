@@ -3,6 +3,7 @@ package cn.tim.xchat.contacts.widget;
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
@@ -123,7 +124,7 @@ public class AddFriendDialog extends Dialog {
         mainExecutor.execute(() -> {
             timeoutTips.setVisibility(View.VISIBLE);
             submitBtn.setIcon(getContext().getResources().getDrawable(
-                    R.drawable.icon_contacts_send_reqfriend_ok, null));
+                    R.drawable.icon_contacts_send_reqfriend_ok));
             submitBtn.setText("发送成功");
             submitBtn.setBackgroundColor(Color.parseColor("#66BB6A"));
             setCanceledOnTouchOutside(true);
@@ -157,7 +158,7 @@ public class AddFriendDialog extends Dialog {
         Executor mainExecutor = getContext().getMainExecutor();
         mainExecutor.execute(() -> {
             submitBtn.setIcon(getContext().getResources().getDrawable(
-                    R.drawable.icon_contacts_send_reqfriend_failed, null));
+                    R.drawable.icon_contacts_send_reqfriend_failed));
             if(errorCode == -1) {
                 submitBtn.setText("网络错误");
             }else {

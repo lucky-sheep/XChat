@@ -27,6 +27,9 @@ public class FriendRequest {
     @Column(name = "accept_user_id", length = 64)
     private String acceptUserId;
 
+    @Column(name = "argee_ret", columnDefinition = "TINYINT", length = 2)
+    private Integer argeeRet;
+
     @Column(name = "request_datetime")
     private Instant requestDatetime;
 

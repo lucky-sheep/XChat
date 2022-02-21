@@ -85,9 +85,10 @@ public class WebSocketHelper {
     public void onNetStateEvent(AppEvent event){
         if(AppEvent.Type.NETWORK_AVAILABLE.equals(event.getType())) {
             Log.e(TAG, "onNetStateEvent: 检测到网络恢复");
-            // 网络变为可用的时候，重新启动 WebSocket
-            if(socketClient != null) socketClient.close();
-            launchHandle();
+            // 网络变为可用的时候，而且WS处于关闭状态的时候，则重新启动 WebSocket
+            if(socketClient != null && socketClient.isClosed()) {
+                launchHandle();
+            }
         }
     }
 
