@@ -5,5 +5,5 @@ import cn.tim.xchat.core.model.DataContentSerializer;
 import java.util.List;
 
 public interface BusinessMsgService {
-    List<DataContentSerializer.DataContent> getUserFriendRequest(String userId);
+    DataContentSerializer.DataContent getUserFriendRequest(String userId);
 }

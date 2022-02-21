@@ -1,6 +1,6 @@
 package cn.tim.xchat.core.model;
 
-import cn.tim.xchat.core.enums.MessagesTypeEnum;
+import cn.tim.xchat.core.enums.MsgTypeEnum;
 import cn.tim.xchat.core.enums.MsgActionEnum;
 import cn.tim.xchat.utils.KeyUtil;
 import com.alibaba.fastjson.JSON;
@@ -26,7 +26,7 @@ public class DataContentSerializerTest {
         DataContentSerializer.DataContent.ChatMessage.Builder msgBuilder
                 = DataContentSerializer.DataContent.ChatMessage.newBuilder();
         DataContentSerializer.DataContent.ChatMessage message = msgBuilder
-                .setType(MessagesTypeEnum.TEXT.ordinal())
+                .setType(MsgTypeEnum.TEXT.ordinal())
                 .setAt("@" + testId)
                 .setReply(testId)
                 .setUrl(url)
@@ -46,7 +46,7 @@ public class DataContentSerializerTest {
 
         start = end;
         ChatMessage chatMessage = new ChatMessage();
-        chatMessage.setType(MessagesTypeEnum.TEXT.ordinal());
+        chatMessage.setType(MsgTypeEnum.TEXT.ordinal());
         chatMessage.setAt("@" + testId);
         chatMessage.setUrl(url);
         chatMessage.setReply(testId);

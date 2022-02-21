@@ -17,6 +17,7 @@ import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import cn.tim.xchat.chat.core.MsgDispatcher;
 import cn.tim.xchat.chat.msg.MsgActionEnum;
 
 import cn.tim.xchat.common.constans.StorageKey;
@@ -55,6 +56,7 @@ public class XWebSocketClient extends WebSocketClient {
             DataContentSerializer.DataContent dataContent =
                     DataContentSerializer.DataContent.parseFrom(byteBuffer.array());
             Log.d(TAG, "onMessage: dataContent = " + dataContent);
+            MsgDispatcher.handProtoMessage(dataContent);
         } catch (InvalidProtocolBufferException e) {
             e.printStackTrace();
         }

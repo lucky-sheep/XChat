@@ -1,9 +1,7 @@
 package cn.tim.xchat;
 
-import android.graphics.Color;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.Gravity;
 
 import androidx.annotation.NonNull;
@@ -11,7 +9,6 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.DefaultLifecycleObserver;
 import androidx.lifecycle.LifecycleOwner;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
@@ -20,15 +17,8 @@ import com.google.android.material.bottomnavigation.BottomNavigationItemView;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.tencent.mmkv.MMKV;
 
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
-
-import java.util.Objects;
-
 import cn.tim.xchat.chat.MessageListFragment;
-import cn.tim.xchat.common.constans.StorageKey;
-import cn.tim.xchat.common.event.WSEvent;
+import cn.tim.xchat.common.XChatBaseActivity;
 import cn.tim.xchat.common.widget.titlebar.BaseTitleBar;
 import cn.tim.xchat.common.widget.titlebar.TitleBarType;
 import cn.tim.xchat.contacts.ContactsFragment;
@@ -38,7 +28,10 @@ import q.rorbin.badgeview.QBadgeView;
 
 public class MainActivityLogic implements DefaultLifecycleObserver {
     protected QBadgeView chatQBadgeView;
-    protected ActivityProvider activityProvider;
+    protected QBadgeView contactQBadgeView;
+//    protected QBadgeView newFriendQBadgeView;
+
+    protected ActivityProvider provider;
     protected Bundle savedStateBundle;
     protected String currentTab;
     private BaseTitleBar baseTitleBar;
@@ -46,36 +39,29 @@ public class MainActivityLogic implements DefaultLifecycleObserver {
     private static final String TAG = "MainActivityLogic";
     private final MMKV mmkv;
     private MainViewModel mainViewModel;
+    private ContactsFragment contactsFragment;
+    private BottomNavigationItemView chat;
+    private BottomNavigationItemView contact;
+    private XChatBaseActivity activity;
 
     public MainActivityLogic(MainActivity activity,
                              Bundle savedInstanceState,
                              String tab) {
-        activityProvider = activity;
+        provider = activity;
         savedStateBundle = savedInstanceState;
         currentTab = (tab == null ? "chat":tab);
         mmkv = MMKV.defaultMMKV();
-        baseTitleBar = activityProvider.findViewById(R.id.app_main_titlebar);
+        baseTitleBar = provider.findViewById(R.id.app_main_titlebar);
+        this.activity = activity;
     }
 
     @Override
     public void onCreate(@NonNull LifecycleOwner owner) {
-        BottomNavigationView bottomNavView = activityProvider.findViewById(R.id.app_main_bottom_navigation);
-        BottomNavigationItemView chat = bottomNavView.findViewById(R.id.tab_menu_chat);
+        BottomNavigationView bottomNavView = provider.findViewById(R.id.app_main_bottom_navigation);
+        chat = bottomNavView.findViewById(R.id.tab_menu_chat);
+        contact = bottomNavView.findViewById(R.id.tab_menu_contact);
 
-        if(chatQBadgeView == null) {
-            chatQBadgeView = new QBadgeView(activityProvider.getActivity());
-        }
-
-        chatQBadgeView.bindTarget(chat)
-                .setBadgeGravity(Gravity.END|Gravity.TOP)
-                .setGravityOffset(20, 0, true)
-                .setBadgeNumber(20)
-                .setBadgeTextSize(9, true)
-                .setOnDragStateChangedListener((dragState, badge, targetView) -> {
-
-                });
-
-        ViewPager2 viewPager = activityProvider.findViewById(R.id.app_main_viewpager);
+        ViewPager2 viewPager = provider.findViewById(R.id.app_main_viewpager);
         setupViewPager(viewPager);
 
         bottomNavView.setOnItemSelectedListener(item -> {
@@ -90,14 +76,15 @@ public class MainActivityLogic implements DefaultLifecycleObserver {
             return true;
         });
 
-        mainViewModel = new ViewModelProvider(activityProvider.getActivity()).get(MainViewModel.class);
-        mainViewModel.status.observe(activityProvider.getActivity(), type -> {
-            if(currentTab.equals("chat")) baseTitleBar.setDescText(type.getName());
-//            if(WSEvent.Type.DISCONNECTED.equals(type)){
-//                baseTitleBar.descTv.setTextColor(Color.parseColor("#FCD81B60"));
-//            }else if(WSEvent.Type.CONNECTED.equals(type)){
-//                baseTitleBar.descTv.setTextColor(Color.parseColor("#F843A047"));
-//            }
+        mainViewModel = new ViewModelProvider(activity).get(MainViewModel.class);
+        mainViewModel.status.observe(activity, type -> {
+            if(currentTab.equals("chat")) {
+                baseTitleBar.setDescText(type.getName());
+            }
+        });
+        
+        mainViewModel.newFriendReqNum.observe(activity, num -> {
+            contactQBadgeView.setBadgeNumber(num);
         });
 
         viewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
@@ -122,6 +109,40 @@ public class MainActivityLogic implements DefaultLifecycleObserver {
         });
 
         selectTabByName(viewPager, bottomNavView, baseTitleBar);
+    }
+
+    @Override
+    public void onStart(@NonNull LifecycleOwner owner) {
+        DefaultLifecycleObserver.super.onStart(owner);
+        initQBadgeView(chat, contact);
+    }
+
+    private void initQBadgeView(BottomNavigationItemView chat,
+                                BottomNavigationItemView contact) {
+
+        chatQBadgeView = new QBadgeView(activity);
+        chatQBadgeView.bindTarget(chat)
+                .setBadgeGravity(Gravity.END|Gravity.TOP)
+                .setGravityOffset(20, 0, true)
+                .setBadgeNumber(20)
+                .setShowShadow(false)
+                .setExactMode(false)
+                .setBadgeTextSize(9, true)
+                .setOnDragStateChangedListener((dragState, badge, targetView) -> {
+
+                });
+
+        contactQBadgeView = new QBadgeView(activity);
+        contactQBadgeView.bindTarget(contact)
+                .setBadgeGravity(Gravity.END|Gravity.TOP)
+                .setGravityOffset(25, 0, true)
+                .setBadgeNumber(0)
+                .setShowShadow(false)
+                .setExactMode(false)
+                .setBadgeTextSize(9, true)
+                .setOnDragStateChangedListener((dragState, badge, targetView) -> {
+
+                });
     }
 
     private void selectTabByName(ViewPager2 viewPager,
@@ -156,13 +177,17 @@ public class MainActivityLogic implements DefaultLifecycleObserver {
     }
 
     private void setupViewPager(ViewPager2 viewPager) {
+        MessageListFragment messageListFragment = new MessageListFragment();
+        contactsFragment = new ContactsFragment(baseTitleBar);
+        PersonalFragment personalFragment = new PersonalFragment();
+
         Fragment[] fragments = new Fragment[]{
-                new MessageListFragment(),
-                new ContactsFragment(baseTitleBar),
-                new PersonalFragment()
+                messageListFragment,
+                contactsFragment,
+                personalFragment
         };
         FragmentStateAdapter stateAdapter = new FragmentStateAdapter
-                ((FragmentActivity) activityProvider.getActivity()) {
+                ((FragmentActivity) activity) {
             @Override
             public int getItemCount() {
                 return fragments.length;

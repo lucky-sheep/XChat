@@ -3,10 +3,7 @@ package cn.tim.xchat.entity;
 import lombok.*;
 import org.hibernate.Hibernate;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.time.Instant;
 import java.util.Objects;
 
@@ -15,7 +12,10 @@ import java.util.Objects;
 @ToString
 @RequiredArgsConstructor
 @Entity
-@Table(name = "friend_request")
+@Table(name = "friend_request", indexes = {
+        @Index(name = "senduser_index", columnList = "send_user_id", unique = false),
+        @Index(name = "acceptuser_index", columnList = "accept_user_id", unique = false),
+})
 public class FriendRequest {
     @Id
     @Column(name = "id", nullable = false, length = 64)

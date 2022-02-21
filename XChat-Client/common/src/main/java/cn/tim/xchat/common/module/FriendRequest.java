@@ -2,7 +2,7 @@ package cn.tim.xchat.common.module;
 
 import org.litepal.crud.LitePalSupport;
 
-public class FriendInfo extends LitePalSupport {
+public class FriendRequest extends LitePalSupport {
     private String itemId;
     private String userId;
     private String username;
@@ -11,18 +11,17 @@ public class FriendInfo extends LitePalSupport {
     private String faceImage;
     private String faceBigImage;
     private String qrCode;
-    private String notes;
+    private int argeeState;
 
-    public FriendInfo(){
-
-    }
-
-    public void setItemId(String itemId) {
-        this.itemId = itemId;
+    public FriendRequest() {
     }
 
     public String getItemId() {
         return itemId;
+    }
+
+    public void setItemId(String itemId) {
+        this.itemId = itemId;
     }
 
     public String getUserId() {
@@ -81,11 +80,12 @@ public class FriendInfo extends LitePalSupport {
         this.qrCode = qrCode;
     }
 
-    public String getNotes() {
-        return notes;
+
+    public int getArgeeState() {
+        return argeeState;
     }
 
-    public void setNotes(String notes) {
-        this.notes = notes;
+    public void setArgeeState(int argeeState) {
+        this.argeeState = argeeState;
     }
 }

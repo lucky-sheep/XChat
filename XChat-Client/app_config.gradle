@@ -26,15 +26,15 @@ ext {
 
     // 测试环境与正式环境的URL
     app_server_url  = [
-//            "debug": "http://192.168.31.156:8080",
-//            "release": "http://192.168.31.156:8080",
-//            "wsdebug": "ws://192.168.31.156:8088/ws",
-//            "wslease": "http://192.168.31.156:8088/ws"
+            "debug": "http://192.168.31.156:8080",
+            "release": "http://192.168.31.156:8080",
+            "wsdebug": "ws://192.168.31.156:8088/ws",
+            "wslease": "http://192.168.31.156:8088/ws"
 
-            "debug": "http://10.170.230.85:8080",
-            "release": "http://10.170.230.85:8080",
-            "wsdebug": "ws://10.170.230.85:8088/ws",
-            "wslease": "http://10.170.230.85:8088/ws"
+//            "debug": "http://10.170.230.85:8080",
+//            "release": "http://10.170.230.85:8080",
+//            "wsdebug": "ws://10.170.230.85:8088/ws",
+//            "wslease": "http://10.170.230.85:8088/ws"
 
 //                "debug": "http://192.168.199.188:8080",
 //                "release": "http://192.168.199.188:8080",
@@ -62,7 +62,7 @@ ext {
             "WebSocket": "org.java-websocket:Java-WebSocket:1.5.2",
             "eventbus": "org.greenrobot:eventbus:3.1.1",
             "litepal": "org.litepal.android:core:2.0.0",
-            "glide":"com.github.bumptech.glide:glide:4.12.0"
+            "glide": "com.github.bumptech.glide:glide:4.12.0",
     ]
 
     app_annotationProcessors = [

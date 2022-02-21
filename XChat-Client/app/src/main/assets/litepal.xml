@@ -7,5 +7,6 @@
     <!-- 指定映射模型 -->
     <list>
         <mapping class="cn.tim.xchat.common.module.FriendInfo"/>
+        <mapping class="cn.tim.xchat.common.module.FriendRequest"/>
     </list>
 </litepal>

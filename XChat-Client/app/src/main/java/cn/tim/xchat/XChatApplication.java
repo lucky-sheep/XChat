@@ -8,15 +8,11 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.net.ConnectivityManager;
-import android.net.Network;
-import android.net.NetworkRequest;
 import android.os.Build;
 import android.os.IBinder;
 import android.provider.Settings;
 import android.text.TextUtils;
 import android.util.Log;
-
-import androidx.annotation.NonNull;
 
 import com.alibaba.android.arouter.launcher.ARouter;
 import com.didichuxing.doraemonkit.DoKit;
@@ -31,7 +27,6 @@ import java.util.UUID;
 
 import cn.tim.xchat.chat.core.WebSocketService;
 import cn.tim.xchat.common.constans.StorageKey;
-import cn.tim.xchat.common.event.AppEvent;
 import cn.tim.xchat.common.event.TokenEvent;
 import cn.tim.xchat.common.task.ThreadManager;
 import cn.tim.xchat.common.utils.MD5Utils;
@@ -131,7 +126,7 @@ public class XChatApplication extends Application {
 
     private void saveDeviceId() {
         String deviceId = Settings.System.getString(getContentResolver(),
-                Settings.System.ANDROID_ID);
+                Settings.Secure.ANDROID_ID);
         if(TextUtils.isEmpty(deviceId)) {
             deviceId = UUID.randomUUID().toString();
         }
@@ -147,25 +142,6 @@ public class XChatApplication extends Application {
 
     /* 通过 WorkManager获取网络状态 */
     private void registerNetStateListener(){
-//        ConnectivityManager connectivityManager = (ConnectivityManager)
-//                context.getSystemService(Context.CONNECTIVITY_SERVICE);
-//        connectivityManager.requestNetwork(new NetworkRequest.Builder().build(),
-//                new ConnectivityManager.NetworkCallback(){
-//                    @Override
-//                    public void onAvailable(@NonNull Network network) {
-//                        super.onAvailable(network);
-//                        Log.i(TAG, "onAvailable: ");
-//                        EventBus.getDefault().post(new AppEvent(AppEvent.Type.NETWORK_AVAILABLE));
-//                    }
-//
-//                    @Override
-//                    public void onUnavailable() {
-//                        super.onUnavailable();
-//                        Log.i(TAG, "onUnavailable: ");
-//                        EventBus.getDefault().post(new AppEvent(AppEvent.Type.NETWORK_UNAVAILABLE));
-//                    }
-//        });
-
         // 动态注册广播
         NetWorkStateReceiver netWorkStateReceiver = new NetWorkStateReceiver();
         IntentFilter filter = new IntentFilter();

@@ -11,7 +11,6 @@ import cn.tim.xchat.repository.UserInfoRepository;
 import cn.tim.xchat.service.FriendService;
 import cn.tim.xchat.utils.KeyUtil;
 import cn.tim.xchat.utils.RegexUtil;
-import cn.tim.xchat.utils.SnowflakeIdWorker3rd;
 import cn.tim.xchat.vo.FriendVO;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
@@ -45,7 +44,7 @@ public class FriendServiceImpl implements FriendService {
             for(MyFriend myFriend: friendList){
                 UserInfo userInfo = userInfoRepository.getById(myFriend.getMyFriendId());
                 friendVO = new FriendVO();
-                friendVO.setUserid(userInfo.getId());
+                friendVO.setUserId(userInfo.getId());
                 friendVO.setEmail(userInfo.getEmail());
                 friendVO.setFaceBigImage(userInfo.getFaceImageBig());
                 friendVO.setFaceImage(userInfo.getFaceImage());
@@ -54,7 +53,7 @@ public class FriendServiceImpl implements FriendService {
                 friendVO.setUsername(userInfo.getUsername());
 
                 friendVO.setNotes(myFriend.getNotes());
-                friendVO.setId(Integer.parseInt(myFriend.getId()));
+                friendVO.setItemId(myFriend.getId());
                 ret.add(friendVO);
             }
         }
@@ -86,9 +85,7 @@ public class FriendServiceImpl implements FriendService {
                     friendRequest.setSendUserId(userId);
                     friendRequest.setAcceptUserId(userInfo.getId());
                     FriendRequest save = friendRequestRepository.save(friendRequest);
-
                     log.info("申请好友 Success, save = " + save);
-                    return;
                 }else {
                     throw new XChatException(ResultEnum.REPEAT_REQUEST_FRIENDS);
                 }

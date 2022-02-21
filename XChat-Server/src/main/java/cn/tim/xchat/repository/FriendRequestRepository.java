@@ -11,5 +11,5 @@ public interface FriendRequestRepository extends JpaRepository<FriendRequest, St
 
     List<FriendRequest> findAllByAcceptUserId(String acceptUserId);
 
-//    List<FriendRequest> findAllByAcceptUserIdAAnd
+    List<FriendRequest> findAllByAcceptUserIdAndArgeeRet(String acceptUserId, int argee);
 }

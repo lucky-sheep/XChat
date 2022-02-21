@@ -1,11 +1,14 @@
+
+
 plugins {
     id 'com.android.application'
 }
-
 apply plugin: 'com.google.protobuf'
+
 if(!isReleaseBuildType()){
     apply plugin: 'com.didi.dokit'
 }
+
 
 android {
     compileSdkVersion app_android.compileSdkVersion
@@ -76,6 +79,8 @@ dependencies {
         implementation project(':login')
     }
 }
+
+
 
 
 dokitExt {

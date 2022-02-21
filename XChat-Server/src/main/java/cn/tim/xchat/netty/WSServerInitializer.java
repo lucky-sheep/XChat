@@ -84,6 +84,6 @@ public class WSServerInitializer extends ChannelInitializer<SocketChannel> {
 			}
 		});
 
-		pipeline.addLast(new ChatHandlerByProtobuf());
+		pipeline.addLast(new ChatHandler());
 	}
 }

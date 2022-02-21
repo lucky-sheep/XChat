@@ -1,9 +1,12 @@
 package cn.tim.xchat.contacts;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,8 +28,12 @@ import org.litepal.LitePal;
 import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import cn.tim.xchat.common.module.FriendInfo;
+import cn.tim.xchat.common.module.FriendRequest;
 import cn.tim.xchat.common.task.ThreadManager;
 import cn.tim.xchat.common.widget.titlebar.BaseTitleBar;
 import cn.tim.xchat.common.widget.toast.XChatToast;
@@ -40,6 +47,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
+import q.rorbin.badgeview.QBadgeView;
 
 @Route(path = "/contacts/main")
 public class ContactsFragment extends Fragment {
@@ -51,9 +59,11 @@ public class ContactsFragment extends Fragment {
     private ContactRVAdapter contactRVAdapter;
 
     private BaseTitleBar baseTitleBar;
+    private final Timer timer;
 
     public ContactsFragment(BaseTitleBar baseTitleBar) {
         this.baseTitleBar = baseTitleBar;
+        timer = new Timer();
     }
 
     // 创建视图
@@ -94,12 +104,36 @@ public class ContactsFragment extends Fragment {
             startActivity(intent);
         });
 
-
         baseTitleBar.addBtn.setOnClickListener(v -> {
             AddFriendDialog addFriendDialog = new AddFriendDialog(requireContext(), R.style.DiyDialog);
             addFriendDialog.setTitle("添加新朋友");
             addFriendDialog.show();
         });
+
+        List<FriendRequest> requestList = LitePal.findAll(FriendRequest.class);
+        int unHandCount = 0;
+        for(FriendRequest request: requestList) {
+            if(request.getArgeeState() == 0){ // 0 表示未处理
+                unHandCount++;
+            }
+        }
+        if(unHandCount != 0) {
+            int finalUnHandCount = unHandCount;
+            AtomicBoolean show = new AtomicBoolean(true);
+            TimerTask tipsFlicker = new TimerTask() {
+                @SuppressLint("SetTextI18n")
+                @Override
+                public void run() {
+                    if(show.getAndSet(!show.get())){
+                        newFriendBtn.setText("好友申请   (" + finalUnHandCount + "个新朋友)");
+                    }else {
+                        newFriendBtn.setText("");
+                    }
+                }
+            };
+
+            timer.schedule(tipsFlicker, 0, 650);
+        }
     }
 
     private void requestData() {
@@ -131,7 +165,7 @@ public class ContactsFragment extends Fragment {
                                 Log.i(TAG, "onResponse: success, friends.size = " + friends.size());
                                 for (int i = 0; i < friends.size(); i++) {
                                     FriendInfo friendInfo = friends.getObject(i, FriendInfo.class);
-                                    FriendInfo info = LitePal.where("username = ?", friendInfo.getUsername())
+                                    FriendInfo  info = LitePal.where("itemId = ?", friendInfo.getItemId())
                                             .findFirst(FriendInfo.class);
                                     if(info != null) info.delete();
                                     friendInfo.save();

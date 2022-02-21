@@ -51,7 +51,7 @@ public class FriendActivity extends XChatBaseActivity {
         userNameTv.setText(username);
         avatarImageView.setTextAndColor(username.substring(0, 1), Color.BLACK);
 
-        userIdTv.setText(String.valueOf(friendInfo.getUserid()));
+        userIdTv.setText(String.valueOf(friendInfo.getUserId()));
         TextView setNoteNameBtn = findViewById(R.id.contact_friend_set_notesname_btn);
 
 

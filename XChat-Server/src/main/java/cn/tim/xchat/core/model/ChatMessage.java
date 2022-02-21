@@ -1,11 +1,12 @@
 package cn.tim.xchat.core.model;
 
+import cn.tim.xchat.core.enums.MsgTypeEnum;
 import lombok.Data;
 
 @Data
 public class ChatMessage {
     /**
-     * 消息类型，{@link cn.tim.xchat.core.enums.MessagesTypeEnum}
+     * 消息类型，{@link MsgTypeEnum}
      */
     private int type;
 
