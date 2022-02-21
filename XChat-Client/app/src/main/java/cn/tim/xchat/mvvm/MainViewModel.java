@@ -13,13 +13,13 @@ import cn.tim.xchat.common.event.WSEvent;
 
 public class MainViewModel extends ViewModel {
     private static final String TAG = "MainViewModel";
-    public MutableLiveData<WSEvent.Type> status = new MutableLiveData<>();
+    public MutableLiveData<WSEvent.Type> status = new MutableLiveData<>(WSEvent.Type.DISCONNECTED);
 
     public MainViewModel(){
         EventBus.getDefault().register(this);
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
+    @Subscribe(threadMode = ThreadMode.MAIN_ORDERED, sticky = true)
     public void setStatus(WSEvent event){
         Log.i(TAG, "responseWSEvent: event = " + event.getType().name());
         status.setValue(event.getType());

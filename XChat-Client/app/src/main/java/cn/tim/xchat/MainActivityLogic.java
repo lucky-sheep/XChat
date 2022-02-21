@@ -1,5 +1,6 @@
 package cn.tim.xchat;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -92,6 +93,11 @@ public class MainActivityLogic implements DefaultLifecycleObserver {
         mainViewModel = new ViewModelProvider(activityProvider.getActivity()).get(MainViewModel.class);
         mainViewModel.status.observe(activityProvider.getActivity(), type -> {
             if(currentTab.equals("chat")) baseTitleBar.setDescText(type.getName());
+//            if(WSEvent.Type.DISCONNECTED.equals(type)){
+//                baseTitleBar.descTv.setTextColor(Color.parseColor("#FCD81B60"));
+//            }else if(WSEvent.Type.CONNECTED.equals(type)){
+//                baseTitleBar.descTv.setTextColor(Color.parseColor("#F843A047"));
+//            }
         });
 
         viewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
@@ -138,8 +144,7 @@ public class MainActivityLogic implements DefaultLifecycleObserver {
 
         if(navItemId == R.id.tab_menu_chat){
             if(mainViewModel != null) {
-                baseTitleBar.setDescText(Objects.requireNonNull(
-                        mainViewModel.status.getValue()).getName());
+                baseTitleBar.setDescText(mainViewModel.status.getValue().getName());
             }else {
                 baseTitleBar.setDescText("");
             }

@@ -5,6 +5,7 @@ import android.app.Application;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.net.ConnectivityManager;
 import android.net.Network;
@@ -30,13 +31,14 @@ import java.util.UUID;
 
 import cn.tim.xchat.chat.core.WebSocketService;
 import cn.tim.xchat.common.constans.StorageKey;
-import cn.tim.xchat.common.event.NetworkStateEvent;
+import cn.tim.xchat.common.event.AppEvent;
 import cn.tim.xchat.common.event.TokenEvent;
 import cn.tim.xchat.common.task.ThreadManager;
 import cn.tim.xchat.common.utils.MD5Utils;
 import cn.tim.xchat.common.widget.toast.XChatToast;
 import cn.tim.xchat.network.OkHttpUtils;
 import cn.tim.xchat.network.TokenInterceptor;
+import cn.tim.xchat.receiver.NetWorkStateReceiver;
 
 public class XChatApplication extends Application {
     private WebSocketService.WebSocketClientBinder webSocketClientBinder;
@@ -145,23 +147,29 @@ public class XChatApplication extends Application {
 
     /* 通过 WorkManager获取网络状态 */
     private void registerNetStateListener(){
-        ConnectivityManager connectivityManager = (ConnectivityManager)
-                context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        connectivityManager.requestNetwork(new NetworkRequest.Builder().build(),
-                new ConnectivityManager.NetworkCallback(){
-                    @Override
-                    public void onAvailable(@NonNull Network network) {
-                        super.onAvailable(network);
-                        Log.i(TAG, "onAvailable: ");
-                        EventBus.getDefault().post(new NetworkStateEvent(NetworkStateEvent.Type.AVAILABLE));
-                    }
+//        ConnectivityManager connectivityManager = (ConnectivityManager)
+//                context.getSystemService(Context.CONNECTIVITY_SERVICE);
+//        connectivityManager.requestNetwork(new NetworkRequest.Builder().build(),
+//                new ConnectivityManager.NetworkCallback(){
+//                    @Override
+//                    public void onAvailable(@NonNull Network network) {
+//                        super.onAvailable(network);
+//                        Log.i(TAG, "onAvailable: ");
+//                        EventBus.getDefault().post(new AppEvent(AppEvent.Type.NETWORK_AVAILABLE));
+//                    }
+//
+//                    @Override
+//                    public void onUnavailable() {
+//                        super.onUnavailable();
+//                        Log.i(TAG, "onUnavailable: ");
+//                        EventBus.getDefault().post(new AppEvent(AppEvent.Type.NETWORK_UNAVAILABLE));
+//                    }
+//        });
 
-                    @Override
-                    public void onUnavailable() {
-                        super.onUnavailable();
-                        Log.i(TAG, "onUnavailable: ");
-                        EventBus.getDefault().post(new NetworkStateEvent(NetworkStateEvent.Type.UNAVAILABLE));
-                    }
-        });
+        // 动态注册广播
+        NetWorkStateReceiver netWorkStateReceiver = new NetWorkStateReceiver();
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
+        registerReceiver(netWorkStateReceiver, filter);
     }
 }

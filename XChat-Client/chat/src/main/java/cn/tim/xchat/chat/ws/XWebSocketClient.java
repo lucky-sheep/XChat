@@ -40,6 +40,7 @@ public class XWebSocketClient extends WebSocketClient {
         sendKeepAliveMsg();
         EventBus.getDefault().postSticky(new WSEvent(WSEvent.Type.CONNECTED));
 //        MMKV.defaultMMKV().putBoolean(StorageKey.WEB_SOCKET_STATUS, true);
+        sendInitConnectMsg();
     }
 
     @Override
@@ -65,32 +66,43 @@ public class XWebSocketClient extends WebSocketClient {
         Log.e(TAG, "onClose(), remote = " + remote);
         if(timer != null) timer.cancel();
         if(remote) {
+            EventBus.getDefault().post(new WSEvent(WSEvent.Type.DISCONNECTED));
             EventBus.getDefault().post(new TokenEvent(TokenEvent.TokenType.TOKEN_OVERDUE));
         }else {
             retry.set(true);
             reconnect();
         }
-        EventBus.getDefault().postSticky(new WSEvent(WSEvent.Type.DISCONNECTED));
     }
 
     @Override
     public void onError(Exception ex) {
-        EventBus.getDefault().postSticky(new WSEvent(WSEvent.Type.DISCONNECTED));
         //Log.e(TAG, "onError()");
         // 如果存在心跳连接，则取消心跳任务
         if(timer != null) timer.cancel();
         if(retry.get()) {
             Log.e(TAG, "onError: 已经尝试重连仍然失败");
+            EventBus.getDefault().post(new WSEvent(WSEvent.Type.DISCONNECTED));
         }
+    }
+
+    // 发送初始化指令
+    private void sendInitConnectMsg() {
+        DataContentSerializer.DataContent CONN_INIT = DataContentSerializer
+                .DataContent
+                .newBuilder()
+                .setAction(MsgActionEnum.CONNECT.type)
+                .setSenderId(MMKV.defaultMMKV().getString(StorageKey.USERID_KEY, null))
+                .build();
+        BinaryFrame binaryFrame = new BinaryFrame();
+        binaryFrame.setPayload(ByteBuffer.wrap(CONN_INIT.toByteArray()));
+        sendFrame(binaryFrame);
     }
 
     public void sendKeepAliveMsg(){
         timer = new Timer();
-        AtomicInteger i = new AtomicInteger(0);
         TimerTask keepAliveTask = new TimerTask() {
             @Override
             public void run() {
-                //Log.d(TAG, "send keepAlive msg, " + (i.getAndIncrement()) + ", isOpen() = " + isOpen() + ", keepAlive.toByteArray().length = " + keepAlive.toByteArray().length);
                 if(isOpen()) {
                     BinaryFrame binaryFrame = new BinaryFrame();
                     binaryFrame.setPayload(ByteBuffer.wrap(keepAlive.toByteArray()));

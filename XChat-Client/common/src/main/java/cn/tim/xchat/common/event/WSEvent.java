@@ -7,8 +7,8 @@ public class WSEvent {
     }
 
     public enum Type {
-        CONNECTED(0, "已连接服务器"), //
-        DISCONNECTED(1, "未连接服务器"), // 连接断开
+        CONNECTED(0, "已连接"), //
+        DISCONNECTED(1, "已断开"), // 连接断开
         DISCONNECTED_BY_USER(2, "主动关闭"); // 主动关闭服务
 
         String name;
@@ -21,6 +21,10 @@ public class WSEvent {
 
         public String getName() {
             return name;
+        }
+
+        public int getCode() {
+            return code;
         }
     }
 

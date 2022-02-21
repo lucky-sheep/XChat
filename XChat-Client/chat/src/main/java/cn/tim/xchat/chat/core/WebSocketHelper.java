@@ -12,7 +12,7 @@ import java.net.URI;
 import cn.tim.xchat.chat.BuildConfig;
 import cn.tim.xchat.chat.ws.XWebSocketClient;
 import cn.tim.xchat.common.constans.StorageKey;
-import cn.tim.xchat.common.event.NetworkStateEvent;
+import cn.tim.xchat.common.event.AppEvent;
 import cn.tim.xchat.common.event.TokenEvent;
 import cn.tim.xchat.common.event.WSEvent;
 import cn.tim.xchat.common.task.ThreadManager;
@@ -81,14 +81,13 @@ public class WebSocketHelper {
         }
     }
 
-    @Subscribe(threadMode = ThreadMode.BACKGROUND)
-    public void onNetStateEvent(NetworkStateEvent event){
-        if(NetworkStateEvent.Type.AVAILABLE.equals(event.getType())) {
+    @Subscribe(threadMode = ThreadMode.ASYNC, sticky = true)
+    public void onNetStateEvent(AppEvent event){
+        if(AppEvent.Type.NETWORK_AVAILABLE.equals(event.getType())) {
             Log.e(TAG, "onNetStateEvent: 检测到网络恢复");
             // 网络变为可用的时候，重新启动 WebSocket
-            if(socketClient != null && socketClient.isClosed()){
-                launchHandle();
-            }
+            if(socketClient != null) socketClient.close();
+            launchHandle();
         }
     }
 

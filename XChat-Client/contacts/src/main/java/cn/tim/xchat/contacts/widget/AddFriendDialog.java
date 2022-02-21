@@ -133,6 +133,7 @@ public class AddFriendDialog extends Dialog {
             @Override
             public void run() {
                 mainExecutor.execute(AddFriendDialog.this::dismiss);
+                timer.cancel();
             }
         }, 10_000); // 10s 后自动关闭
 
