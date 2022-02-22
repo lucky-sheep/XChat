@@ -77,8 +77,14 @@
     </LinearLayout>
 
     <LinearLayout
+        android:layout_marginTop="100dp"
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
+        <Button
+            android:text="CLEAR DB"
+            android:id="@+id/debug_clear_databases"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
     </LinearLayout>
 </FrameLayout>

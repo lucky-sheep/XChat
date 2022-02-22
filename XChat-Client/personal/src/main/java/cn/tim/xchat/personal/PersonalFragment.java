@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -14,8 +15,12 @@ import com.alibaba.android.arouter.facade.annotation.Route;
 import com.alibaba.android.arouter.launcher.ARouter;
 import com.tencent.mmkv.MMKV;
 
+import org.litepal.LitePal;
+
 import cn.carbs.android.avatarimageview.library.AvatarImageView;
 import cn.tim.xchat.common.constans.StorageKey;
+import cn.tim.xchat.common.module.FriendInfo;
+import cn.tim.xchat.common.module.FriendRequest;
 
 
 @Route(path = "/personal/main")
@@ -25,6 +30,12 @@ public class PersonalFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.layout_personal_main_fragment, container, false);
+
+        Button clearDB = view.findViewById(R.id.debug_clear_databases);
+        clearDB.setOnClickListener(v -> {
+            LitePal.deleteAll(FriendInfo.class);
+            LitePal.deleteAll(FriendRequest.class);
+        });
         initView(view);
         return view;
     }
