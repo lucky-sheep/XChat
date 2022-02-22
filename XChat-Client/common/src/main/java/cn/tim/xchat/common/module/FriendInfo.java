@@ -88,4 +88,20 @@ public class FriendInfo extends LitePalSupport implements FriendObtain{
     public void setNotes(String notes) {
         this.notes = notes;
     }
+
+
+    @Override
+    public String toString() {
+        return "FriendInfo{" +
+                "itemId='" + itemId + '\'' +
+                ", userId='" + userId + '\'' +
+                ", username='" + username + '\'' +
+                ", nickname='" + nickname + '\'' +
+                ", email='" + email + '\'' +
+                ", faceImage='" + faceImage + '\'' +
+                ", faceBigImage='" + faceBigImage + '\'' +
+                ", qrCode='" + qrCode + '\'' +
+                ", notes='" + notes + '\'' +
+                '}';
+    }
 }

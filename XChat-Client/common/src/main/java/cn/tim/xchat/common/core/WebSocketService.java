@@ -1,4 +1,4 @@
-package cn.tim.xchat.chat.core;
+package cn.tim.xchat.common.core;
 
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -13,8 +13,7 @@ import android.util.Log;
 
 import androidx.core.app.NotificationCompat;
 
-import cn.tim.xchat.chat.ChatActivity;
-import cn.tim.xchat.chat.R;
+import cn.tim.xchat.common.R;
 
 public class WebSocketService extends Service {
     public static final String TAG = "WebSocketService";
@@ -79,13 +78,19 @@ public class WebSocketService extends Service {
         NotificationChannel notificationChannel = new NotificationChannel(CHANNEL_ID,
                 CHANNEL_NAME, NotificationManager.IMPORTANCE_LOW);
 
-        PendingIntent pi = PendingIntent.getActivity(this, 0, new Intent(this, ChatActivity.class), 0);
+        Class<?> chatActivityClazz = null;
+        try {
+            chatActivityClazz = Class.forName("cn.tim.xchat.chat.ChatActivity");
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        PendingIntent pi = PendingIntent.getActivity(this, 0, new Intent(this, chatActivityClazz), 0);
         notification = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setContentTitle("This is content title.")
                 .setContentText("This is content text.")
                 .setWhen(System.currentTimeMillis())
-                .setSmallIcon(R.mipmap.ic_launcher)
-                .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher))
+                .setSmallIcon(R.drawable.ic_baseline_chat_24)
+                .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.ic_baseline_chat_144))
                 .setContentIntent(pi)
                 .build();
 

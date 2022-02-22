@@ -9,6 +9,7 @@ import cn.tim.xchat.exception.XChatException;
 import cn.tim.xchat.repository.FriendRequestRepository;
 import cn.tim.xchat.repository.MyFriendRepository;
 import cn.tim.xchat.repository.UserInfoRepository;
+import cn.tim.xchat.service.BusinessMsgService;
 import cn.tim.xchat.service.FriendService;
 import cn.tim.xchat.utils.KeyUtil;
 import cn.tim.xchat.utils.RegexUtil;
@@ -34,6 +35,10 @@ public class FriendServiceImpl implements FriendService {
 
     @Resource
     FriendRequestRepository friendRequestRepository;
+
+    @Resource
+    BusinessMsgService businessMsgService;
+
     AtomicInteger count = new AtomicInteger(0);
 
     @Override
@@ -88,6 +93,9 @@ public class FriendServiceImpl implements FriendService {
                     friendRequest.setArgeeRet(RequestFriendEnum.UNHAND_OTHER.getCode());
                     FriendRequest save = friendRequestRepository.save(friendRequest);
                     log.info("申请好友 Success, save = " + save);
+
+                    // 如果对方在线，就发送提醒
+                    businessMsgService.sendNewFriendRequest(friendRequest);
                 }else {
                     throw new XChatException(ResultEnum.REPEAT_REQUEST_FRIENDS);
                 }

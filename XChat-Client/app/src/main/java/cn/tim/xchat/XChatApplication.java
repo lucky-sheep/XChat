@@ -25,9 +25,11 @@ import org.litepal.LitePal;
 
 import java.util.UUID;
 
-import cn.tim.xchat.chat.core.WebSocketService;
+import cn.tim.xchat.common.core.WebSocketService;
 import cn.tim.xchat.common.constans.StorageKey;
 import cn.tim.xchat.common.event.TokenEvent;
+import cn.tim.xchat.common.module.FriendInfo;
+import cn.tim.xchat.common.module.FriendRequest;
 import cn.tim.xchat.common.task.ThreadManager;
 import cn.tim.xchat.common.utils.MD5Utils;
 import cn.tim.xchat.common.widget.toast.XChatToast;

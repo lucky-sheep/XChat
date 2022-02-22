@@ -1,4 +1,4 @@
-package cn.tim.xchat.chat.ws;
+package cn.tim.xchat.common.core;
 
 import android.util.Log;
 
@@ -15,10 +15,8 @@ import java.nio.ByteBuffer;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
 
-import cn.tim.xchat.chat.core.MsgDispatcher;
-import cn.tim.xchat.chat.msg.MsgActionEnum;
+import cn.tim.xchat.common.msg.MsgActionEnum;
 
 import cn.tim.xchat.common.constans.StorageKey;
 import cn.tim.xchat.common.event.TokenEvent;

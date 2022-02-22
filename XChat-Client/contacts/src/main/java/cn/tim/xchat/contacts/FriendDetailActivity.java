@@ -78,6 +78,11 @@ public class FriendDetailActivity extends XChatBaseActivity {
         userIdTv.setText(String.valueOf(friendRequest.getUserId()));
         noteNameTv.setText(TextUtils.isEmpty(friendRequest.getNickname())?
                 friendRequest.getUsername():friendRequest.getNickname());
+
+        Glide.with(this)
+                .load(friendRequest.getFaceImage())
+                .centerCrop()
+                .into(avatarIv);
     }
 
     @Override
@@ -87,6 +92,7 @@ public class FriendDetailActivity extends XChatBaseActivity {
 
 
     private void showAlreadyFriend(){
+        Log.i(TAG, "showAlreadyFriend: friendInfo = " + friendInfo);
         String notesName = friendInfo.getNotes(); // 备注名
         String nickname = friendInfo.getNickname(); // 昵称
 

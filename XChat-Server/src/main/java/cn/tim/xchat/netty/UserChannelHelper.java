@@ -1,5 +1,6 @@
 package cn.tim.xchat.netty;
 
+import cn.tim.xchat.core.model.DataContentSerializer;
 import io.netty.channel.Channel;
 
 import java.util.concurrent.ConcurrentHashMap;
@@ -29,5 +30,30 @@ public class UserChannelHelper {
      */
     public static void offOnline(String userId){
         userChannelMap.remove(userId);
+    }
+
+    public static boolean isOnline(String userId){
+        if(userChannelMap.containsKey(userId)){
+            Channel channel = userChannelMap.get(userId);
+            return channel.isOpen();
+        }
+        return false;
+    }
+
+    /**
+     * 如果用户在线就发送发消息
+     * @param userId
+     * @param dataContent
+     * @return
+     */
+    public static boolean isOnlineAndSendMsg(String userId, DataContentSerializer.DataContent dataContent){
+        if(userChannelMap.containsKey(userId)){
+            Channel channel = userChannelMap.get(userId);
+            if(channel.isOpen()){
+                channel.writeAndFlush(dataContent);
+                return true;
+            }
+        }
+        return false;
     }
 }

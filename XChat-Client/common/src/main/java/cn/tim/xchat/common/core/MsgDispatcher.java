@@ -1,9 +1,9 @@
-package cn.tim.xchat.chat.core;
+package cn.tim.xchat.common.core;
 
 import android.util.Log;
 
-import cn.tim.xchat.chat.handler.BusinessHandler;
-import cn.tim.xchat.chat.msg.MsgActionEnum;
+import cn.tim.xchat.common.handler.BusinessHandler;
+import cn.tim.xchat.common.msg.MsgActionEnum;
 import cn.tim.xchat.core.model.DataContentSerializer;
 
 /**

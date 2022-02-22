@@ -57,7 +57,6 @@
 
                     <TextView
                         android:text="通过"
-                        android:textSize="17sp"
                         android:layout_marginStart="18dp"
                         android:id="@+id/contact_item_apply_btn"
                         android:layout_width="wrap_content"

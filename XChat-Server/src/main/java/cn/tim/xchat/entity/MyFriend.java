@@ -2,6 +2,7 @@ package cn.tim.xchat.entity;
 
 import lombok.*;
 import org.hibernate.Hibernate;
+import org.hibernate.annotations.Proxy;
 
 import javax.persistence.*;
 import java.util.Objects;

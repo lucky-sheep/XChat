@@ -2,6 +2,7 @@ package cn.tim.xchat.entity;
 
 import lombok.*;
 import org.hibernate.Hibernate;
+import org.hibernate.annotations.Proxy;
 
 import javax.persistence.*;
 import java.time.Instant;
@@ -16,6 +17,7 @@ import java.util.Objects;
         @Index(name = "senduser_index", columnList = "send_user_id", unique = false),
         @Index(name = "acceptuser_index", columnList = "accept_user_id", unique = false),
 })
+@Proxy(lazy = false)
 public class FriendRequest {
     @Id
     @Column(name = "id", nullable = false, length = 64)

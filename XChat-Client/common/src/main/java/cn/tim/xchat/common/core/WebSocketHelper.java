@@ -1,4 +1,4 @@
-package cn.tim.xchat.chat.core;
+package cn.tim.xchat.common.core;
 
 import android.text.TextUtils;
 import android.util.Log;
@@ -7,15 +7,18 @@ import com.tencent.mmkv.MMKV;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+import org.java_websocket.framing.BinaryFrame;
 
 import java.net.URI;
-import cn.tim.xchat.chat.BuildConfig;
-import cn.tim.xchat.chat.ws.XWebSocketClient;
+import java.nio.ByteBuffer;
+
+import cn.tim.xchat.common.BuildConfig;
 import cn.tim.xchat.common.constans.StorageKey;
 import cn.tim.xchat.common.event.AppEvent;
 import cn.tim.xchat.common.event.TokenEvent;
 import cn.tim.xchat.common.event.WSEvent;
 import cn.tim.xchat.common.task.ThreadManager;
+import cn.tim.xchat.core.model.DataContentSerializer;
 
 public class WebSocketHelper {
     public static WebSocketHelper instance;
@@ -94,5 +97,17 @@ public class WebSocketHelper {
 
     public void cancelWebSocket(){
         EventBus.getDefault().unregister(this);
+    }
+
+
+    public boolean sendMsg(DataContentSerializer.DataContent dataContent){
+        if(socketClient != null && socketClient.isOpen()){
+            BinaryFrame binaryFrame = new BinaryFrame();
+            binaryFrame.setPayload(ByteBuffer.wrap(dataContent.toByteArray()));
+            socketClient.sendFrame(binaryFrame);
+            return true;
+        }
+
+        return false;
     }
 }

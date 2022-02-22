@@ -2,8 +2,7 @@
 SQLyog Professional v12.09 (64 bit)
 MySQL - 8.0.28 : Database - xchat-dev
 *********************************************************************
-*/
-
+*/
 
 /*!40101 SET NAMES utf8 */;
 
@@ -39,15 +38,18 @@ DROP TABLE IF EXISTS `friend_request`;
 
 CREATE TABLE `friend_request` (
   `id` varchar(64) NOT NULL,
-  `send_user_id` varchar(64) DEFAULT NULL,
-  `accept_user_id` varchar(64) DEFAULT NULL,
-  `request_datetime` datetime DEFAULT NULL,
-  PRIMARY KEY (`id`)
+  `send_user_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+  `accept_user_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+  `argee_ret` tinyint NOT NULL,
+  `request_datetime` datetime NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `senduser_index` (`send_user_id`),
+  KEY `acceptuser_index` (`accept_user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COMMENT='发送好友请求的表';
 
 /*Data for the table `friend_request` */
 
-insert  into `friend_request`(`id`,`send_user_id`,`accept_user_id`,`request_datetime`) values ('211419008','210507275','211331714','2022-02-20 16:31:01');
+insert  into `friend_request`(`id`,`send_user_id`,`accept_user_id`,`argee_ret`,`request_datetime`) values ('211787648','210507275','211331714',8,'2022-02-22 16:31:27');
 
 /*Table structure for table `my_friends` */
 
@@ -64,7 +66,7 @@ CREATE TABLE `my_friends` (
 
 /*Data for the table `my_friends` */
 
-insert  into `my_friends`(`id`,`my_user_id`,`my_friend_id`,`notes`) values ('211302712','210507275','211331712','BBQ'),('211302713','210507275','211331713',NULL),('211331714','211331712','210507275','老李'),('211331715','211331713','210507275',NULL);
+insert  into `my_friends`(`id`,`my_user_id`,`my_friend_id`,`notes`) values ('211787649','210507275','211331714',NULL),('211787650','211331714','210507275',NULL);
 
 /*Table structure for table `user_info` */
 

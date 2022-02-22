@@ -139,6 +139,11 @@ public class BaseFriendAdapter<T extends FriendObtain>
         notifyItemRangeChanged(position, dataSource.size() - position);
     }
 
+    // 刷新一条数据
+    public void updateOneData(int position) {
+        notifyItemRangeChanged(position, 1);
+    }
+
     static class BaseViewHolder extends RecyclerView.ViewHolder {
         AvatarImageView headerIv;
         TextView usernameTv;

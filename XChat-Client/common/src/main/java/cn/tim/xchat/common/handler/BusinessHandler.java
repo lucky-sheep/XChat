@@ -1,4 +1,4 @@
-package cn.tim.xchat.chat.handler;
+package cn.tim.xchat.common.handler;
 
 import com.alibaba.fastjson.JSON;
 
@@ -8,7 +8,7 @@ import org.litepal.LitePal;
 import java.util.HashMap;
 import java.util.List;
 
-import cn.tim.xchat.chat.msg.MsgTypeEnum;
+import cn.tim.xchat.common.msg.MsgTypeEnum;
 import cn.tim.xchat.common.event.AppEvent;
 import cn.tim.xchat.common.module.FriendRequest;
 import cn.tim.xchat.core.model.DataContentSerializer;

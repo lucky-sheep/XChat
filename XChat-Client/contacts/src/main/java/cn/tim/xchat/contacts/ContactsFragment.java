@@ -67,6 +67,7 @@ public class ContactsFragment extends Fragment {
     private final Timer timer;
 
     private MainViewModel mainViewModel;
+    private TimerTask tipsFlicker;
 
     public ContactsFragment(BaseTitleBar baseTitleBar, MainViewModel mainViewModel) {
         this.baseTitleBar = baseTitleBar;
@@ -122,8 +123,11 @@ public class ContactsFragment extends Fragment {
 
         mainViewModel.newFriendReqNum.observe(requireActivity(), count -> {
             if(count > 0) {
+                // 后台请求数据后更新数据库
+                ThreadManager.getInstance().runTask(this::requestData);
+
                 AtomicBoolean show = new AtomicBoolean(true);
-                TimerTask tipsFlicker = new TimerTask() {
+                tipsFlicker = new TimerTask() {
                     @Override
                     public void run() {
                         if (show.getAndSet(!show.get())) {
@@ -136,7 +140,9 @@ public class ContactsFragment extends Fragment {
                 timer.schedule(tipsFlicker, 0, 650);
             }else {
                 newFriendBtn.setText("好友申请");
-                timer.cancel();
+                if(tipsFlicker != null) {
+                    tipsFlicker.cancel();
+                }
             }
         });
 
@@ -183,7 +189,7 @@ public class ContactsFragment extends Fragment {
                                 Log.i(TAG, "onResponse: success, friends.size = " + friends.size());
                                 for (int i = 0; i < friends.size(); i++) {
                                     FriendInfo friendInfo = friends.getObject(i, FriendInfo.class);
-                                    FriendInfo info = LitePal.where("itemId = ?", friendInfo.getItemId())
+                                    FriendInfo info = LitePal.where("userId = ?", friendInfo.getUserId())
                                             .findFirst(FriendInfo.class);
                                     if(info != null) info.delete();
                                     friendInfo.save();

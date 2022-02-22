@@ -1,6 +1,7 @@
 package cn.tim.xchat.netty;
 
 import cn.tim.xchat.core.enums.MsgActionEnum;
+import cn.tim.xchat.core.enums.MsgTypeEnum;
 import cn.tim.xchat.core.model.DataContentSerializer;
 import cn.tim.xchat.service.BusinessMsgService;
 import cn.tim.xchat.utils.SpringUtil;
@@ -55,6 +56,12 @@ public class ChatHandler extends SimpleChannelInboundHandler<DataContentSerializ
         } else if (action == MsgActionEnum.SIGNED.type) {
         } else if (action == MsgActionEnum.KEEPALIVE.type) {
             log.debug("KEEPALIVE MSG, size = " + dataContent.toByteArray().length);
+        } else if (action == MsgActionEnum.BUSINESS.type) {
+            // 业务消息
+            int type = dataContent.getChatMessage().getType();
+            if(type == MsgTypeEnum.FRIEND_REQUEST.ordinal()) {
+                businessMsgService.handleFriendRequestMsg(dataContent, currentChannel);
+            }
         }
     }
 

@@ -1,4 +1,4 @@
-package cn.tim.xchat.chat.msg;
+package cn.tim.xchat.common.msg;
 
 public enum MsgActionEnum {
     KEEPALIVE(0, "心跳保持"),

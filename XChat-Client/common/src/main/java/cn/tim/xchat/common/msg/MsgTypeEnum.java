@@ -1,4 +1,4 @@
-package cn.tim.xchat.chat.msg;
+package cn.tim.xchat.common.msg;
 
 /**
  * 消息类型, 服务端必须和客户端端统一

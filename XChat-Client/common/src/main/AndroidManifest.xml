@@ -7,5 +7,10 @@
             android:launchMode="singleTask"
             android:screenOrientation="portrait">
         </activity>
+
+        <service
+            android:name="cn.tim.xchat.common.core.WebSocketService"
+            android:enabled="true"
+            android:exported="true"/>
     </application>
 </manifest>

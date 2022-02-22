@@ -1,6 +1,7 @@
 plugins {
     id 'com.android.library'
 }
+apply plugin: 'com.google.protobuf'
 
 android {
     compileSdkVersion app_android.compileSdkVersion
@@ -22,12 +23,37 @@ android {
         }
     }
 
+    sourceSets {
+        main {
+            if(!isRelease){
+                // 如果是组件化模式，需要单独运行时
+                manifest.srcFile 'src/main/debug/AndroidManifest.xml'
+            }else {
+                // 集成化模式，整个项目打包
+                manifest.srcFile 'src/main/AndroidManifest.xml'
+            }
+
+            java {
+                srcDir 'src/main/java'
+            }
+            proto {
+                srcDir 'src/main/proto' //指定.proto文件路径
+            }
+        }
+    }
+
     buildTypes {
+        debug {
+            buildConfigField("String", "WEBSOCKET_URL", "\"${app_server_url.wsdebug}\"")
+        }
+
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            buildConfigField("String", "WEBSOCKET_URL", "\"${app_server_url.wsrelease}\"")
         }
     }
+
     compileOptions {
         sourceCompatibility app_android.sourceCompatibility
         targetCompatibility app_android.targetCompatibility
@@ -45,5 +71,27 @@ dependencies {
     app_onlydebug_tools_dependencies.each {k, v ->
         debugImplementation v
         println('Debug Tools: ' + k + " -> " + v)
+    }
+
+
+    api "com.google.protobuf:protobuf-java:3.10.0"
+    api "com.google.protobuf:protoc:3.17.0"
+}
+
+
+protobuf {
+    protoc {
+        artifact = 'com.google.protobuf:protoc:3.17.0' // 也可以配置本地编译器路径
+    }
+
+    generateProtoTasks {
+        all().each { task ->
+            task.builtins {
+                remove java
+            }
+            task.builtins {
+                java {}// 生产java源码
+            }
+        }
     }
 }
