@@ -2,7 +2,7 @@ package cn.tim.xchat.common.module;
 
 import org.litepal.crud.LitePalSupport;
 
-public class FriendRequest extends LitePalSupport {
+public class FriendRequest extends LitePalSupport implements FriendObtain{
     private String itemId;
     private String userId;
     private String username;
@@ -76,6 +76,11 @@ public class FriendRequest extends LitePalSupport {
         return qrCode;
     }
 
+    @Override
+    public String getNotes() {
+        return null;
+    }
+
     public void setQrCode(String qrCode) {
         this.qrCode = qrCode;
     }
@@ -87,5 +92,20 @@ public class FriendRequest extends LitePalSupport {
 
     public void setArgeeState(int argeeState) {
         this.argeeState = argeeState;
+    }
+
+    @Override
+    public String toString() {
+        return "FriendRequest{" +
+                "itemId='" + itemId + '\'' +
+                ", userId='" + userId + '\'' +
+                ", username='" + username + '\'' +
+                ", nickname='" + nickname + '\'' +
+                ", email='" + email + '\'' +
+                ", faceImage='" + faceImage + '\'' +
+                ", faceBigImage='" + faceBigImage + '\'' +
+                ", qrCode='" + qrCode + '\'' +
+                ", argeeState=" + argeeState +
+                '}';
     }
 }

@@ -19,10 +19,10 @@ import com.tencent.mmkv.MMKV;
 
 import cn.tim.xchat.chat.MessageListFragment;
 import cn.tim.xchat.common.XChatBaseActivity;
+import cn.tim.xchat.common.mvvm.MainViewModel;
 import cn.tim.xchat.common.widget.titlebar.BaseTitleBar;
 import cn.tim.xchat.common.widget.titlebar.TitleBarType;
 import cn.tim.xchat.contacts.ContactsFragment;
-import cn.tim.xchat.mvvm.MainViewModel;
 import cn.tim.xchat.personal.PersonalFragment;
 import q.rorbin.badgeview.QBadgeView;
 
@@ -61,6 +61,8 @@ public class MainActivityLogic implements DefaultLifecycleObserver {
         chat = bottomNavView.findViewById(R.id.tab_menu_chat);
         contact = bottomNavView.findViewById(R.id.tab_menu_contact);
 
+        mainViewModel = new ViewModelProvider(activity).get(MainViewModel.class);
+
         ViewPager2 viewPager = provider.findViewById(R.id.app_main_viewpager);
         setupViewPager(viewPager);
 
@@ -76,7 +78,7 @@ public class MainActivityLogic implements DefaultLifecycleObserver {
             return true;
         });
 
-        mainViewModel = new ViewModelProvider(activity).get(MainViewModel.class);
+//        mainViewModel = new ViewModelProvider(activity).get(MainViewModel.class);
         mainViewModel.status.observe(activity, type -> {
             if(currentTab.equals("chat")) {
                 baseTitleBar.setDescText(type.getName());
@@ -178,7 +180,7 @@ public class MainActivityLogic implements DefaultLifecycleObserver {
 
     private void setupViewPager(ViewPager2 viewPager) {
         MessageListFragment messageListFragment = new MessageListFragment();
-        contactsFragment = new ContactsFragment(baseTitleBar);
+        contactsFragment = new ContactsFragment(baseTitleBar, mainViewModel);
         PersonalFragment personalFragment = new PersonalFragment();
 
         Fragment[] fragments = new Fragment[]{

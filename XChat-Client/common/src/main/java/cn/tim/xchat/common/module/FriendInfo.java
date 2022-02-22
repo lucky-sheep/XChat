@@ -2,7 +2,7 @@ package cn.tim.xchat.common.module;
 
 import org.litepal.crud.LitePalSupport;
 
-public class FriendInfo extends LitePalSupport {
+public class FriendInfo extends LitePalSupport implements FriendObtain{
     private String itemId;
     private String userId;
     private String username;

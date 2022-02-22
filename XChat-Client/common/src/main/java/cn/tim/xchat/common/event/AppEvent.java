@@ -20,7 +20,7 @@ public class AppEvent {
     public enum Type {
         NETWORK_AVAILABLE, // 网络可用
         NETWORK_UNAVAILABLE, // 网络不可用
-        NEW_FRIENDS_REQUEST, // 新的朋友添加请求
+        NEW_FRIENDS_REQUEST, // 新的朋友添加请求(包含同意、拒绝)
     }
 
     public AppEvent.Type getType() {

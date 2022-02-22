@@ -4,7 +4,15 @@
 
     <application>
         <activity
-            android:name=".FriendActivity"
+            android:name=".FriendDetailActivity"
+            android:launchMode="singleTask"
+            android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar"
+            android:exported="false" />
+
+
+        <activity
+            android:name=".FriendApplyActivity"
+            android:launchMode="singleTask"
             android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar"
             android:exported="false" />
     </application>

@@ -11,5 +11,5 @@ public enum MsgTypeEnum {
     ADDRESS,
     FILE,
 
-    FRIEND_REQUEST, // 好友添加请求
+    FRIEND_REQUEST, // 好友添加请求, 同意/拒绝请求等，都算
 }

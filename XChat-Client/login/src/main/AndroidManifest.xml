@@ -5,6 +5,7 @@
     <application>
         <activity
             android:name=".LoginActivity"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar"
             />

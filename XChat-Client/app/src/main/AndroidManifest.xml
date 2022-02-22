@@ -26,15 +26,15 @@
             android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
             android:name=".MainActivity"
             android:exported="true"
-            android:screenOrientation="portrait"></activity>
-
+            android:launchMode="singleTask"
+            android:theme="@style/GRAY_BACKGROUND"
+            android:screenOrientation="portrait"/>
         <receiver android:name=".receiver.NetWorkStateReceiver"
             android:enabled="true"
             android:exported="true"/>

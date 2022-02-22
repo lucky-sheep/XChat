@@ -3,6 +3,7 @@ package cn.tim.xchat.login;
 import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -76,6 +77,7 @@ public class LoginActivity extends XChatBaseActivity {
                     .build("/home/main")
                     .withString("token", token)
                     .withString("tab", "personal")
+                    .withFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP) // 清除Activity调用栈
                     .navigation();
             finish();
         }else {

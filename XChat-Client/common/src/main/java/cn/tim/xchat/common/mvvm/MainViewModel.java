@@ -1,4 +1,4 @@
-package cn.tim.xchat.mvvm;
+package cn.tim.xchat.common.mvvm;
 
 import android.util.Log;
 

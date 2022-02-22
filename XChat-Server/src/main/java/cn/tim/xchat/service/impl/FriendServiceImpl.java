@@ -4,6 +4,7 @@ import cn.tim.xchat.entity.FriendRequest;
 import cn.tim.xchat.entity.MyFriend;
 import cn.tim.xchat.entity.UserInfo;
 import cn.tim.xchat.enums.ResultEnum;
+import cn.tim.xchat.enums.business.RequestFriendEnum;
 import cn.tim.xchat.exception.XChatException;
 import cn.tim.xchat.repository.FriendRequestRepository;
 import cn.tim.xchat.repository.MyFriendRepository;
@@ -84,6 +85,7 @@ public class FriendServiceImpl implements FriendService {
                     friendRequest.setRequestDatetime(Instant.now());
                     friendRequest.setSendUserId(userId);
                     friendRequest.setAcceptUserId(userInfo.getId());
+                    friendRequest.setArgeeRet(RequestFriendEnum.UNHAND_OTHER.getCode());
                     FriendRequest save = friendRequestRepository.save(friendRequest);
                     log.info("申请好友 Success, save = " + save);
                 }else {

@@ -32,13 +32,24 @@ public class BusinessMsgServiceImpl implements BusinessMsgService {
     public DataContentSerializer.DataContent getUserFriendRequest(String userId) {
         List<FriendRequestVO> ret = Lists.newArrayList();
         // 查找未处理的好友请求
-        List<FriendRequest> requestList = friendRequestRepository.findAllByAcceptUserIdAndArgeeRet(userId,
-                RequestFriendEnum.UNHAND.ordinal());
+//        List<FriendRequest> requestList = friendRequestRepository.findAllByAcceptUserIdAndArgeeRet(userId,
+//                RequestFriendEnum.UNHAND.ordinal());
+
+        List<FriendRequest> requestList = friendRequestRepository.findAllByAcceptUserIdOrSendUserId(userId, userId);
 
         FriendRequestVO friendVO;
         UserInfo userInfo;
         for(FriendRequest friendRequest: requestList) {
-            Optional<UserInfo> userInfoOpt = userInfoRepository.findById(friendRequest.getSendUserId());
+            boolean acceptIsMe = false;
+            Optional<UserInfo> userInfoOpt = Optional.empty();
+            // 获取发送者
+            if(userId.equals(friendRequest.getSendUserId())){
+                userInfoOpt = userInfoRepository.findById(friendRequest.getAcceptUserId());
+            }else if(userId.equals(friendRequest.getAcceptUserId())){
+                userInfoOpt = userInfoRepository.findById(friendRequest.getSendUserId());
+                acceptIsMe = true;
+            }
+
             if(userInfoOpt.isEmpty()){
                 log.error("未找到发起好友请求的用户，严重错误！");
                 friendRequestRepository.deleteById(friendRequest.getSendUserId());
@@ -49,7 +60,9 @@ public class BusinessMsgServiceImpl implements BusinessMsgService {
             friendVO = getFriendVO(userInfo);
             friendVO.setItemId(friendRequest.getId());
             friendVO.setNotes(null);
-            friendVO.setArgeeState(friendRequest.getArgeeRet());
+//            friendVO.setArgeeState(friendRequest.getArgeeRet());
+            friendVO.setArgeeState(acceptIsMe ? friendRequest.getArgeeRet() - 7
+                    :friendRequest.getArgeeRet());
             ret.add(friendVO);
         }
 

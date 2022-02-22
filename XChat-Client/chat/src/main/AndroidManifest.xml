@@ -10,6 +10,7 @@
 
         <activity
             android:name=".ChatActivity"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait" />
 
         <receiver android:name=".network.NetworkStateReceiver"

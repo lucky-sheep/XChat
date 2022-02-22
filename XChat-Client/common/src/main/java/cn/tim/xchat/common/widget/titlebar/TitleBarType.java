@@ -7,6 +7,7 @@ public enum TitleBarType {
 
     CONTACTS_MAIN_PAGER(201, "联系人主页"),
     CONTACTS_FRIEND_INFO(202, "联系人详情"),
+    CONTACTS_APPLY_LIST(203, "好友申请列表"),
 
     PERSONAL_MAIN_PAGER(301, "个人信息页"),
     PERSONAL_DETAIL_PAGER(302, "个人信息详情页");

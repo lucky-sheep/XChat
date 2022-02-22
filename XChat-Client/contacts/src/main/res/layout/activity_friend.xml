@@ -8,7 +8,7 @@
     android:layout_height="match_parent"
     android:paddingStart="15dp"
     android:paddingEnd="15dp"
-    tools:context=".FriendActivity">
+    tools:context=".FriendDetailActivity">
 
     <LinearLayout
         android:orientation="vertical"
@@ -75,6 +75,7 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/contact_friend_set_notesname_layout"
             android:background="@drawable/common_radius_gray_bg"
             android:orientation="horizontal"
             android:gravity="center_vertical"
@@ -103,6 +104,7 @@
             android:layout_width="match_parent"
             android:layout_height="1dp"/>
         <RelativeLayout
+            android:id="@+id/contact_friend_to_msg_btn"
             android:background="@drawable/common_radius_gray_bg"
             android:orientation="horizontal"
             android:gravity="center"
@@ -111,7 +113,6 @@
             android:layout_height="60dp">
 
             <TextView
-                android:id="@+id/contact_friend_to_msg_btn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:drawableLeft="@drawable/icon_contacts_goto_chat"
@@ -123,6 +124,7 @@
         </RelativeLayout>
 
         <RelativeLayout
+            android:id="@+id/contact_friend_to_call_btn"
             android:background="@drawable/common_radius_gray_bg"
             android:orientation="horizontal"
             android:gravity="center"
@@ -131,7 +133,6 @@
             android:layout_height="60dp">
 
             <TextView
-                android:id="@+id/contact_friend_to_call__btn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:drawableLeft="@drawable/icon_contacts_start_call_video"

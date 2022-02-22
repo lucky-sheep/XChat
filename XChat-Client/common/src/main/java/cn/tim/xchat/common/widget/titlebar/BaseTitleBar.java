@@ -62,6 +62,12 @@ public class BaseTitleBar extends RelativeLayout implements TitleBarFun {
                 descTv.setVisibility(GONE);
                 rightAll.setVisibility(GONE);
                 break;
+            case CONTACTS_APPLY_LIST:
+                descTv.setVisibility(VISIBLE);
+                centerTitle.setText("新朋友申请列表");
+                addBtn.setVisibility(GONE);
+                menuBtn.setVisibility(GONE);
+                break;
             case PERSONAL_MAIN_PAGER:
                 titleBarView.setVisibility(INVISIBLE);
                 break;

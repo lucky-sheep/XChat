@@ -1,19 +1,24 @@
 package cn.tim.xchat.contacts;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.contract.ActivityResultContract;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -27,16 +32,17 @@ import org.litepal.LitePal;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import cn.tim.xchat.common.module.FriendInfo;
 import cn.tim.xchat.common.module.FriendRequest;
+import cn.tim.xchat.common.mvvm.MainViewModel;
 import cn.tim.xchat.common.task.ThreadManager;
 import cn.tim.xchat.common.widget.titlebar.BaseTitleBar;
 import cn.tim.xchat.common.widget.toast.XChatToast;
+import cn.tim.xchat.contacts.adapter.FriendInfoAdapter;
 import cn.tim.xchat.contacts.widget.AddFriendDialog;
 import cn.tim.xchat.network.OkHttpUtils;
 import cn.tim.xchat.network.config.NetworkConfig;
@@ -47,7 +53,6 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
-import q.rorbin.badgeview.QBadgeView;
 
 @Route(path = "/contacts/main")
 public class ContactsFragment extends Fragment {
@@ -56,14 +61,17 @@ public class ContactsFragment extends Fragment {
     private TextView newFriendBtn;
     private TextView groupManagerBtn;
     private RecyclerView contactRV;
-    private ContactRVAdapter contactRVAdapter;
+    private FriendInfoAdapter contactRVAdapter;
 
     private BaseTitleBar baseTitleBar;
     private final Timer timer;
 
-    public ContactsFragment(BaseTitleBar baseTitleBar) {
+    private MainViewModel mainViewModel;
+
+    public ContactsFragment(BaseTitleBar baseTitleBar, MainViewModel mainViewModel) {
         this.baseTitleBar = baseTitleBar;
         timer = new Timer();
+        this.mainViewModel = mainViewModel;
     }
 
     // 创建视图
@@ -82,26 +90,26 @@ public class ContactsFragment extends Fragment {
         // 创建数据库
         SQLiteDatabase database = LitePal.getDatabase();
 
-//        LitePal.deleteAll(FriendInfo.class);
         List<FriendInfo> friendsInfo = LitePal.findAll(FriendInfo.class);
-        contactRVAdapter = new ContactRVAdapter(getContext(), contactRV);
+        contactRVAdapter = new FriendInfoAdapter(getContext(), contactRV);
         contactRVAdapter.setDataSource(friendsInfo);
         contactRV.setLayoutManager(new LinearLayoutManager(getContext()));
         contactRV.setAdapter(contactRVAdapter);
 
         // 后台请求数据后更新数据库
         ThreadManager.getInstance().runTask(this::requestData);
+
         contactRVAdapter.setListener(position -> {
             FriendInfo friendInfo = contactRVAdapter.getDataSource().get(position);
             Log.i(TAG, "inflateData: friendInfo = " + friendInfo.getUsername());
-//            ARouter.getInstance()
-//                    .build("/contacts/friend")
-////                    .withObject("friendInfo", friendInfo) // 傻逼ARouter，果断unstar
-//                    .withString("username", friendInfo.getUsername())
-//                    .navigation();
-            Intent intent = new Intent(getContext(), FriendActivity.class);
-            intent.putExtra("username", friendInfo.getUsername());
-            startActivity(intent);
+//            Intent intent = new Intent(getContext(), FriendDetailActivity.class);
+//            intent.putExtra("username", friendInfo.getUsername());
+//            startActivity(intent);
+
+            ARouter.getInstance()
+                    .build("/contacts/detail")
+                    .withObject("friendInfo", friendInfo)
+                    .navigation();
         });
 
         baseTitleBar.addBtn.setOnClickListener(v -> {
@@ -110,30 +118,40 @@ public class ContactsFragment extends Fragment {
             addFriendDialog.show();
         });
 
-        List<FriendRequest> requestList = LitePal.findAll(FriendRequest.class);
-        int unHandCount = 0;
-        for(FriendRequest request: requestList) {
-            if(request.getArgeeState() == 0){ // 0 表示未处理
-                unHandCount++;
-            }
-        }
-        if(unHandCount != 0) {
-            int finalUnHandCount = unHandCount;
-            AtomicBoolean show = new AtomicBoolean(true);
-            TimerTask tipsFlicker = new TimerTask() {
-                @SuppressLint("SetTextI18n")
-                @Override
-                public void run() {
-                    if(show.getAndSet(!show.get())){
-                        newFriendBtn.setText("好友申请   (" + finalUnHandCount + "个新朋友)");
-                    }else {
-                        newFriendBtn.setText("");
-                    }
-                }
-            };
+        //List<FriendRequest> requestList = LitePal.findAll(FriendRequest.class);
 
-            timer.schedule(tipsFlicker, 0, 650);
-        }
+        mainViewModel.newFriendReqNum.observe(requireActivity(), count -> {
+            if(count > 0) {
+                AtomicBoolean show = new AtomicBoolean(true);
+                TimerTask tipsFlicker = new TimerTask() {
+                    @Override
+                    public void run() {
+                        if (show.getAndSet(!show.get())) {
+                            newFriendBtn.setText("好友申请   (" + count + "条新消息)");
+                        } else {
+                            newFriendBtn.setText("");
+                        }
+                    }
+                };
+                timer.schedule(tipsFlicker, 0, 650);
+            }else {
+                newFriendBtn.setText("好友申请");
+                timer.cancel();
+            }
+        });
+
+        newFriendBtn.setOnClickListener(v -> {
+            mainViewModel.newFriendReqNum.setValue(0);
+            // 好友请求页面
+            ARouter.getInstance()
+                    .build("/contacts/apply")
+                    .navigation(requireActivity(), 1001);
+        });
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
     }
 
     private void requestData() {
@@ -165,7 +183,7 @@ public class ContactsFragment extends Fragment {
                                 Log.i(TAG, "onResponse: success, friends.size = " + friends.size());
                                 for (int i = 0; i < friends.size(); i++) {
                                     FriendInfo friendInfo = friends.getObject(i, FriendInfo.class);
-                                    FriendInfo  info = LitePal.where("itemId = ?", friendInfo.getItemId())
+                                    FriendInfo info = LitePal.where("itemId = ?", friendInfo.getItemId())
                                             .findFirst(FriendInfo.class);
                                     if(info != null) info.delete();
                                     friendInfo.save();

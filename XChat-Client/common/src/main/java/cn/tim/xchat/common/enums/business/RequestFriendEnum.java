@@ -1,12 +1,7 @@
-package cn.tim.xchat.enums.business;
+package cn.tim.xchat.common.enums.business;
 
-import cn.tim.xchat.core.enums.CodeEnum;
-import lombok.Getter;
+import cn.tim.xchat.common.enums.CodeEnum;
 
-/**
- * 请求添加好友的三种状态
- */
-@Getter
 public enum RequestFriendEnum implements CodeEnum {
     UNHAND_ME(0, "我未处理"),
     AGREE_ME(1, "我已同意"),
@@ -26,11 +21,16 @@ public enum RequestFriendEnum implements CodeEnum {
         this.desc = desc;
     }
 
+    @Override
     public int getCode() {
         return code;
     }
 
     public static boolean isMyHandTask(int code){
         return code < RequestFriendEnum.PARTITION_VALIDATOR.getCode();
+    }
+
+    public String getDesc() {
+        return desc;
     }
 }
