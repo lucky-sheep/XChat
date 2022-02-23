@@ -19,6 +19,7 @@ import org.greenrobot.eventbus.EventBus;
 
 import cn.tim.xchat.common.XChatBaseActivity;
 import cn.tim.xchat.common.constans.StorageKey;
+import cn.tim.xchat.common.event.AppEvent;
 import cn.tim.xchat.common.event.TokenEvent;
 import cn.tim.xchat.common.widget.loading.LoadingComponent;
 import cn.tim.xchat.common.widget.toast.XChatToast;
@@ -73,6 +74,9 @@ public class LoginActivity extends XChatBaseActivity {
             String deviceId = mmkv.getString(StorageKey.DEVICE_ID_KEY, "");
             Log.i(LoginActivity.TAG, "MMKV deviceId = " + deviceId
                     + ", UserInfo deviceId = " + userInfo.getClientId());
+
+            // 发送LoginEvent，发送粘性广播避免未初始化
+            EventBus.getDefault().postSticky(new AppEvent(AppEvent.Type.USER_LOGIN_OR_REGISTER));
             ARouter.getInstance()
                     .build("/home/main")
                     .withString("token", token)

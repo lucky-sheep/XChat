@@ -92,6 +92,9 @@ public class WebSocketHelper {
             if(socketClient != null && socketClient.isClosed()) {
                 launchHandle();
             }
+        }else if(AppEvent.Type.USER_LOGIN_OR_REGISTER.equals(event.getType())){
+            if(socketClient != null && socketClient.isClosed()) stopWebSocket();
+            launchHandle(); // 用户登录或者注册的时候启动WS
         }
     }
 
