@@ -9,4 +9,5 @@
     <color name="white">#FFFFFFFF</color>
     <color name="warning">#FCD81B60</color>
     <color name="success">#F843A047</color>
+    <color name="boot_back">#fafafa</color>
 </resources>
