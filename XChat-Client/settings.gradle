@@ -6,3 +6,5 @@ include ':app'
 rootProject.name = "XChat-Client"
 include ':login'
 include ':base-network'
+include ':common:library:emojicon'
+include ':common:library:keyboard'

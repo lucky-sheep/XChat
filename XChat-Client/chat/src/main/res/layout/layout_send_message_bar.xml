@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/sendMsgLayout"
+    android:layout_alignParentBottom="true"
+    android:layout_width="fill_parent"
+    android:layout_height="55dp"
+    android:background="#fefefe"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    android:gravity="center_vertical"
+    android:orientation="horizontal">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/send_img_bar_mic_iv"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/icon_chat_input_mic"
+            android:contentDescription="@string/app_name" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:background="@drawable/bg_min_btn_rudis"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginBottom="2dp"
+            app:boxStrokeColor="@color/white"
+            app:boxStrokeWidth="0dp"
+            app:boxStrokeWidthFocused="0dp"
+            app:hintTextColor="@color/white">
+
+            <EditText
+                android:id="@+id/send_img_bar_content_et"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="top"
+                android:layout_marginBottom="2dp"
+                android:inputType="textMultiLine"
+                android:maxLines="2"
+                android:minWidth="0dp"
+                android:minHeight="0dp"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <ImageView
+            android:id="@+id/send_img_bar_emoji_iv"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:layout_marginStart="5dp"
+            android:layout_marginEnd="2dp"
+            android:src="@drawable/icon_chat_input_emoji" />
+
+        <ImageView
+            android:id="@+id/send_img_bar_add_iv"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:layout_marginStart="5dp"
+            android:layout_marginEnd="2dp"
+            android:src="@drawable/icon_chat_input_add"
+            android:visibility="visible" />
+
+        <!-- com.google.android.material.button.MaterialButton -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/send_img_bar_send_btn"
+            style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
+            app:backgroundTint="@color/green"
+            android:textColor="@color/white"
+            app:cornerRadius="4dp"
+            android:layout_width="50dp"
+            android:layout_height="40dp"
+            android:layout_marginEnd="8dp"
+            android:minWidth="0dp"
+            android:minHeight="0dp"
+            android:paddingStart="8dp"
+            android:paddingTop="0dp"
+            android:paddingEnd="8dp"
+            android:paddingBottom="0dp"
+            android:text="发送"
+            android:textSize="12sp"
+            android:visibility="visible" />
+    </LinearLayout>
+</LinearLayout>
