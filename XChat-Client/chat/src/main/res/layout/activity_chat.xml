@@ -1,33 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
+<cn.dreamtobe.kpswitch.widget.KPSwitchRootLinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_width="match_parent">
+    android:fitsSystemWindows="true"
+    android:orientation="vertical">
 
     <cn.tim.xchat.common.widget.titlebar.BaseTitleBar
         android:id="@+id/chat_msg_titlebar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:layout_below="@id/chat_msg_titlebar"
-        android:id="@+id/chat_msg_rv"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+    <include layout="@layout/view_message_list" />
+    <include layout="@layout/layout_send_message_bar" />
 
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <include layout="@layout/layout_send_message_bar" />
-    </ScrollView>
-
-    <cn.dreamtobe.kpswitch.widget.KPSwitchFSPanelLinearLayout
-        android:id="@+id/panel_root"
+    <cn.dreamtobe.kpswitch.widget.KPSwitchPanelLinearLayout
+        android:id="@+id/chat_panel_root"
         style="@style/Panel"
         android:visibility="gone">
+        <include layout="@layout/layout_merge_panel_content" />
+    </cn.dreamtobe.kpswitch.widget.KPSwitchPanelLinearLayout>
 
-        <include layout="@layout/merge_panel_content" />
-    </cn.dreamtobe.kpswitch.widget.KPSwitchFSPanelLinearLayout>
-
-</RelativeLayout>
+</cn.dreamtobe.kpswitch.widget.KPSwitchRootLinearLayout>

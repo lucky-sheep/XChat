@@ -76,11 +76,8 @@ dependencies {
     api "com.google.protobuf:protobuf-java:3.13.0"
     api "com.google.protobuf:protoc:3.17.0"
 
-    api project(':common:library:emojicon')
-    println('引入依赖 (src): emojicon -> io.github.rockerhieu.emojicon')
-
-    api project(':common:library:keyboard')
-    println('引入依赖 (src): keyboard -> cn.dreamtobe.kpswitch')
+//    api project(':common:library:emoji')
+//    println('引入依赖 (src): emoji -> io.github.rockerhieu.emoji')
 }
 
 

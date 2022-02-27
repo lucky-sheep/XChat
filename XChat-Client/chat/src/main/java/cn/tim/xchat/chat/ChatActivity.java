@@ -1,54 +1,55 @@
 package cn.tim.xchat.chat;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.alibaba.android.arouter.facade.annotation.Route;
-import com.google.android.material.button.MaterialButton;
 
 import cn.dreamtobe.kpswitch.util.KPSwitchConflictUtil;
 import cn.dreamtobe.kpswitch.util.KeyboardUtil;
-import cn.dreamtobe.kpswitch.widget.KPSwitchFSPanelLinearLayout;
 import cn.dreamtobe.kpswitch.widget.KPSwitchPanelLinearLayout;
-import cn.tim.xchat.common.XChatBaseActivity;
+import cn.tim.xchat.common.utils.StatusBarUtil;
 import cn.tim.xchat.common.widget.titlebar.BaseTitleBar;
-import io.github.rockerhieu.emojicon.util.Utils;
 
 @Route(path = "/chat/list")
-public class ChatActivity extends XChatBaseActivity {
-    private KPSwitchFSPanelLinearLayout panelRoot;
-    private ImageView micBtn;
-    private ImageView emojiBtn;
-    private ImageView addBtn;
-    private EditText contentEt;
-    private MaterialButton sendBtn;
-    private RecyclerView msgListRv;
-    private BaseTitleBar baseTitleBar;
+public class ChatActivity extends AppCompatActivity {
+    private static final String TAG = "ChatActivity";
+
+//    private void adaptTheme(final boolean isFullScreenTheme) {
+//        if (isFullScreenTheme) {
+//            getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+//        } else {
+//            ;
+//        }
+//    }
 
     @Override
+    @SuppressLint("ClickableViewAccessibility")
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_chat);
 
+        StatusBarUtil.setDarkStatusIcon(getWindow(), true);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        setContentView(R.layout.activity_chat);
         findView();
 
         KeyboardUtil.attach(this, panelRoot);
-        KPSwitchConflictUtil.attach(panelRoot, addBtn, contentEt,
-                new KPSwitchConflictUtil.SwitchClickListener() {
-                    @Override
-                    public void onClickSwitch(View v, boolean switchToPanel) {
-                        if (switchToPanel) {
-                            contentEt.clearFocus();
-                        } else {
-                            contentEt.requestFocus();
-                        }
+        KPSwitchConflictUtil.attach(panelRoot, addBtn, sendEdit,
+                switchToPanel -> {
+                    if (switchToPanel) {
+                        sendEdit.clearFocus();
+                    } else {
+                        sendEdit.requestFocus();
                     }
                 });
 
@@ -58,63 +59,21 @@ public class ChatActivity extends XChatBaseActivity {
             }
             return false;
         });
-//
-//        contentEt.setOnClickListener(v -> {
-//            KPSwitchConflictUtil.attach(panelRoot, baseTitleBar, contentEt,
-//                    new KPSwitchConflictUtil.SwitchClickListener() {
-//                        @Override
-//                        public void onClickSwitch(View v, boolean switchToPanel) {
-//                            if (switchToPanel) {
-//                                contentEt.clearFocus();
-//                            } else {
-//                                contentEt.requestFocus();
-//                            }
-//                        }
-//                    });
-//        });
-//        contentEt.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-//            @Override
-//            public void onFocusChange(View v, boolean hasFocus) {
-//                KPSwitchConflictUtil.attach(panelRoot, baseTitleBar, contentEt,
-//                        new KPSwitchConflictUtil.SwitchClickListener() {
-//                            @Override
-//                            public void onClickSwitch(View v, boolean switchToPanel) {
-//                                if (switchToPanel) {
-//                                    contentEt.clearFocus();
-//                                } else {
-//                                    contentEt.requestFocus();
-//                                }
-//                            }
-//                        });
-//            }
-//        });
     }
 
-    @Override
-    protected ViewGroup getContentView() {
-        return findViewById(android.R.id.content);
-    }
-
-    private void findView(){
-        panelRoot = findViewById(R.id.panel_root);
+    private KPSwitchPanelLinearLayout panelRoot;
+    private EditText sendEdit;
+    private ImageView addBtn;
+    private RecyclerView msgListRv;
+    private BaseTitleBar baseTitleBar;
 
 
-        micBtn = findViewById(R.id.send_img_bar_mic_iv);
-        emojiBtn = findViewById(R.id.send_img_bar_emoji_iv);
-        addBtn = findViewById(R.id.send_img_bar_add_iv);
-        contentEt = findViewById(R.id.send_img_bar_content_et);
-        sendBtn = findViewById(R.id.send_img_bar_send_btn);
-
-
+    private void findView() {
         msgListRv = findViewById(R.id.chat_msg_rv);
+        panelRoot = findViewById(R.id.chat_panel_root);
+        sendEdit = findViewById(R.id.send_img_bar_content_et);
+        addBtn = findViewById(R.id.send_img_bar_add_iv);
         baseTitleBar = findViewById(R.id.chat_msg_titlebar);
-    }
-
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        panelRoot.recordKeyboardStatus(getWindow());
     }
 
     @Override
@@ -126,12 +85,5 @@ public class ChatActivity extends XChatBaseActivity {
             return true;
         }
         return super.dispatchKeyEvent(event);
-    }
-
-    // 当屏幕分屏/多窗口变化时回调
-    @Override
-    public void onMultiWindowModeChanged(boolean isInMultiWindowMode) {
-        super.onMultiWindowModeChanged(isInMultiWindowMode);
-        KPSwitchConflictUtil.onMultiWindowModeChanged(isInMultiWindowMode);
     }
 }

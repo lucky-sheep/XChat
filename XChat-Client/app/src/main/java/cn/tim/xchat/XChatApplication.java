@@ -65,7 +65,7 @@ public class XChatApplication extends Application {
 
         saveDeviceId();
 
-        if(!BuildConfig.DEBUG) {
+        if(BuildConfig.DEBUG) {
             new DoKit.Builder(this)
                     .productId("4b16245fb438845e09386178c9dda449")
                     .build();
