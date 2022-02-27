@@ -13,31 +13,30 @@ import android.widget.ImageView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.alibaba.android.arouter.facade.annotation.Autowired;
 import com.alibaba.android.arouter.facade.annotation.Route;
+import com.alibaba.android.arouter.launcher.ARouter;
 
 import cn.dreamtobe.kpswitch.util.KPSwitchConflictUtil;
 import cn.dreamtobe.kpswitch.util.KeyboardUtil;
 import cn.dreamtobe.kpswitch.widget.KPSwitchPanelLinearLayout;
 import cn.tim.xchat.common.utils.StatusBarUtil;
 import cn.tim.xchat.common.widget.titlebar.BaseTitleBar;
+import cn.tim.xchat.common.widget.titlebar.TitleBarType;
 
 @Route(path = "/chat/list")
 public class ChatActivity extends AppCompatActivity {
     private static final String TAG = "ChatActivity";
 
-//    private void adaptTheme(final boolean isFullScreenTheme) {
-//        if (isFullScreenTheme) {
-//            getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-//        } else {
-//            ;
-//        }
-//    }
+    @Autowired(required = true)
+    String userId; // 表示正在和谁对话
 
     @Override
     @SuppressLint("ClickableViewAccessibility")
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        ARouter.getInstance().inject(this);
         StatusBarUtil.setDarkStatusIcon(getWindow(), true);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         setContentView(R.layout.activity_chat);
@@ -67,13 +66,13 @@ public class ChatActivity extends AppCompatActivity {
     private RecyclerView msgListRv;
     private BaseTitleBar baseTitleBar;
 
-
     private void findView() {
         msgListRv = findViewById(R.id.chat_msg_rv);
         panelRoot = findViewById(R.id.chat_panel_root);
         sendEdit = findViewById(R.id.send_img_bar_content_et);
         addBtn = findViewById(R.id.send_img_bar_add_iv);
         baseTitleBar = findViewById(R.id.chat_msg_titlebar);
+        baseTitleBar.autoChangeByType(TitleBarType.MESSAGE_CHAT_PAGER);
     }
 
     @Override

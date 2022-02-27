@@ -75,6 +75,10 @@ public class BaseTitleBar extends RelativeLayout implements TitleBarFun {
                 centerTitle.setText("资料详情");
                 rightAll.setVisibility(INVISIBLE);
                 break;
+            case MESSAGE_CHAT_PAGER:
+                addBtn.setVisibility(GONE);
+                findBtn.setVisibility(GONE);
+                break;
         }
     }
 
