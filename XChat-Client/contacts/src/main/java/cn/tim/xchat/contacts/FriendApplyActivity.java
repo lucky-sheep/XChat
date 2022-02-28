@@ -14,6 +14,8 @@ import com.alibaba.android.arouter.launcher.ARouter;
 import org.litepal.LitePal;
 
 import java.util.List;
+import java.util.Locale;
+
 import cn.tim.xchat.common.XChatBaseActivity;
 import cn.tim.xchat.common.core.WebSocketHelper;
 import cn.tim.xchat.common.enums.business.RequestFriendEnum;
@@ -46,8 +48,7 @@ public class FriendApplyActivity extends XChatBaseActivity {
         acceptRv = findViewById(R.id.contacts_accept_list_rv);
 
         // 寻找
-        List<FriendRequest> friendRequests = LitePal.where("argeeState < ?",
-                String.valueOf(RequestFriendEnum.PARTITION_VALIDATOR.getCode()))
+        List<FriendRequest> friendRequests = LitePal.where("isMyRequest = ?", "1")
                 .find(FriendRequest.class);
         for (FriendRequest request: friendRequests){
             Log.i(TAG, "onCreate: " + request);
@@ -73,7 +74,7 @@ public class FriendApplyActivity extends XChatBaseActivity {
                 FriendRequest friendRequest = friendRequests.get(position);
                 boolean sendRet = sendPassOrRefuseMsg(friendRequest, true);
                 if(sendRet) {
-                    friendRequest.setArgeeState(RequestFriendEnum.AGREE_ME.getCode());
+                    friendRequest.setArgeeState(RequestFriendEnum.AGREE.getCode());
                     applyAdapter.updateOneData(position);
                     // 本地更新数据库 朋友库 + 申请库
                     friendRequest.save();
@@ -93,8 +94,7 @@ public class FriendApplyActivity extends XChatBaseActivity {
 
         // ======================================================
 
-        List<FriendRequest> friendAccept = LitePal.where("argeeState > ?",
-                String.valueOf(RequestFriendEnum.PARTITION_VALIDATOR.getCode()))
+        List<FriendRequest> friendAccept = LitePal.where("isMyRequest = ?", "0")
                 .find(FriendRequest.class);
         baseTitleBar.backBtn.setOnClickListener(v -> finish());
         FriendApplyAdapter acceptAdapter = new FriendApplyAdapter(this, acceptRv);
@@ -141,17 +141,16 @@ public class FriendApplyActivity extends XChatBaseActivity {
      */
     private boolean sendPassOrRefuseMsg(FriendRequest friendRequest, boolean result) {
         String itemId = friendRequest.getItemId();
-        int state = result? RequestFriendEnum.AGREE_ME.getCode():
-                RequestFriendEnum.AGREE_ME.getCode();
+        int state = result? RequestFriendEnum.AGREE.getCode():
+                RequestFriendEnum.REFUSE.getCode();
 
-        @SuppressLint("DefaultLocale")
-        String data = String.format("{\"itemId\": \"%s\", \"state\": %d}", itemId, state);
+        String data = String.format(Locale.CHINA,"{\"itemId\": \"%s\", \"state\": %d}", itemId, state);
 
         DataContentSerializer.DataContent.ChatMessage message =
                 DataContentSerializer.DataContent.ChatMessage
                         .newBuilder()
                         .setText(data)
-                        .setType(MsgTypeEnum.FRIEND_REQUEST.ordinal())
+                        .setType(MsgTypeEnum.FRIEND_REQUEST.getCode())
                         .build();
 
         DataContentSerializer.DataContent dataContent = DataContentSerializer.DataContent

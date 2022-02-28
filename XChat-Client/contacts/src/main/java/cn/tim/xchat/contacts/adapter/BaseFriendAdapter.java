@@ -70,9 +70,9 @@ public class BaseFriendAdapter<T extends FriendObtain>
             request = (FriendRequest) itemData;
             int argeeState = request.getArgeeState();
 
-            if(RequestFriendEnum.isMyHandTask(argeeState)){
+            if(request.getIsMyRequest() == 1){
                 // 我需要处理的
-                if(argeeState == RequestFriendEnum.UNHAND_ME.getCode()) {
+                if(argeeState == RequestFriendEnum.UNHAND.getCode()) {
                     holder.applyBtn.setVisibility(View.VISIBLE);
                     holder.refuseBtn.setVisibility(View.VISIBLE);
                     holder.optResultTv.setVisibility(View.GONE);
@@ -83,7 +83,7 @@ public class BaseFriendAdapter<T extends FriendObtain>
                             Objects.requireNonNull(EnumUtil.getByCode(request.getArgeeState(),
                                     RequestFriendEnum.class)).getDesc());
                 }
-            }else {
+            }else if(request.getIsMyRequest() == 0){
                 // 对方处理的
                 holder.applyBtn.setVisibility(View.GONE);
                 holder.refuseBtn.setVisibility(View.GONE);

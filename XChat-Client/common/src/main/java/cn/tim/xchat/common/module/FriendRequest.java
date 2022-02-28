@@ -1,5 +1,7 @@
 package cn.tim.xchat.common.module;
 
+import androidx.annotation.NonNull;
+
 import org.litepal.crud.LitePalSupport;
 
 public class FriendRequest extends LitePalSupport implements FriendObtain{
@@ -12,6 +14,10 @@ public class FriendRequest extends LitePalSupport implements FriendObtain{
     private String faceBigImage;
     private String qrCode;
     private int argeeState;
+    /**
+     * 0 true 1 false
+     */
+    private int isMyRequest; // 0 true 1 false
 
     public FriendRequest() {
     }
@@ -94,6 +100,15 @@ public class FriendRequest extends LitePalSupport implements FriendObtain{
         this.argeeState = argeeState;
     }
 
+    public void setIsMyRequest(int isMyRequest) {
+        this.isMyRequest = isMyRequest;
+    }
+
+    public int getIsMyRequest() {
+        return isMyRequest;
+    }
+
+    @NonNull
     @Override
     public String toString() {
         return "FriendRequest{" +

@@ -90,7 +90,7 @@ public class FriendServiceImpl implements FriendService {
                     friendRequest.setRequestDatetime(Instant.now());
                     friendRequest.setSendUserId(userId);
                     friendRequest.setAcceptUserId(userInfo.getId());
-                    friendRequest.setArgeeRet(RequestFriendEnum.UNHAND_OTHER.getCode());
+                    friendRequest.setArgeeRet(RequestFriendEnum.UNHAND.getCode());
                     FriendRequest save = friendRequestRepository.save(friendRequest);
                     log.info("申请好友 Success, save = " + save);
 

@@ -7,4 +7,6 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 public class FriendRequestVO extends FriendVO {
     private int argeeState;
+
+    private int isMyRequest; // 0 true 1 false
 }

@@ -41,22 +41,20 @@ public class BusinessMsgServiceImpl implements BusinessMsgService {
     public DataContentSerializer.DataContent getUserFriendRequest(String userId) {
         List<FriendRequestVO> ret = Lists.newArrayList();
         // 查找未处理的好友请求
-//        List<FriendRequest> requestList = friendRequestRepository.findAllByAcceptUserIdAndArgeeRet(userId,
-//                RequestFriendEnum.UNHAND.ordinal());
-
-        List<FriendRequest> requestList = friendRequestRepository.findAllByAcceptUserIdOrSendUserId(userId, userId);
+        List<FriendRequest> requestList = friendRequestRepository.findAllByAcceptUserIdOrSendUserIdAndArgeeRet(
+                userId, userId, RequestFriendEnum.UNHAND.getCode());
 
         FriendRequestVO friendVO;
         UserInfo userInfo;
         for(FriendRequest friendRequest: requestList) {
-            boolean acceptIsMe = false;
+            boolean isMyRequest = false;
             Optional<UserInfo> userInfoOpt = Optional.empty();
-            // 获取发送者
+            // 获取对方信息
             if(userId.equals(friendRequest.getSendUserId())){
                 userInfoOpt = userInfoRepository.findById(friendRequest.getAcceptUserId());
+                isMyRequest = true;
             }else if(userId.equals(friendRequest.getAcceptUserId())){
                 userInfoOpt = userInfoRepository.findById(friendRequest.getSendUserId());
-                acceptIsMe = true;
             }
 
             if(userInfoOpt.isEmpty()){
@@ -69,16 +67,14 @@ public class BusinessMsgServiceImpl implements BusinessMsgService {
             friendVO = getFriendVO(userInfo);
             friendVO.setItemId(friendRequest.getId());
             friendVO.setNotes(null);
-//            friendVO.setArgeeState(friendRequest.getArgeeRet());
-            friendVO.setArgeeState(acceptIsMe ? friendRequest.getArgeeRet() - 7
-                    // ！！如果接受者是我自己的话， -7 表示自己的处理结果
-                    :friendRequest.getArgeeRet());
+            friendVO.setArgeeState(friendRequest.getArgeeRet());
+            friendVO.setIsMyRequest(isMyRequest ? 0: 1);
             ret.add(friendVO);
         }
 
         DataContentSerializer.DataContent.ChatMessage chatMessage =
                 DataContentSerializer.DataContent.ChatMessage.newBuilder()
-                .setType(MsgTypeEnum.FRIEND_REQUEST.ordinal())
+                .setType(MsgTypeEnum.FRIEND_REQUEST.getCode())
                 .setText(JSON.toJSONString(ret))
                 .build();
 
@@ -95,14 +91,18 @@ public class BusinessMsgServiceImpl implements BusinessMsgService {
         String itemId = dataJson.getString("itemId");
         int state = dataJson.getInteger("state");
         FriendRequest friendRequest = friendRequestRepository.getById(itemId);
-        friendRequest.setArgeeRet(state + 7); // 和上面原理一样，如果接受者是别人的话， +7 表示把自己的处理结果给别人看
+        friendRequest.setArgeeRet(state);
         String acceptUserId = friendRequest.getAcceptUserId();
         String sendUserId = friendRequest.getSendUserId();
         // 保存好友请求表
         friendRequestRepository.save(friendRequest);
 
+        if(friendRequest.getArgeeRet() != RequestFriendEnum.REFUSE.getCode()){
+            UserChannelHelper.isOnlineAndSendMsg(sendUserId, getUserFriendRequest(sendUserId));
+        }
+
         // 保存好友关系 -> 只有同意的情况下才保存
-        if(friendRequest.getArgeeRet() == RequestFriendEnum.AGREE_OTHER.getCode()){
+        if(friendRequest.getArgeeRet() == RequestFriendEnum.AGREE.getCode()){
             UserChannelHelper.isOnlineAndSendMsg(sendUserId, getUserFriendRequest(sendUserId));
 
             MyFriend myFriend = new MyFriend();

@@ -1,15 +1,31 @@
 package cn.tim.xchat.common.msg;
 
+import cn.tim.xchat.common.enums.CodeEnum;
+
 /**
  * 消息类型, 服务端必须和客户端端统一
  */
-public enum MsgTypeEnum {
-    TEXT,
-    VOICE,
-    VIDEO,
-    PICTURE,
-    ADDRESS,
-    FILE,
+public enum MsgTypeEnum implements CodeEnum {
+    TEXT(0, "文本消息"),
+    VOICE(1, "语音消息"),
+    VIDEO(2, "视频消息"),
+    PICTURE(3, "图片消息"),
+    ADDRESS(4, "位置消息"),
+    FILE(5, "文件"),
 
-    FRIEND_REQUEST, // 好友添加请求, 同意/拒绝请求等，都算
+
+    FRIEND_REQUEST(11, "好友添加请求");
+
+    private int code;
+    private String desc;
+
+    MsgTypeEnum(int code, String desc){
+        this.code = code;
+        this.desc = desc;
+    }
+
+    @Override
+    public int getCode() {
+        return this.code;
+    }
 }

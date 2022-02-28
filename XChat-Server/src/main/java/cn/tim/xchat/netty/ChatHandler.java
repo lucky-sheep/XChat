@@ -6,7 +6,6 @@ import cn.tim.xchat.core.model.DataContentSerializer;
 import cn.tim.xchat.service.BusinessMsgService;
 import cn.tim.xchat.utils.SpringUtil;
 import io.netty.channel.Channel;
-import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.group.ChannelGroup;
@@ -14,15 +13,10 @@ import io.netty.channel.group.DefaultChannelGroup;
 import io.netty.util.AttributeKey;
 import io.netty.util.concurrent.GlobalEventExecutor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 
-import javax.annotation.Resource;
-import java.util.List;
 
 @Slf4j
-//@ChannelHandler.Sharable
-//@Component
 public class ChatHandler extends SimpleChannelInboundHandler<DataContentSerializer.DataContent> {
     // 用于记录和管理所有客户端的Channel
     public static ChannelGroup users =
@@ -53,13 +47,14 @@ public class ChatHandler extends SimpleChannelInboundHandler<DataContentSerializ
             log.info("用户:" + senderId + "上线, channelId:" + currentChannel.id().asLongText() + ", 开始发送积压消息------->");
             currentChannel.writeAndFlush(businessMsgService.getUserFriendRequest(senderId));
         } else if (action == MsgActionEnum.CHAT.type) {
+
         } else if (action == MsgActionEnum.SIGNED.type) {
         } else if (action == MsgActionEnum.KEEPALIVE.type) {
             log.debug("KEEPALIVE MSG, size = " + dataContent.toByteArray().length);
         } else if (action == MsgActionEnum.BUSINESS.type) {
             // 业务消息
             int type = dataContent.getChatMessage().getType();
-            if(type == MsgTypeEnum.FRIEND_REQUEST.ordinal()) {
+            if(type == MsgTypeEnum.FRIEND_REQUEST.getCode()) {
                 businessMsgService.handleFriendRequestMsg(dataContent, currentChannel);
             }
         }

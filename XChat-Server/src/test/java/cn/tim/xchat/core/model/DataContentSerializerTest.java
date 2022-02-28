@@ -26,7 +26,7 @@ public class DataContentSerializerTest {
         DataContentSerializer.DataContent.ChatMessage.Builder msgBuilder
                 = DataContentSerializer.DataContent.ChatMessage.newBuilder();
         DataContentSerializer.DataContent.ChatMessage message = msgBuilder
-                .setType(MsgTypeEnum.TEXT.ordinal())
+                .setType(MsgTypeEnum.TEXT.getCode())
                 .setAt("@" + testId)
                 .setReply(testId)
                 .setUrl(url)
@@ -46,7 +46,7 @@ public class DataContentSerializerTest {
 
         start = end;
         ChatMessage chatMessage = new ChatMessage();
-        chatMessage.setType(MsgTypeEnum.TEXT.ordinal());
+        chatMessage.setType(MsgTypeEnum.TEXT.getCode());
         chatMessage.setAt("@" + testId);
         chatMessage.setUrl(url);
         chatMessage.setReply(testId);
