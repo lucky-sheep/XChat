@@ -1,19 +1,23 @@
 package cn.tim.xchat.contacts;
 
-import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.ViewGroup;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.test.espresso.core.internal.deps.guava.collect.Maps;
 
+import com.alibaba.android.arouter.facade.annotation.Autowired;
 import com.alibaba.android.arouter.facade.annotation.Route;
 import com.alibaba.android.arouter.launcher.ARouter;
 
 import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 import org.litepal.LitePal;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
@@ -25,6 +29,7 @@ import cn.tim.xchat.common.module.FriendInfo;
 import cn.tim.xchat.common.module.FriendRequest;
 import cn.tim.xchat.common.msg.MsgActionEnum;
 import cn.tim.xchat.common.msg.MsgTypeEnum;
+import cn.tim.xchat.common.mvvm.MainViewModel;
 import cn.tim.xchat.common.utils.BeanCopyUtil;
 import cn.tim.xchat.common.widget.titlebar.BaseTitleBar;
 import cn.tim.xchat.common.widget.titlebar.TitleBarType;
@@ -37,31 +42,35 @@ public class FriendApplyActivity extends XChatBaseActivity {
     private static final String TAG = "FriendApplyActivity";
     private RecyclerView applyRv;
     private RecyclerView acceptRv;
+    private FriendApplyAdapter applyAdapter;
+    private FriendApplyAdapter acceptAdapter;
+
+    @Autowired
+    MainViewModel mainViewModel;
+    private List<FriendRequest> friendsAccept;
+    private List<FriendRequest> friendsRequest;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_contacts_friend_apply);
         ARouter.getInstance().inject(this);
+        EventBus.getDefault().register(this);
         BaseTitleBar baseTitleBar = findViewById(R.id.contact_friend_apply_title_bar);
         baseTitleBar.autoChangeByType(TitleBarType.CONTACTS_APPLY_LIST);
 
         applyRv = findViewById(R.id.contacts_apply_list_rv);
         acceptRv = findViewById(R.id.contacts_accept_list_rv);
 
-        // 寻找
-        List<FriendRequest> friendRequests = LitePal.where("isMyRequest = ?", "1")
-                .find(FriendRequest.class);
-        for (FriendRequest request: friendRequests){
-            Log.i(TAG, "onCreate: " + request);
-        }
+        getFriendReqAccFromDB();
 
-        FriendApplyAdapter applyAdapter = new FriendApplyAdapter(this, applyRv);
-        applyAdapter.setDataSource(friendRequests);
+        // =============== my accept ==================
+        applyAdapter = new FriendApplyAdapter(this, applyRv);
+        applyAdapter.setDataSource(friendsRequest);
 
         // 跳转详情页
         applyAdapter.setListener(position -> {
-            FriendRequest friendRequest = friendRequests.get(position);
+            FriendRequest friendRequest = friendsRequest.get(position);
             navigationToDetail(friendRequest);
         });
 
@@ -73,7 +82,7 @@ public class FriendApplyActivity extends XChatBaseActivity {
             @Override
             public void onItemClickPass(int position) {
                 Log.i(TAG, "onItemClickPass: ");
-                FriendRequest friendRequest = friendRequests.get(position);
+                FriendRequest friendRequest = friendsRequest.get(position);
                 boolean sendRet = sendPassOrRefuseMsg(friendRequest, true);
                 if(sendRet) {
                     friendRequest.setArgeeState(RequestFriendEnum.AGREE.getCode());
@@ -89,7 +98,7 @@ public class FriendApplyActivity extends XChatBaseActivity {
 
             @Override
             public void onItemClickRefuse(int position) {
-                FriendRequest friendRequest = friendRequests.get(position);
+                FriendRequest friendRequest = friendsRequest.get(position);
                 friendRequest.setArgeeState(RequestFriendEnum.REFUSE.getCode());
                 boolean sendRet = sendPassOrRefuseMsg(friendRequest, false);
                 if(sendRet) {
@@ -99,16 +108,13 @@ public class FriendApplyActivity extends XChatBaseActivity {
             }
         });
 
-        // ======================================================
-
-        List<FriendRequest> friendAccept = LitePal.where("isMyRequest = ?", "0")
-                .find(FriendRequest.class);
+        // =============== my send ==================
         baseTitleBar.backBtn.setOnClickListener(v -> finish());
-        FriendApplyAdapter acceptAdapter = new FriendApplyAdapter(this, acceptRv);
-        acceptAdapter.setDataSource(friendAccept);
+        acceptAdapter = new FriendApplyAdapter(this, acceptRv);
+        acceptAdapter.setDataSource(friendsAccept);
 
         acceptAdapter.setListener(position -> {
-            FriendRequest friendRequest = friendAccept.get(position);
+            FriendRequest friendRequest = friendsAccept.get(position);
             navigationToDetail(friendRequest);
         });
 
@@ -125,10 +131,7 @@ public class FriendApplyActivity extends XChatBaseActivity {
         // 先查数据库
         FriendInfo friendInfo = LitePal.where("userId = ?", userId).findFirst(FriendInfo.class);
         if(friendInfo != null) {
-
-//        }
         // 已经同意的跳转
-//        if(friendRequest.getArgeeState() == RequestFriendEnum.AGREE_ME.getCode()){
             ARouter.getInstance()
                     .build("/contacts/detail")
                     .withObject("friendInfo", LitePal.where("userId = ?",
@@ -183,12 +186,42 @@ public class FriendApplyActivity extends XChatBaseActivity {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        Log.i(TAG, "saveFriendRequestToFriend: friendInfo = " + friendInfo);
-        // TODO 通知Friend列表更新
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onFriendReqResultEvent(AppEvent appEvent){
+        if(appEvent.getType() == AppEvent.Type.NEW_FRIENDS_REQUEST){
+            getFriendReqAccFromDB();
+            acceptAdapter.setDataSource(friendsAccept);
+            applyAdapter.setDataSource(friendsRequest);
+        }
+    }
+
+    // 从数据库得到好友请求信息
+    private void getFriendReqAccFromDB() {
+        friendsAccept = LitePal.where("isMyRequest = ?", "0")
+                .find(FriendRequest.class);
+        friendsRequest = LitePal.where("isMyRequest = ?", "1")
+                .find(FriendRequest.class);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        EventBus.getDefault().unregister(this);
+        // 外部通知清零
+        HashMap<String, Object> data = Maps.newHashMap();
+        data.put(AppEvent.Type.NEW_FRIENDS_REQUEST.name(), 0);
+        EventBus.getDefault().post(new AppEvent(AppEvent.Type.NEW_FRIENDS_REQUEST, data));
     }
 
     @Override
     protected ViewGroup getContentView() {
         return findViewById(android.R.id.content);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
     }
 }

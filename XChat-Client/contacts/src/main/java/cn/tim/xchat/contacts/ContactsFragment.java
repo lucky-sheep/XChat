@@ -136,6 +136,7 @@ public class ContactsFragment extends Fragment {
             // 好友请求页面
             ARouter.getInstance()
                     .build("/contacts/apply")
+                    .withObject("mainViewModel", mainViewModel)
                     .navigation(requireActivity(), 1001);
         });
 

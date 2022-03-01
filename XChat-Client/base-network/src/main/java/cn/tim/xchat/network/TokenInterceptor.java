@@ -85,7 +85,14 @@ public class TokenInterceptor implements Interceptor {
         BufferedSource source = response.body().source();
         Buffer buffer = source.getBuffer();
         String readString = buffer.clone().readString(StandardCharsets.UTF_8);
-        ResponseModule responseModule = JSON.parseObject(readString, ResponseModule.class);
+        ResponseModule responseModule = null;
+        try {
+            responseModule = JSON.parseObject(readString, ResponseModule.class);
+        }catch (JSONException e){
+            e.printStackTrace();
+            EventBus.getDefault().post(new TokenEvent(TokenEvent.TokenType.SERVER_ERROR));
+        }
+
         if(responseModule != null && !responseModule.getSuccess()) {
             if(responseModule.getCode() == 50001) {
                 // 说明Token过期
