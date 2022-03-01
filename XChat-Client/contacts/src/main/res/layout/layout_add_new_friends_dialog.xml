@@ -50,7 +50,7 @@
                 android:layout_centerInParent="true"
                 android:text="申请添加好友"
                 android:textColor="@color/white"
-                app:backgroundTint="#EC407A"
+                app:backgroundTint="#8B8B8B"
                 app:cornerRadius="12dp"
                 app:iconGravity="textStart"
                 app:icon="@drawable/icon_contacts_send_reqfriend"

@@ -21,7 +21,8 @@ public class AppEvent {
         NETWORK_AVAILABLE, // 网络可用
         NETWORK_UNAVAILABLE, // 网络不可用
         NEW_FRIENDS_REQUEST, // 新的朋友添加请求(包含同意、拒绝)
-        USER_LOGIN_OR_REGISTER // 用户登录或者注册（需要启动WS连接）
+        USER_LOGIN_OR_REGISTER, // 用户登录或者注册（需要启动WS连接）
+        REFRESH_LOCAL_FRIENDS_LIST // 刷新本地好友列表
     }
 
     public AppEvent.Type getType() {

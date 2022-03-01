@@ -18,6 +18,8 @@ public class MainViewModel extends ViewModel {
 
     public MutableLiveData<Integer> newFriendReqNum = new MutableLiveData<>(0);
 
+    public MutableLiveData<Boolean> localFriendRefresh = new MutableLiveData<>(false);
+
     public MainViewModel(){
         EventBus.getDefault().register(this);
     }
@@ -34,6 +36,8 @@ public class MainViewModel extends ViewModel {
             newFriendReqNum.setValue((Integer) event.getData()
                     .get(AppEvent.Type.NEW_FRIENDS_REQUEST.name()));
             Log.i(TAG, "setMainUpdate: event = " + event.getType().name());
+        }else if(AppEvent.Type.REFRESH_LOCAL_FRIENDS_LIST == event.getType()){
+            localFriendRefresh.setValue(true);
         }
     }
 

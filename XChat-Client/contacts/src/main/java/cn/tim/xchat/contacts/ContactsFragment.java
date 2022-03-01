@@ -1,8 +1,5 @@
 package cn.tim.xchat.contacts;
 
-import android.annotation.SuppressLint;
-import android.content.Context;
-import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.util.Log;
@@ -11,14 +8,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import androidx.activity.result.ActivityResult;
-import androidx.activity.result.ActivityResultCallback;
-import androidx.activity.result.contract.ActivityResultContract;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -32,12 +23,12 @@ import org.litepal.LitePal;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import cn.tim.xchat.common.module.FriendInfo;
-import cn.tim.xchat.common.module.FriendRequest;
 import cn.tim.xchat.common.mvvm.MainViewModel;
 import cn.tim.xchat.common.task.ThreadManager;
 import cn.tim.xchat.common.widget.titlebar.BaseTitleBar;
@@ -102,11 +93,6 @@ public class ContactsFragment extends Fragment {
 
         contactRVAdapter.setListener(position -> {
             FriendInfo friendInfo = contactRVAdapter.getDataSource().get(position);
-            Log.i(TAG, "inflateData: friendInfo = " + friendInfo.getUsername());
-//            Intent intent = new Intent(getContext(), FriendDetailActivity.class);
-//            intent.putExtra("username", friendInfo.getUsername());
-//            startActivity(intent);
-
             ARouter.getInstance()
                     .build("/contacts/detail")
                     .withObject("friendInfo", friendInfo)
@@ -119,8 +105,6 @@ public class ContactsFragment extends Fragment {
             addFriendDialog.show();
         });
 
-        //List<FriendRequest> requestList = LitePal.findAll(FriendRequest.class);
-
         mainViewModel.newFriendReqNum.observe(requireActivity(), count -> {
             if(count > 0) {
                 // 后台请求数据后更新数据库
@@ -131,7 +115,8 @@ public class ContactsFragment extends Fragment {
                     @Override
                     public void run() {
                         if (show.getAndSet(!show.get())) {
-                            newFriendBtn.setText("好友申请   (" + count + "条新消息)");
+                            newFriendBtn.setText(String.format(
+                                    Locale.CHINA, "好友申请   (%d条新消息)", count));
                         } else {
                             newFriendBtn.setText("");
                         }
@@ -152,6 +137,14 @@ public class ContactsFragment extends Fragment {
             ARouter.getInstance()
                     .build("/contacts/apply")
                     .navigation(requireActivity(), 1001);
+        });
+
+        mainViewModel.localFriendRefresh.observe(requireActivity(), needRefresh -> {
+            // 从数据库更新本地好友列表
+            if(needRefresh) {
+                contactRVAdapter.setDataSource(LitePal.findAll(FriendInfo.class));
+                mainViewModel.localFriendRefresh.setValue(false);
+            }
         });
     }
 
