@@ -9,14 +9,14 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.DefaultLifecycleObserver;
 import androidx.lifecycle.LifecycleOwner;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.google.android.material.bottomnavigation.BottomNavigationItemView;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.tencent.mmkv.MMKV;
+
+import java.util.Objects;
 
 import cn.tim.xchat.chat.MessageListFragment;
 import cn.tim.xchat.common.XChatBaseActivity;
@@ -30,20 +30,16 @@ import q.rorbin.badgeview.QBadgeView;
 public class MainActivityLogic implements DefaultLifecycleObserver {
     protected QBadgeView chatQBadgeView;
     protected QBadgeView contactQBadgeView;
-//    protected QBadgeView newFriendQBadgeView;
 
     protected ActivityProvider provider;
     protected Bundle savedStateBundle;
     protected String currentTab;
-    private BaseTitleBar baseTitleBar;
+    private final BaseTitleBar baseTitleBar;
 
-    private static final String TAG = "MainActivityLogic";
-    private final MMKV mmkv;
     private MainViewModel mainViewModel;
-    private ContactsFragment contactsFragment;
     private BottomNavigationItemView chat;
     private BottomNavigationItemView contact;
-    private XChatBaseActivity activity;
+    private final XChatBaseActivity activity;
 
     public MainActivityLogic(MainActivity activity,
                              Bundle savedInstanceState,
@@ -51,7 +47,6 @@ public class MainActivityLogic implements DefaultLifecycleObserver {
         provider = activity;
         savedStateBundle = savedInstanceState;
         currentTab = (tab == null ? "chat":tab);
-        mmkv = MMKV.defaultMMKV();
         baseTitleBar = provider.findViewById(R.id.app_main_titlebar);
         this.activity = activity;
     }
@@ -79,22 +74,14 @@ public class MainActivityLogic implements DefaultLifecycleObserver {
             return true;
         });
 
-//        mainViewModel = new ViewModelProvider(activity).get(MainViewModel.class);
         mainViewModel.status.observe(activity, type -> {
             if(currentTab.equals("chat")) {
                 baseTitleBar.setDescText(type.getName());
             }
         });
-        
-//        mainViewModel.newFriendReqNum.observeForever(activity, num -> {
-//            contactQBadgeView.setBadgeNumber(num);
-//        });
 
         mainViewModel.newFriendReqNum.observeForever(
-                num -> {
-                    if(contactQBadgeView != null)
-                        contactQBadgeView.setBadgeNumber(num);
-                }
+                num -> { if(contactQBadgeView != null) contactQBadgeView.setBadgeNumber(num); }
         );
 
         viewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
@@ -175,7 +162,8 @@ public class MainActivityLogic implements DefaultLifecycleObserver {
 
         if(navItemId == R.id.tab_menu_chat){
             if(mainViewModel != null) {
-                baseTitleBar.setDescText(mainViewModel.status.getValue().getName());
+                baseTitleBar.setDescText(Objects.requireNonNull(
+                        mainViewModel.status.getValue()).getName());
             }else {
                 baseTitleBar.setDescText("");
             }
@@ -188,7 +176,7 @@ public class MainActivityLogic implements DefaultLifecycleObserver {
 
     private void setupViewPager(ViewPager2 viewPager) {
         MessageListFragment messageListFragment = new MessageListFragment();
-        contactsFragment = new ContactsFragment(baseTitleBar, mainViewModel);
+        ContactsFragment contactsFragment = new ContactsFragment(baseTitleBar, mainViewModel);
         PersonalFragment personalFragment = new PersonalFragment();
 
         Fragment[] fragments = new Fragment[]{
@@ -214,6 +202,6 @@ public class MainActivityLogic implements DefaultLifecycleObserver {
 
     @Override
     public void onDestroy(@NonNull LifecycleOwner owner) {
-        
+
     }
 }

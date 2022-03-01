@@ -26,7 +26,7 @@ public class BusinessHandler {
 
     /**
      * 处理好友请求结果消息
-     * @param chatMessage
+     * @param chatMessage ChatMessage
      */
     private static void handleFriendReqResultMsg(DataContentSerializer.DataContent.ChatMessage chatMessage) {
         int modifyCount = 0;
@@ -55,7 +55,7 @@ public class BusinessHandler {
 
     /**
      * 处理新好友请求消息
-     * @param chatMessage
+     * @param chatMessage ChatMessage
      */
     private static void handleNewFriendReqMsg(DataContentSerializer.DataContent.ChatMessage chatMessage) {
         int modifyCount = 0;

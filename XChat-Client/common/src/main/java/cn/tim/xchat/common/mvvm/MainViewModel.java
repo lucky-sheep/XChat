@@ -35,7 +35,7 @@ public class MainViewModel extends ViewModel {
         if(event.getType() == AppEvent.Type.NEW_FRIENDS_REQUEST){
             newFriendReqNum.setValue((Integer) event.getData()
                     .get(AppEvent.Type.NEW_FRIENDS_REQUEST.name()));
-            Log.i(TAG, "setMainUpdate: event = " + event.getType().name());
+            //Log.i(TAG, "setMainUpdate: event = " + event.getType().name());
         }else if(AppEvent.Type.REFRESH_LOCAL_FRIENDS_LIST == event.getType()){
             localFriendRefresh.setValue(true);
         }

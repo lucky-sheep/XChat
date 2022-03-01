@@ -54,10 +54,10 @@ public class ContactsFragment extends Fragment {
     private RecyclerView contactRV;
     private FriendInfoAdapter contactRVAdapter;
 
-    private BaseTitleBar baseTitleBar;
+    private final BaseTitleBar baseTitleBar;
     private final Timer timer;
 
-    private MainViewModel mainViewModel;
+    private final MainViewModel mainViewModel;
     private TimerTask tipsFlicker;
 
     public ContactsFragment(BaseTitleBar baseTitleBar, MainViewModel mainViewModel) {
@@ -115,8 +115,8 @@ public class ContactsFragment extends Fragment {
                     @Override
                     public void run() {
                         if (show.getAndSet(!show.get())) {
-                            newFriendBtn.setText(String.format(
-                                    Locale.CHINA, "好友申请   (%d条新消息)", count));
+                            newFriendBtn.setText(String.format(Locale.CHINA,
+                                    "好友申请   (%d条新消息)", count));
                         } else {
                             newFriendBtn.setText("");
                         }

@@ -1,11 +1,10 @@
 package cn.tim.xchat.contacts.widget;
 
-import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
-import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -16,16 +15,17 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
+import androidx.core.content.res.ResourcesCompat;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.google.android.material.button.MaterialButton;
 
 import org.litepal.LitePal;
-import org.litepal.crud.LitePalSupport;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -51,18 +51,22 @@ public class AddFriendDialog extends Dialog {
     private static final String TAG = "AddFriendDialog";
     private String nameOrEmail;
     private MaterialButton submitBtn;
-    private Timer timer = new Timer();
+    private final Timer timer = new Timer();
 
     private TextView timeoutTips;
+    private Drawable sendDraw;
+    private Drawable errorDraw;
+    private Drawable successDraw;
 
     public AddFriendDialog(@NonNull Context context, int themeResId) {
-        super(context);
+        super(context, themeResId);
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_add_new_friends_dialog);
+        initDrawable();
         Window window = getWindow();
         window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
@@ -127,8 +131,7 @@ public class AddFriendDialog extends Dialog {
         Executor mainExecutor = getContext().getMainExecutor();
         mainExecutor.execute(() -> {
             timeoutTips.setVisibility(View.VISIBLE);
-            submitBtn.setIcon(getContext().getResources().getDrawable(
-                    R.drawable.icon_contacts_send_reqfriend_ok));
+            submitBtn.setIcon(successDraw);
             submitBtn.setText("发送成功");
             submitBtn.setBackgroundColor(Color.parseColor("#66BB6A"));
             setCanceledOnTouchOutside(true);
@@ -149,7 +152,7 @@ public class AddFriendDialog extends Dialog {
                 mainExecutor.execute(()-> {
                     if(count.getAndDecrement() > 0){
                         // 自动关闭Dialog
-                        timeoutTips.setText(count + "s后自动关闭");
+                        timeoutTips.setText(String.format(Locale.CHINA, "%ss后自动关闭", count));
                     }
                 });
             }
@@ -166,12 +169,10 @@ public class AddFriendDialog extends Dialog {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.P)
-    @SuppressLint("UseCompatLoadingForDrawables")
     private void handleError(int errorCode, String msg){
         Executor mainExecutor = getContext().getMainExecutor();
         mainExecutor.execute(() -> {
-            submitBtn.setIcon(getContext().getResources().getDrawable(
-                    R.drawable.icon_contacts_send_reqfriend_failed));
+            submitBtn.setIcon(errorDraw);
             if(errorCode == -1) {
                 submitBtn.setText("网络错误");
             }else {
@@ -185,11 +186,25 @@ public class AddFriendDialog extends Dialog {
                 mainExecutor.execute(() -> {
                     submitBtn.setText("申请添加好友");
                     submitBtn.setEnabled(true);
-                    submitBtn.setIcon(getContext().getResources().getDrawable(
-                            R.drawable.icon_contacts_send_reqfriend, null));
+                    submitBtn.setIcon(sendDraw);
                     setCanceledOnTouchOutside(true);
                 });
             }
         }, 2500);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if(timer != null) timer.cancel();
+    }
+
+    private void initDrawable(){
+        sendDraw = ResourcesCompat.getDrawable(getContext().getResources(),
+                R.drawable.icon_contacts_send_reqfriend, null);
+        errorDraw = ResourcesCompat.getDrawable(getContext().getResources(),
+                R.drawable.icon_contacts_send_reqfriend_failed, null);
+        successDraw = ResourcesCompat.getDrawable(getContext().getResources(),
+                R.drawable.icon_contacts_send_reqfriend_ok, null);
     }
 }
