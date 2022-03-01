@@ -4,6 +4,7 @@ import cn.tim.xchat.constant.RedisConstant;
 import cn.tim.xchat.enums.ResultEnum;
 import cn.tim.xchat.exception.XChatException;
 import cn.tim.xchat.service.FriendService;
+import cn.tim.xchat.vo.FriendRequestVO;
 import cn.tim.xchat.vo.FriendVO;
 import cn.tim.xchat.vo.R;
 import io.swagger.annotations.ApiOperation;
@@ -43,13 +44,13 @@ public class FriendController {
 
     @ApiOperation(value = "申请好友接口", notes = "")
     @PostMapping("/request")
-    public R requestFriend(@RequestHeader(name = "token", required = true) String token,
+    public R requestFriend(@RequestHeader(name = "token") String token,
                            @RequestBody Map<String, Object> map){
         String username = (String) map.get("username");
         String userId = stringRedisTemplate.opsForValue().get(String.format(RedisConstant.TOKEN_PREFIX, token));
         if(!ObjectUtils.isEmpty(userId)) {
-            friendService.requestFriend(userId, username);
-            return R.ok().message("申请成功");
+            FriendRequestVO friendRequestVO = friendService.requestFriend(userId, username);
+            return R.ok().message("申请成功").data("friendRequestVO", friendRequestVO);
         }else {
             throw new XChatException(ResultEnum.TOKEN_OVERDUE);
         }

@@ -45,7 +45,7 @@ public class ChatHandler extends SimpleChannelInboundHandler<DataContentSerializ
             currentChannel.attr(userIdAttributeKey).set(senderId);
             UserChannelHelper.online(senderId, currentChannel);
             log.info("用户:" + senderId + "上线, channelId:" + currentChannel.id().asLongText() + ", 开始发送积压消息------->");
-            currentChannel.writeAndFlush(businessMsgService.getUserFriendRequest(senderId));
+            currentChannel.writeAndFlush(businessMsgService.getUserNewFriendRequest(senderId));
         } else if (action == MsgActionEnum.CHAT.type) {
 
         } else if (action == MsgActionEnum.SIGNED.type) {
@@ -54,7 +54,7 @@ public class ChatHandler extends SimpleChannelInboundHandler<DataContentSerializ
         } else if (action == MsgActionEnum.BUSINESS.type) {
             // 业务消息
             int type = dataContent.getChatMessage().getType();
-            if(type == MsgTypeEnum.FRIEND_REQUEST.getCode()) {
+            if(type == MsgTypeEnum.FRIEND_REQUEST_NEW.getCode()) {
                 businessMsgService.handleFriendRequestMsg(dataContent, currentChannel);
             }
         }

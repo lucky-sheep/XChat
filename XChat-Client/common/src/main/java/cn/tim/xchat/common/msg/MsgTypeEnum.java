@@ -14,7 +14,8 @@ public enum MsgTypeEnum implements CodeEnum {
     FILE(5, "文件"),
 
 
-    FRIEND_REQUEST(11, "好友添加请求");
+    FRIEND_REQUEST_NEW(11, "好友添加请求 & 客户端同意/拒绝"),
+    FRIEND_REQUEST_RET(12, "好友请求同意结果");
 
     private int code;
     private String desc;

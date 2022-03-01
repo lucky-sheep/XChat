@@ -38,7 +38,7 @@ public class BusinessMsgServiceImpl implements BusinessMsgService {
     MyFriendRepository myFriendRepository;
 
     @Override
-    public DataContentSerializer.DataContent getUserFriendRequest(String userId) {
+    public DataContentSerializer.DataContent getUserNewFriendRequest(String userId) {
         List<FriendRequestVO> ret = Lists.newArrayList();
         // 查找未处理的好友请求
         List<FriendRequest> requestList = friendRequestRepository.findAllByAcceptUserIdOrSendUserIdAndArgeeRet(
@@ -74,7 +74,7 @@ public class BusinessMsgServiceImpl implements BusinessMsgService {
 
         DataContentSerializer.DataContent.ChatMessage chatMessage =
                 DataContentSerializer.DataContent.ChatMessage.newBuilder()
-                .setType(MsgTypeEnum.FRIEND_REQUEST.getCode())
+                .setType(MsgTypeEnum.FRIEND_REQUEST_NEW.getCode())
                 .setText(JSON.toJSONString(ret))
                 .build();
 
@@ -97,14 +97,10 @@ public class BusinessMsgServiceImpl implements BusinessMsgService {
         // 保存好友请求表
         friendRequestRepository.save(friendRequest);
 
-        if(friendRequest.getArgeeRet() != RequestFriendEnum.REFUSE.getCode()){
-            UserChannelHelper.isOnlineAndSendMsg(sendUserId, getUserFriendRequest(sendUserId));
-        }
+        UserChannelHelper.isOnlineAndSendMsg(sendUserId, getUserFriendRequestRet(sendUserId, friendRequest));
 
         // 保存好友关系 -> 只有同意的情况下才保存
         if(friendRequest.getArgeeRet() == RequestFriendEnum.AGREE.getCode()){
-            UserChannelHelper.isOnlineAndSendMsg(sendUserId, getUserFriendRequest(sendUserId));
-
             MyFriend myFriend = new MyFriend();
             MyFriend tmpSA = myFriendRepository.findMyFriendByMyUserIdAndMyFriendId(friendRequest.getSendUserId(),
                     friendRequest.getAcceptUserId());
@@ -126,21 +122,61 @@ public class BusinessMsgServiceImpl implements BusinessMsgService {
             myFriend.setMyUserId(friendRequest.getAcceptUserId());
             myFriend.setMyFriendId(friendRequest.getSendUserId());
             myFriendRepository.save(myFriend);
+        }else if(friendRequest.getArgeeRet() == RequestFriendEnum.REFUSE.getCode()){
+            log.info("用户" + friendRequest.getAcceptUserId() + "拒绝了" + friendRequest.getSendUserId());
         }
     }
 
     @Override
     public void sendNewFriendRequest(FriendRequest friendRequest) {
         UserChannelHelper.isOnlineAndSendMsg(friendRequest.getAcceptUserId(),
-                getUserFriendRequest(friendRequest.getAcceptUserId()));
+                getUserNewFriendRequest(friendRequest.getAcceptUserId()));
 
-        UserChannelHelper.isOnlineAndSendMsg(friendRequest.getSendUserId(),
-                getUserFriendRequest(friendRequest.getSendUserId()));
+        // 不向发起者发送消息
+//        UserChannelHelper.isOnlineAndSendMsg(friendRequest.getSendUserId(),
+//                getUserNewFriendRequest(friendRequest.getSendUserId()));
+    }
+
+    @Override
+    public DataContentSerializer.DataContent getUserFriendRequestRet(String userId, FriendRequest friendRequest) {
+        FriendRequestVO friendVO;
+        boolean isMyRequest = false;
+        Optional<UserInfo> userInfoOpt = Optional.empty();
+        // 获取对方信息
+        if(userId.equals(friendRequest.getSendUserId())){
+            userInfoOpt = userInfoRepository.findById(friendRequest.getAcceptUserId());
+            isMyRequest = true;
+        }else if(userId.equals(friendRequest.getAcceptUserId())){
+            userInfoOpt = userInfoRepository.findById(friendRequest.getSendUserId());
+        }
+
+        if(userInfoOpt.isEmpty()){
+            log.error("未找到发起好友请求的用户，严重错误！");
+            friendRequestRepository.deleteById(friendRequest.getSendUserId());
+            return null;
+        }
+
+        UserInfo userInfo = userInfoOpt.get();
+        friendVO = getFriendVO(userInfo);
+        friendVO.setItemId(friendRequest.getId());
+        friendVO.setNotes(null);
+        friendVO.setArgeeState(friendRequest.getArgeeRet());
+        friendVO.setIsMyRequest(isMyRequest ? 0: 1);
+
+        DataContentSerializer.DataContent.ChatMessage chatMessage =
+                DataContentSerializer.DataContent.ChatMessage.newBuilder()
+                        .setType(MsgTypeEnum.FRIEND_REQUEST_RET.getCode())
+                        .setText(JSON.toJSONString(friendVO))
+                        .build();
+
+        return DataContentSerializer.DataContent.newBuilder()
+                .setAction(MsgActionEnum.BUSINESS.getCode())
+                .setChatMessage(chatMessage)
+                .build();
     }
 
     static FriendRequestVO getFriendVO(UserInfo userInfo) {
         FriendRequestVO friendVO = new FriendRequestVO();
-//        friendVO.setItemId();
         friendVO.setUserId(userInfo.getId());
         friendVO.setEmail(userInfo.getEmail());
         friendVO.setFaceBigImage(userInfo.getFaceImageBig());

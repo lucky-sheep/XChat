@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.alibaba.android.arouter.facade.annotation.Route;
 import com.alibaba.android.arouter.launcher.ARouter;
 
+import org.greenrobot.eventbus.EventBus;
 import org.litepal.LitePal;
 
 import java.util.List;
@@ -19,6 +20,7 @@ import java.util.Locale;
 import cn.tim.xchat.common.XChatBaseActivity;
 import cn.tim.xchat.common.core.WebSocketHelper;
 import cn.tim.xchat.common.enums.business.RequestFriendEnum;
+import cn.tim.xchat.common.event.AppEvent;
 import cn.tim.xchat.common.module.FriendInfo;
 import cn.tim.xchat.common.module.FriendRequest;
 import cn.tim.xchat.common.msg.MsgActionEnum;
@@ -79,14 +81,19 @@ public class FriendApplyActivity extends XChatBaseActivity {
                     // 本地更新数据库 朋友库 + 申请库
                     friendRequest.save();
                     saveFriendRequestToFriend(friendRequest);
+
+                    // 刷新FriendRV
+                    EventBus.getDefault().post(new AppEvent(AppEvent.Type.REFRESH_LOCAL_FRIENDS_LIST));
                 }
             }
 
             @Override
             public void onItemClickRefuse(int position) {
-                Log.i(TAG, "onItemClickRefuse: ");
-                boolean sendRet = sendPassOrRefuseMsg(friendRequests.get(position), false);
+                FriendRequest friendRequest = friendRequests.get(position);
+                friendRequest.setArgeeState(RequestFriendEnum.REFUSE.getCode());
+                boolean sendRet = sendPassOrRefuseMsg(friendRequest, false);
                 if(sendRet) {
+                    friendRequest.save();
                     applyAdapter.updateOneData(position);
                 }
             }
@@ -150,7 +157,7 @@ public class FriendApplyActivity extends XChatBaseActivity {
                 DataContentSerializer.DataContent.ChatMessage
                         .newBuilder()
                         .setText(data)
-                        .setType(MsgTypeEnum.FRIEND_REQUEST.getCode())
+                        .setType(MsgTypeEnum.FRIEND_REQUEST_NEW.getCode())
                         .build();
 
         DataContentSerializer.DataContent dataContent = DataContentSerializer.DataContent
@@ -177,6 +184,7 @@ public class FriendApplyActivity extends XChatBaseActivity {
             e.printStackTrace();
         }
         Log.i(TAG, "saveFriendRequestToFriend: friendInfo = " + friendInfo);
+        // TODO 通知Friend列表更新
     }
 
     @Override

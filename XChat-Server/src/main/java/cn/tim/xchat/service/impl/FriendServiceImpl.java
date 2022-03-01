@@ -13,9 +13,12 @@ import cn.tim.xchat.service.BusinessMsgService;
 import cn.tim.xchat.service.FriendService;
 import cn.tim.xchat.utils.KeyUtil;
 import cn.tim.xchat.utils.RegexUtil;
+import cn.tim.xchat.utils.SpringUtil;
+import cn.tim.xchat.vo.FriendRequestVO;
 import cn.tim.xchat.vo.FriendVO;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -67,7 +70,7 @@ public class FriendServiceImpl implements FriendService {
     }
 
     @Override
-    public void requestFriend(String userId, String reqUserNameOrEmail) {
+    public FriendRequestVO requestFriend(String userId, String reqUserNameOrEmail) {
         log.info("count = " + count.getAndIncrement());
         boolean isEmail = RegexUtil.isEmail(reqUserNameOrEmail);
         UserInfo userInfo;
@@ -96,6 +99,14 @@ public class FriendServiceImpl implements FriendService {
 
                     // 如果对方在线，就发送提醒
                     businessMsgService.sendNewFriendRequest(friendRequest);
+                    FriendRequestVO friendRequestVO = new FriendRequestVO();
+                    BeanUtils.copyProperties(userInfoRepository.getById(
+                            friendRequest.getAcceptUserId()), friendRequestVO);
+                    friendRequestVO.setIsMyRequest(0);
+                    friendRequestVO.setItemId(friendRequest.getId());
+                    friendRequestVO.setNotes(null);
+                    friendRequestVO.setArgeeState(RequestFriendEnum.UNHAND.getCode());
+                    return friendRequestVO;
                 }else {
                     throw new XChatException(ResultEnum.REPEAT_REQUEST_FRIENDS);
                 }
