@@ -44,8 +44,10 @@ public class ChatHandler extends SimpleChannelInboundHandler<DataContentSerializ
             // 获取用户ID，塞到Channel的属性字段里面
             currentChannel.attr(userIdAttributeKey).set(senderId);
             UserChannelHelper.online(senderId, currentChannel);
-            log.info("用户:" + senderId + "上线, channelId:" + currentChannel.id().asLongText() + ", 开始发送积压消息------->");
+            log.info("用户:" + senderId + "上线, channelId:" + currentChannel.id().asLongText()
+                    + ", 开始发送积压消息(新的好友请求、未接收的消息)------->");
             currentChannel.writeAndFlush(businessMsgService.getUserNewFriendRequest(senderId));
+            businessMsgService.sendUserNewMsgBeforeUserOnline(senderId, currentChannel);
         } else if (action == MsgActionEnum.CHAT.type) {
 
         } else if (action == MsgActionEnum.SIGNED.type) {

@@ -1,13 +1,16 @@
 package cn.tim.xchat.service.impl;
 
+import cn.tim.xchat.core.enums.MsgSignEnum;
 import cn.tim.xchat.core.enums.MsgTypeEnum;
 import cn.tim.xchat.core.enums.MsgActionEnum;
 import cn.tim.xchat.core.model.DataContentSerializer;
+import cn.tim.xchat.entity.ChatMsg;
 import cn.tim.xchat.entity.FriendRequest;
 import cn.tim.xchat.entity.MyFriend;
 import cn.tim.xchat.entity.UserInfo;
 import cn.tim.xchat.enums.business.RequestFriendEnum;
 import cn.tim.xchat.netty.UserChannelHelper;
+import cn.tim.xchat.repository.ChatMsgRepository;
 import cn.tim.xchat.repository.FriendRequestRepository;
 import cn.tim.xchat.repository.MyFriendRepository;
 import cn.tim.xchat.repository.UserInfoRepository;
@@ -36,6 +39,10 @@ public class BusinessMsgServiceImpl implements BusinessMsgService {
 
     @Resource
     MyFriendRepository myFriendRepository;
+
+
+    @Resource
+    ChatMsgRepository chatMsgRepository;
 
     @Override
     public DataContentSerializer.DataContent getUserNewFriendRequest(String userId) {
@@ -131,10 +138,6 @@ public class BusinessMsgServiceImpl implements BusinessMsgService {
     public void sendNewFriendRequest(FriendRequest friendRequest) {
         UserChannelHelper.isOnlineAndSendMsg(friendRequest.getAcceptUserId(),
                 getUserNewFriendRequest(friendRequest.getAcceptUserId()));
-
-        // 不向发起者发送消息
-//        UserChannelHelper.isOnlineAndSendMsg(friendRequest.getSendUserId(),
-//                getUserNewFriendRequest(friendRequest.getSendUserId()));
     }
 
     @Override
@@ -174,6 +177,43 @@ public class BusinessMsgServiceImpl implements BusinessMsgService {
                 .setChatMessage(chatMessage)
                 .build();
     }
+
+    @Override
+    public void sendUserNewMsgBeforeUserOnline(String userId, Channel currentChannel) {
+        List<ChatMsg> chatMsg = chatMsgRepository.findAllByAcceptUserIdAndSignFlag(userId, MsgSignEnum.UN_RECEIVE.getCode());
+        DataContentSerializer.DataContent.ChatMessage.Builder chatMsgBuilder = DataContentSerializer.DataContent.ChatMessage
+                .newBuilder();
+        DataContentSerializer.DataContent.Builder msgBuilder = DataContentSerializer.DataContent.newBuilder();
+        for(ChatMsg msg: chatMsg){
+            packMsgByType(chatMsgBuilder, msg);
+            currentChannel.writeAndFlush(
+                    msgBuilder.setAction(MsgActionEnum.CHAT.type)
+                            .setChatMessage(chatMsgBuilder)
+                            .setSenderId(msg.getSendUserId())
+                            .setReceiveId(msg.getAcceptUserId())
+                            .setTimestamp((int) msg.getCreateTime().getEpochSecond())
+                            .build()
+            );
+            msg.setSignFlag(MsgSignEnum.RECEIVED.getCode());
+        }
+        // 更新本地数据库
+        chatMsgRepository.saveAll(chatMsg);
+    }
+
+    /**
+     * 根据消息类型封装消息
+     * @param chatMsgBuilder builder
+     * @param msg 文本消息
+     */
+    private void packMsgByType(DataContentSerializer.DataContent.ChatMessage.Builder chatMsgBuilder, ChatMsg msg) {
+        int type = msg.getType();
+
+        chatMsgBuilder.setType(type);
+        if(type == MsgTypeEnum.TEXT.getCode()){
+            chatMsgBuilder.setText(msg.getMsg());
+        }
+    }
+
 
     static FriendRequestVO getFriendVO(UserInfo userInfo) {
         FriendRequestVO friendVO = new FriendRequestVO();

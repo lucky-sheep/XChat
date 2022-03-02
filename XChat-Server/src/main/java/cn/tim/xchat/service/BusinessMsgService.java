@@ -32,4 +32,11 @@ public interface BusinessMsgService {
      * @return
      */
     DataContentSerializer.DataContent getUserFriendRequestRet(String userId, FriendRequest friendRequest);
+
+    /**
+     * 用户上线之后发送积压消息
+     * @param userId acceptUserId
+     * @param currentChannel channel
+     */
+    void sendUserNewMsgBeforeUserOnline(String userId, Channel currentChannel);
 }

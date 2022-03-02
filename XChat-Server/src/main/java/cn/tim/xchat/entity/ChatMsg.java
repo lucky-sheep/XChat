@@ -21,6 +21,9 @@ public class ChatMsg {
     @Column(name = "id", nullable = false, length = 64)
     private String id;
 
+    @Column(name = "type", nullable = false)
+    private int type;
+
     @Column(name = "send_user_id", nullable = false, length = 64)
     private String sendUserId;
 
@@ -30,11 +33,16 @@ public class ChatMsg {
     @Column(name = "msg", nullable = false)
     private String msg;
 
+    /**
+     * {@link cn.tim.xchat.core.enums.MsgSignEnum}
+     */
     @Column(name = "sign_flag", nullable = false)
     private Integer signFlag;
 
     @Column(name = "create_time", nullable = false)
     private Instant createTime;
+
+
 
     @Override
     public boolean equals(Object o) {
