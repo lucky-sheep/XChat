@@ -4,6 +4,7 @@ import cn.tim.xchat.core.enums.MsgActionEnum;
 import cn.tim.xchat.core.enums.MsgTypeEnum;
 import cn.tim.xchat.core.model.DataContentSerializer;
 import cn.tim.xchat.service.BusinessMsgService;
+import cn.tim.xchat.service.ChatMsgService;
 import cn.tim.xchat.utils.SpringUtil;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
@@ -21,12 +22,15 @@ public class ChatHandler extends SimpleChannelInboundHandler<DataContentSerializ
     // 用于记录和管理所有客户端的Channel
     public static ChannelGroup users =
             new DefaultChannelGroup(GlobalEventExecutor.INSTANCE);
-    private AttributeKey<String> userIdAttributeKey = AttributeKey.valueOf("userId");;
 
+    private final AttributeKey<String> userIdAttributeKey = AttributeKey.valueOf("userId");
+
+    // 获取服务对象
     BusinessMsgService businessMsgService = SpringUtil.getBean(BusinessMsgService.class);
+    ChatMsgService chatMsgService = SpringUtil.getBean(ChatMsgService.class);
 
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, DataContentSerializer.DataContent dataContent) throws Exception {
+    protected void channelRead0(ChannelHandlerContext ctx, DataContentSerializer.DataContent dataContent) {
         Channel currentChannel = ctx.channel();
         int action = dataContent.getAction();
 
@@ -47,9 +51,11 @@ public class ChatHandler extends SimpleChannelInboundHandler<DataContentSerializ
             log.info("用户:" + senderId + "上线, channelId:" + currentChannel.id().asLongText()
                     + ", 开始发送积压消息(新的好友请求、未接收的消息)------->");
             currentChannel.writeAndFlush(businessMsgService.getUserNewFriendRequest(senderId));
-            businessMsgService.sendUserNewMsgBeforeUserOnline(senderId, currentChannel);
+            //businessMsgService.sendUserNewMsgBeforeUserOnline(senderId, currentChannel);
+            chatMsgService.sendUserNewMsgBeforeUserOnline(senderId, currentChannel);
         } else if (action == MsgActionEnum.CHAT.type) {
-
+            // 收到消息
+            chatMsgService.handleReceivedMsg(dataContent);
         } else if (action == MsgActionEnum.SIGNED.type) {
         } else if (action == MsgActionEnum.KEEPALIVE.type) {
             log.debug("KEEPALIVE MSG, size = " + dataContent.toByteArray().length);
@@ -72,13 +78,13 @@ public class ChatHandler extends SimpleChannelInboundHandler<DataContentSerializ
      * 获取客户端的channel，并且放到ChannelGroup中去进行管理
      */
     @Override
-    public void handlerAdded(ChannelHandlerContext ctx) throws Exception {
+    public void handlerAdded(ChannelHandlerContext ctx) {
         users.add(ctx.channel());
         log.info("ChatHandlerByProtobuf ChannelGroup:users -> add channel, id = " + ctx.channel().id());
     }
 
     @Override
-    public void handlerRemoved(ChannelHandlerContext ctx) throws Exception {
+    public void handlerRemoved(ChannelHandlerContext ctx) {
         String channelId = ctx.channel().id().asShortText();
         log.info("remove channel id = " + channelId);
         // 当触发handlerRemoved，ChannelGroup会自动移除对应客户端的channel
@@ -93,7 +99,7 @@ public class ChatHandler extends SimpleChannelInboundHandler<DataContentSerializ
     }
 
     @Override
-    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
         cause.printStackTrace();
         // 发生异常之后关闭channel，随后从ChannelGroup中移除
         String userId = ctx.channel().attr(userIdAttributeKey).get();

@@ -29,14 +29,7 @@ public interface BusinessMsgService {
      * 获取好友请求的处理结果
      * @param userId sendUserId
      * @param friendRequest FriendRequest
-     * @return
+     * @return 回应结果
      */
     DataContentSerializer.DataContent getUserFriendRequestRet(String userId, FriendRequest friendRequest);
-
-    /**
-     * 用户上线之后发送积压消息
-     * @param userId acceptUserId
-     * @param currentChannel channel
-     */
-    void sendUserNewMsgBeforeUserOnline(String userId, Channel currentChannel);
 }

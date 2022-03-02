@@ -178,43 +178,6 @@ public class BusinessMsgServiceImpl implements BusinessMsgService {
                 .build();
     }
 
-    @Override
-    public void sendUserNewMsgBeforeUserOnline(String userId, Channel currentChannel) {
-        List<ChatMsg> chatMsg = chatMsgRepository.findAllByAcceptUserIdAndSignFlag(userId, MsgSignEnum.UN_RECEIVE.getCode());
-        DataContentSerializer.DataContent.ChatMessage.Builder chatMsgBuilder = DataContentSerializer.DataContent.ChatMessage
-                .newBuilder();
-        DataContentSerializer.DataContent.Builder msgBuilder = DataContentSerializer.DataContent.newBuilder();
-        for(ChatMsg msg: chatMsg){
-            packMsgByType(chatMsgBuilder, msg);
-            currentChannel.writeAndFlush(
-                    msgBuilder.setAction(MsgActionEnum.CHAT.type)
-                            .setChatMessage(chatMsgBuilder)
-                            .setSenderId(msg.getSendUserId())
-                            .setReceiveId(msg.getAcceptUserId())
-                            .setTimestamp((int) msg.getCreateTime().getEpochSecond())
-                            .build()
-            );
-            msg.setSignFlag(MsgSignEnum.RECEIVED.getCode());
-        }
-        // 更新本地数据库
-        chatMsgRepository.saveAll(chatMsg);
-    }
-
-    /**
-     * 根据消息类型封装消息
-     * @param chatMsgBuilder builder
-     * @param msg 文本消息
-     */
-    private void packMsgByType(DataContentSerializer.DataContent.ChatMessage.Builder chatMsgBuilder, ChatMsg msg) {
-        int type = msg.getType();
-
-        chatMsgBuilder.setType(type);
-        if(type == MsgTypeEnum.TEXT.getCode()){
-            chatMsgBuilder.setText(msg.getMsg());
-        }
-    }
-
-
     static FriendRequestVO getFriendVO(UserInfo userInfo) {
         FriendRequestVO friendVO = new FriendRequestVO();
         friendVO.setUserId(userInfo.getId());
