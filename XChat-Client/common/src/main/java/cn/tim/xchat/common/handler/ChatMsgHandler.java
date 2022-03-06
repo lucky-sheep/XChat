@@ -46,7 +46,7 @@ public class ChatMsgHandler {
         chatMsg.setItemId(msgItemId);
         chatMsg.setAcceptUserId(UserUtil.get().getId());
         chatMsg.setSendUserId(dataContent.getSenderId());
-        chatMsg.setCreateTime(dataContent.getTimestamp());
+        chatMsg.setCreateTime(dataContent.getTimestamp() * 1000L);
         chatMsg.setType(chatMessage.getType());
         chatMsg.setSignFlag(MsgSignEnum.UN_READ.getCode());
         chatMsg.setMsg(chatMessage.getText()); // text type

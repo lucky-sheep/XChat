@@ -86,7 +86,7 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ChatVi
 
 
         // ========================================
-        holder.itemView.setOnClickListener(v -> listener.onItemClick(position));
+//        holder.itemView.setOnClickListener(v -> listener.onItemClick(position));
     }
 
     private void handleSign(TextView msgStateTv, ChatMsgVO chatMsgVO) {
@@ -116,9 +116,11 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ChatVi
             msgTv.setTextColor(Color.BLACK);
             msgTv.setText(chatMsgVO.getText());
 //            ViewGroup.LayoutParams layoutParams = textView.getLayoutParams();
-//            layoutParams.width =
-
-            layoutPosition.addView(msgTv);
+            ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT);
+//            msgTv.setLayoutParams(params);
+//            layoutPosition.addView(msgTv);
+            layoutPosition.addView(msgTv, params);
         }else if(msgTypeEnum.equals(MsgTypeEnum.ADDRESS)){
             // TODO
         }else {
@@ -146,20 +148,20 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ChatVi
                     .into(avatarIv);
         }
 
-        avatarIv.setOnClickListener(v -> {
-            if(chatMsgVO.isMe()){
-                ARouter.getInstance()
-                        .build("/personal/detail")
-                        .navigation(context);
-            }else {
-                ARouter.getInstance()
-                        .build("/contacts/detail")
-                        .withObject("friendInfo",
-                                LitePal.where("userId = ?", chatMsgVO.getSenderUserId())
-                                        .findFirst(FriendInfo.class))
-                        .navigation();
-            }
-        });
+//        avatarIv.setOnClickListener(v -> {
+//            if(chatMsgVO.isMe()){
+//                ARouter.getInstance()
+//                        .build("/personal/detail")
+//                        .navigation(context);
+//            }else {
+//                ARouter.getInstance()
+//                        .build("/contacts/detail")
+//                        .withObject("friendInfo",
+//                                LitePal.where("userId = ?", chatMsgVO.getSenderUserId())
+//                                        .findFirst(FriendInfo.class))
+//                        .navigation();
+//            }
+//        });
 
     }
 
@@ -195,6 +197,12 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ChatVi
 
         // 刷新ItemView
         notifyItemRangeChanged(position, dataSource.size() - position);
+    }
+
+    @Override
+    public void onViewRecycled(@NonNull ChatViewHolder holder) {
+        super.onViewRecycled(holder);
+        holder.msgRegionRl.removeAllViews();
     }
 
     /*

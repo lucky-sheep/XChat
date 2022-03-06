@@ -8,11 +8,13 @@ import cn.tim.xchat.entity.ChatMsg;
 import cn.tim.xchat.repository.ChatMsgRepository;
 import cn.tim.xchat.service.ChatMsgService;
 import io.netty.channel.Channel;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.List;
 
+@Slf4j
 @Service
 public class ChatMsgServiceImpl implements ChatMsgService {
 
@@ -49,6 +51,11 @@ public class ChatMsgServiceImpl implements ChatMsgService {
         int type = chatMessage.getType();
         ChatMsg chatMsg = unpackMsgByType(dataContent);
 
+        log.info("handleReceivedMsg, msg = " + dataContent);
+        log.info("handleReceivedMsg, msg = " + dataContent.getChatMessage().getText());
+
+
+        // TODO 1、save msg 2、to obj channel
     }
 
 

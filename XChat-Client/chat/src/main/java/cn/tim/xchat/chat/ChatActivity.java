@@ -31,6 +31,9 @@ import cn.dreamtobe.kpswitch.util.KPSwitchConflictUtil;
 import cn.dreamtobe.kpswitch.util.KeyboardUtil;
 import cn.dreamtobe.kpswitch.widget.KPSwitchPanelLinearLayout;
 import cn.tim.xchat.chat.adapter.ChatListAdapter;
+import cn.tim.xchat.chat.send.CallBackAsync;
+import cn.tim.xchat.chat.send.SendMsgAction;
+import cn.tim.xchat.chat.send.impl.SendMsgActionImpl;
 import cn.tim.xchat.chat.vo.ChatMsgVO;
 import cn.tim.xchat.common.enums.business.MsgSignEnum;
 import cn.tim.xchat.common.module.FriendInfo;
@@ -53,6 +56,8 @@ public class ChatActivity extends AppCompatActivity {
     FriendInfo friendInfo; // 表示正在和谁对话
     private ChatViewModel chatViewModel;
     private ChatListAdapter chatListAdapter;
+
+    SendMsgAction sendMsgAction;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,6 +101,7 @@ public class ChatActivity extends AppCompatActivity {
         msgListRv.setAdapter(chatListAdapter);
 
 
+        sendMsgAction = new SendMsgActionImpl();
 //
 //        List<ChatMsgVO> chatMsgVOS = convertMsgDataToVO();
 //        List<ChatMsg> chatMsgList = chatViewModel.msgList.get(friendInfo.getUserId());
@@ -118,6 +124,9 @@ public class ChatActivity extends AppCompatActivity {
 
 
         testOnData();
+
+
+        msgListRv.setLayoutManager(linearLayoutManager);
     }
 
     private void testOnData() {
@@ -197,7 +206,20 @@ public class ChatActivity extends AppCompatActivity {
     private void sendBaseMsg() {
         String msgText = sendEdit.getText().toString();
         Log.i(TAG, "sendBaseMsg: msgText = " + msgText);
+        boolean sendRet = sendMsgAction.sendTextMsg(friendInfo.getUserId(), msgText, null);
 
+        ChatMsg chatMsg = new ChatMsg(); // FIXME ID从服务器确认
+        chatMsg.setItemId(KeyUtil.genUniqueKey());
+        chatMsg.setType(MsgTypeEnum.TEXT.getCode());
+        chatMsg.setSendUserId(UserUtil.get().getId());
+        chatMsg.setAcceptUserId(friendInfo.getUserId());
+        chatMsg.setSignFlag(MsgSignEnum.UN_READ.getCode());
+        chatMsg.setCreateTime(Instant.now().toEpochMilli());
+        chatMsg.setMsg(msgText);
+
+        chatMsg.save();
+
+        chatListAdapter.addData(chatListAdapter.getItemCount(), _convertMsgData(chatMsg));
     }
 
     /*

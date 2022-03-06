@@ -53,7 +53,7 @@ public class ChatHandler extends SimpleChannelInboundHandler<DataContentSerializ
             currentChannel.writeAndFlush(businessMsgService.getUserNewFriendRequest(senderId));
             //businessMsgService.sendUserNewMsgBeforeUserOnline(senderId, currentChannel);
             chatMsgService.sendUserNewMsgBeforeUserOnline(senderId, currentChannel);
-        } else if (action == MsgActionEnum.CHAT.type) {
+        } else if (action == MsgActionEnum.CHAT.getCode()) {
             // 收到消息
             chatMsgService.handleReceivedMsg(dataContent, currentChannel);
         } else if (action == MsgActionEnum.SIGNED.type) {
