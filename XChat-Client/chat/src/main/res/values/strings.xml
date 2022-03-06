@@ -2,4 +2,5 @@
     <string name="app_name">ChatModule</string>
     <string name="send">发送</string>
     <string name="add">＋</string>
+    <string name="sign_state_text">已读/未读</string>
 </resources>

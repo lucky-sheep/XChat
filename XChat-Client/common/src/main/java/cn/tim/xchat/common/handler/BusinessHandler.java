@@ -21,6 +21,8 @@ public class BusinessHandler {
             handleNewFriendReqMsg(chatMessage);
         }else if(type == MsgTypeEnum.FRIEND_REQUEST_RET.getCode()){
             handleFriendReqResultMsg(chatMessage);
+        }else if(type == MsgTypeEnum.TEXT.getCode()){
+
         }
     }
 

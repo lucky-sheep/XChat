@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="msg_item_datetime_tv" type="id"/>
+    <item name="msg_item_layout_ll" type="id"/>
+    <item name="msg_item_msg_region" type="id"/>
+    <item name="msg_item_avatar_iv" type="id"/>
+    <item name="msg_item_state_tv" type="id"/>
+    <item name="msg_item_my_layout" type="id"/>
+    <item name="msg_item_friend_layout" type="id"/>
+</resources>

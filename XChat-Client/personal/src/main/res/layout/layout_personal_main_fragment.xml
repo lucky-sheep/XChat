@@ -81,8 +81,9 @@
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-        <Button
-            android:text="CLEAR DB"
+        <com.google.android.material.button.MaterialButton
+            android:text="Clear DB"
+            android:textAllCaps="false"
             android:id="@+id/debug_clear_databases"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>

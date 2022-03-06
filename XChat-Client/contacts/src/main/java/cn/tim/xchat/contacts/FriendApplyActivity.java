@@ -213,6 +213,9 @@ public class FriendApplyActivity extends XChatBaseActivity {
         HashMap<String, Object> data = Maps.newHashMap();
         data.put(AppEvent.Type.NEW_FRIENDS_REQUEST.name(), 0);
         EventBus.getDefault().post(new AppEvent(AppEvent.Type.NEW_FRIENDS_REQUEST, data));
+
+        // 但是需要刷新好友列表
+        EventBus.getDefault().post(new AppEvent(AppEvent.Type.REFRESH_LOCAL_FRIENDS_LIST));
     }
 
     @Override

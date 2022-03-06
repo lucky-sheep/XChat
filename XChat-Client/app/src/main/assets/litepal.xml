@@ -8,5 +8,6 @@
     <list>
         <mapping class="cn.tim.xchat.common.module.FriendInfo"/>
         <mapping class="cn.tim.xchat.common.module.FriendRequest"/>
+        <mapping class="cn.tim.xchat.common.module.chat.ChatMsg"/>
     </list>
 </litepal>

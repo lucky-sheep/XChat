@@ -23,6 +23,7 @@ import cn.tim.xchat.common.module.FriendInfo;
 import cn.tim.xchat.common.module.FriendRequest;
 import cn.tim.xchat.common.widget.titlebar.BaseTitleBar;
 import cn.tim.xchat.common.widget.titlebar.TitleBarType;
+import cn.tim.xchat.common.widget.toast.XChatToast;
 
 @Route(path = "/contacts/detail")
 public class FriendDetailActivity extends XChatBaseActivity {
@@ -33,6 +34,7 @@ public class FriendDetailActivity extends XChatBaseActivity {
 
     @Autowired(required = false)
     FriendInfo friendInfo;
+
     private AvatarImageView avatarIv;
     private TextView noteNameTv;
     private TextView userNameTv;
@@ -66,6 +68,26 @@ public class FriendDetailActivity extends XChatBaseActivity {
         if(friendRequest != null){
             showRequestFriend();
         }
+
+        toMsgBtn.setOnClickListener(v -> {
+            ARouter.getInstance()
+                    .build("/chat/main")
+                    .withObject("friendInfo", getUser())
+                    .navigation();
+        });
+    }
+
+    private FriendInfo getUser() {
+        if(friendInfo != null) {
+            return friendInfo;
+        }
+
+        if(friendRequest != null) {
+            return LitePal.where("userId = ?",
+                    friendRequest.getUserId()).findFirst(FriendInfo.class);
+        }
+        XChatToast.INSTANCE.showToast(this, "未知错误");
+        return null;
     }
 
     private void showRequestFriend() {

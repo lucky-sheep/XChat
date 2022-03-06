@@ -42,11 +42,13 @@ public class ChatMsgServiceImpl implements ChatMsgService {
     }
 
     @Override
-    public void handleReceivedMsg(DataContentSerializer.DataContent dataContent) {
+    public void handleReceivedMsg(DataContentSerializer.DataContent dataContent, Channel currentChannel) {
         String receiveId = dataContent.getReceiveId();
         String senderId = dataContent.getSenderId();
         DataContentSerializer.DataContent.ChatMessage chatMessage = dataContent.getChatMessage();
         int type = chatMessage.getType();
+        ChatMsg chatMsg = unpackMsgByType(dataContent);
+
     }
 
 
@@ -58,6 +60,12 @@ public class ChatMsgServiceImpl implements ChatMsgService {
     private ChatMsg unpackMsgByType(DataContentSerializer.DataContent dataContent) {
         ChatMsg chatMsg = new ChatMsg();
         // TODO 根据消息类型从Protobuf解封装
+        DataContentSerializer.DataContent.ChatMessage chatMessage = dataContent.getChatMessage();
+        int type = chatMessage.getType();
+        if(type == MsgTypeEnum.TEXT.getCode()){
+            // save
+
+        }
         return chatMsg;
     }
 

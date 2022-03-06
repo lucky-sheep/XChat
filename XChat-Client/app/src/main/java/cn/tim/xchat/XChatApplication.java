@@ -65,11 +65,11 @@ public class XChatApplication extends Application {
 
         saveDeviceId();
 
-        if(BuildConfig.DEBUG) {
-            new DoKit.Builder(this)
-                    .productId("4b16245fb438845e09386178c9dda449")
-                    .build();
-        }
+//        if(BuildConfig.DEBUG) {
+//            new DoKit.Builder(this)
+//                    .productId("4b16245fb438845e09386178c9dda449")
+//                    .build();
+//        }
 
         EventBus.getDefault().register(this);
         registerNetStateListener();
@@ -91,18 +91,14 @@ public class XChatApplication extends Application {
             }
             String token = tokenInterceptor.flushToken();
             if(TextUtils.isEmpty(token)) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                    this.getMainExecutor().execute(()->
-                            ARouter.getInstance()
-                                    .build("/login/main")
-                                    .navigation(this));
-                }
+                this.getMainExecutor().execute(()->
+                        ARouter.getInstance()
+                                .build("/login/main")
+                                .navigation(this));
             }
         }else if(TokenEvent.TokenType.SERVER_ERROR.equals(tokenEvent.getType())){
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                this.getMainExecutor().execute(()->
-                        XChatToast.INSTANCE.showToast(this, "网络出了点小问题"));
-            }
+            this.getMainExecutor().execute(()->
+                    XChatToast.INSTANCE.showToast(this, "网络出了点小问题"));
         }
     }
 

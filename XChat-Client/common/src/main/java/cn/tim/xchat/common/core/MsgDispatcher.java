@@ -20,6 +20,8 @@ public class MsgDispatcher {
         int msgAction = dataContent.getAction();
         if(msgAction == MsgActionEnum.BUSINESS.type) {
             BusinessHandler.hand(dataContent);
+        }else if(msgAction == MsgActionEnum.CHAT.type){
+
         }
     }
 }

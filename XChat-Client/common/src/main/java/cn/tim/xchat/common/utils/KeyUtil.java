@@ -12,4 +12,15 @@ public class KeyUtil {
 
         return System.currentTimeMillis() + String.valueOf(number);
     }
+
+//    private
+//
+//
+//    /**
+//     * 生成唯一的主键
+//     */
+//    public static synchronized String genUserKey() {
+//        return String.valueOf(worker3rd.nextId());
+//    }
+//}
 }

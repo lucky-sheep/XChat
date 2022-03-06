@@ -13,6 +13,7 @@ import cn.tim.xchat.common.event.AppEvent;
 import cn.tim.xchat.common.event.WSEvent;
 
 public class MainViewModel extends ViewModel {
+
     private static final String TAG = "MainViewModel";
     public MutableLiveData<WSEvent.Type> status = new MutableLiveData<>(WSEvent.Type.DISCONNECTED);
 
