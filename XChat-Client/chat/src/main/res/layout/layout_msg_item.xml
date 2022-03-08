@@ -1,26 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingEnd="5dp"
     android:paddingStart="5dp"
-    xmlns:tools="http://schemas.android.com/tools">
+    android:paddingEnd="5dp">
+
     <RelativeLayout
-        android:visibility="gone"
+        android:layout_marginTop="12dp"
+        android:layout_marginStart="50dp"
         android:id="@id/msg_item_my_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:visibility="gone">
 
         <TextView
-            android:visibility="gone"
             android:id="@id/msg_item_datetime_tv"
             android:layout_width="match_parent"
             android:layout_height="20dp"
             android:gravity="center_horizontal"
-            tools:text="2022:02:12 19:58"
-            android:textSize="12sp" />
+            android:textSize="12sp"
+            android:visibility="gone"
+            tools:text="2022:02:12 19:58" />
 
-        <LinearLayout
+        <RelativeLayout
             android:id="@+id/msg_item_layout_ll"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -29,21 +32,14 @@
             android:gravity="end"
             android:orientation="horizontal">
 
-
-            <!-- msg view 不要气泡，垃圾-->
-           <RelativeLayout
-                android:padding="12dp"
-                android:background="@drawable/bg_base_text_msg"
+            <RelativeLayout
                 android:id="@id/msg_item_msg_region"
+                android:layout_toStartOf="@id/msg_item_avatar_iv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:layout_marginEnd="8dp">
-<!--                &lt;!&ndash; 通过添加View的方式来完成 &ndash;&gt;-->
-<!--                <TextView-->
-<!--                    android:layout_width="wrap_content"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:text="@string/app_name" />-->
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp">
             </RelativeLayout>
 
             <!-- avatar -->
@@ -51,39 +47,45 @@
                 android:id="@id/msg_item_avatar_iv"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
-                android:src="@mipmap/icon_header" />
-        </LinearLayout>
+                android:layout_alignParentEnd="true"
+                tools:src="@mipmap/icon_header" />
 
-        <TextView
-            android:id="@id/msg_item_state_tv"
-            android:layout_width="wrap_content"
-            android:layout_height="20dp"
-            android:layout_below="@id/msg_item_layout_ll"
-            android:layout_alignStart="@id/msg_item_layout_ll"
-            android:text="@string/sign_state_text"
-            android:textSize="12sp" />
+            <TextView
+                android:id="@id/msg_item_state_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="20dp"
+                android:layout_below="@id/msg_item_msg_region"
+                android:layout_alignStart="@id/msg_item_msg_region"
+                android:text="@string/sign_state_text"
+                android:layout_marginStart="15dp"
+                android:textSize="12sp" />
+        </RelativeLayout>
     </RelativeLayout>
 
+    <!-- ================================== -->
+
     <RelativeLayout
-        android:visibility="gone"
         android:id="@id/msg_item_friend_layout"
+        android:layout_marginTop="12dp"
+        android:layout_marginEnd="50dp"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:visibility="visible">
 
         <TextView
             android:id="@id/msg_item_datetime_tv"
-            android:textSize="12sp"
-            android:gravity="center_horizontal"
-            tools:text="2022:02:12 19:58"
             android:layout_width="match_parent"
-            android:layout_height="20dp"/>
+            android:layout_height="20dp"
+            android:gravity="center_horizontal"
+            android:textSize="12sp"
+            tools:text="2022:02:12 19:58" />
 
-        <LinearLayout
+        <RelativeLayout
             android:id="@id/msg_item_layout_ll"
-            android:layout_alignParentStart="true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/msg_item_datetime_tv"
+            android:layout_alignParentStart="true"
             android:gravity="start"
             android:orientation="horizontal">
 
@@ -92,29 +94,28 @@
                 android:id="@id/msg_item_avatar_iv"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
-                android:src="@mipmap/icon_header" />
+                android:layout_alignParentStart="true"
+                tools:src="@mipmap/icon_header" />
             <!-- msg view -->
             <RelativeLayout
                 android:id="@id/msg_item_msg_region"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:layout_marginEnd="8dp">
-                <!-- 通过添加View的方式来完成 -->
-<!--                <TextView-->
-<!--                    android:text="@string/app_name"-->
-<!--                    android:layout_width="wrap_content"-->
-<!--                    android:layout_height="wrap_content"/>-->
+                android:layout_toEndOf="@id/msg_item_avatar_iv"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp">
             </RelativeLayout>
-        </LinearLayout>
 
-        <TextView
-            android:id="@id/msg_item_state_tv"
-            android:layout_width="wrap_content"
-            android:layout_height="20dp"
-            android:layout_below="@id/msg_item_layout_ll"
-            android:layout_alignEnd="@id/msg_item_layout_ll"
-            android:text="@string/sign_state_text"
-            android:textSize="12sp" />
+            <TextView
+                android:id="@id/msg_item_state_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="20dp"
+                android:layout_below="@id/msg_item_msg_region"
+                android:layout_alignEnd="@id/msg_item_msg_region"
+                android:layout_marginEnd="15dp"
+                android:text="@string/sign_state_text"
+                android:textSize="12sp" />
+        </RelativeLayout>
     </RelativeLayout>
 </FrameLayout>

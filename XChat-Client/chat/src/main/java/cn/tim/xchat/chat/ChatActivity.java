@@ -40,6 +40,7 @@ import cn.tim.xchat.common.module.FriendInfo;
 import cn.tim.xchat.common.module.UserInfo;
 import cn.tim.xchat.common.module.chat.ChatMsg;
 import cn.tim.xchat.common.msg.MsgTypeEnum;
+import cn.tim.xchat.common.utils.BeanCopyUtil;
 import cn.tim.xchat.common.utils.DateUtils;
 import cn.tim.xchat.common.utils.EnumUtil;
 import cn.tim.xchat.common.utils.KeyUtil;
@@ -211,15 +212,28 @@ public class ChatActivity extends AppCompatActivity {
         ChatMsg chatMsg = new ChatMsg(); // FIXME ID从服务器确认
         chatMsg.setItemId(KeyUtil.genUniqueKey());
         chatMsg.setType(MsgTypeEnum.TEXT.getCode());
-        chatMsg.setSendUserId(UserUtil.get().getId());
-        chatMsg.setAcceptUserId(friendInfo.getUserId());
+        chatMsg.setSendUserId( friendInfo.getUserId());
+        chatMsg.setAcceptUserId(UserUtil.get().getId());
         chatMsg.setSignFlag(MsgSignEnum.UN_READ.getCode());
         chatMsg.setCreateTime(Instant.now().toEpochMilli());
         chatMsg.setMsg(msgText);
-
         chatMsg.save();
 
         chatListAdapter.addData(chatListAdapter.getItemCount(), _convertMsgData(chatMsg));
+
+//        ChatMsg newChatMsg = new ChatMsg();
+//        try {
+//            BeanCopyUtil.copyProperties(chatMsg, newChatMsg);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//        chatMsg.setItemId(KeyUtil.genUniqueKey());
+//        chatMsg.setSendUserId(friendInfo.getUserId());
+//        chatMsg.setAcceptUserId(UserUtil.get().getId());
+//        chatMsg.setCreateTime(Instant.now().toEpochMilli() + 6000);
+//        chatMsg.save();
+//
+//        chatListAdapter.addData(chatListAdapter.getItemCount(), _convertMsgData(chatMsg));
     }
 
     /*

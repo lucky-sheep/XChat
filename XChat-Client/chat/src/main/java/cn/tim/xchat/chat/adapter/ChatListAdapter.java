@@ -28,6 +28,8 @@ import cn.tim.xchat.common.module.FriendInfo;
 import cn.tim.xchat.common.msg.MsgTypeEnum;
 import cn.tim.xchat.common.utils.DateUtils;
 
+
+// TODO 通过多ViewHolder重构一下
 public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ChatViewHolder> {
 
     private final Context context;
@@ -35,7 +37,7 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ChatVi
     private List<ChatMsgVO> dataSource;
     private OnItemClickListener listener;
 
-    private String[] avatarKey = {"http://", "file://", "https://"};
+    private final String[] avatarKey = {"http://", "file://", "https://"};
 
     public ChatListAdapter(Context context, RecyclerView recyclerView){
         this.context = context;
@@ -63,13 +65,13 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ChatVi
     @Override
     public void onBindViewHolder(@NonNull ChatViewHolder holder, int position) {
         ChatMsgVO chatMsgVO = dataSource.get(position);
-        if(chatMsgVO.isMe()) {
-            holder.myLayout.setVisibility(View.VISIBLE);
-            holder.friendLayout.setVisibility(View.GONE);
-        }else {
-            holder.myLayout.setVisibility(View.GONE);
-            holder.friendLayout.setVisibility(View.VISIBLE);
-        }
+//        if(chatMsgVO.isMe()) {
+//            holder.myLayout.setVisibility(View.VISIBLE);
+//            holder.friendLayout.setVisibility(View.GONE);
+//        }else {
+//            holder.myLayout.setVisibility(View.GONE);
+//            holder.friendLayout.setVisibility(View.VISIBLE);
+//        }
 
         // ========================================
         // 处理头像
@@ -112,15 +114,16 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ChatVi
     private void handleMsgByType(RelativeLayout layoutPosition, ChatMsgVO chatMsgVO) {
         MsgTypeEnum msgTypeEnum = chatMsgVO.getMsgTypeEnum();
         if(msgTypeEnum.equals(MsgTypeEnum.TEXT)){
-            TextView msgTv = new TextView(context);
+            TextView msgTv = (TextView) LayoutInflater.from(context).inflate(R.layout.chat_textview, layoutPosition, false);
+//            TextView msgTv = new TextView(context);
             msgTv.setTextColor(Color.BLACK);
             msgTv.setText(chatMsgVO.getText());
 //            ViewGroup.LayoutParams layoutParams = textView.getLayoutParams();
-            ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
-                    ViewGroup.LayoutParams.WRAP_CONTENT);
+//            ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
+//                    ViewGroup.LayoutParams.WRAP_CONTENT);
 //            msgTv.setLayoutParams(params);
 //            layoutPosition.addView(msgTv);
-            layoutPosition.addView(msgTv, params);
+            layoutPosition.addView(msgTv);
         }else if(msgTypeEnum.equals(MsgTypeEnum.ADDRESS)){
             // TODO
         }else {
